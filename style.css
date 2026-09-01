@@ -1,3 +1,7 @@
+* {
+    box-sizing: border-box;
+}
+
 body {
     margin: 0;
     font-family: Arial, sans-serif;
@@ -5,35 +9,185 @@ body {
     color: #17202a;
 }
 
+/* CABEÇALHO */
+
 header {
     background: #111827;
     color: white;
-    padding: 20px 40px;
+    padding: 18px 6%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
-header h1 {
-    margin: 0;
+.logo {
+    font-size: 22px;
+    font-weight: bold;
+    letter-spacing: 1px;
 }
+
+nav {
+    display: flex;
+    gap: 25px;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    font-size: 15px;
+}
+
+nav a:hover {
+    opacity: 0.7;
+}
+
+/* ÁREA PRINCIPAL */
 
 main {
-    max-width: 1100px;
-    margin: 60px auto;
-    padding: 20px;
+    max-width: 1200px;
+    margin: auto;
 }
 
+/* HERO */
+
 .hero {
+    min-height: 500px;
+    display: flex;
+    align-items: center;
+    padding: 70px 6%;
     background: white;
-    padding: 50px;
-    border-radius: 16px;
-    text-align: center;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+}
+
+.hero-text {
+    max-width: 700px;
+}
+
+.tag {
+    display: inline-block;
+    background: #e5e7eb;
+    color: #111827;
+    padding: 8px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.hero h1 {
+    font-size: 52px;
+    line-height: 1.1;
+    margin: 20px 0;
+}
+
+.hero p {
+    font-size: 19px;
+    color: #667085;
+    line-height: 1.6;
+}
+
+/* BOTÕES */
+
+.buttons {
+    display: flex;
+    gap: 15px;
+    margin-top: 30px;
 }
 
 button {
     background: #111827;
     color: white;
     border: none;
-    padding: 12px 22px;
+    padding: 14px 25px;
     border-radius: 8px;
     cursor: pointer;
+    font-size: 15px;
+    font-weight: bold;
+}
+
+button:hover {
+    opacity: 0.85;
+}
+
+button.secondary {
+    background: white;
+    color: #111827;
+    border: 1px solid #d1d5db;
+}
+
+/* CURSOS */
+
+.courses {
+    padding: 70px 6%;
+}
+
+.courses h2 {
+    font-size: 32px;
+    margin-bottom: 30px;
+}
+
+.course-card {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    max-width: 500px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+}
+
+.course-card h3 {
+    font-size: 22px;
+}
+
+.course-card p {
+    color: #667085;
+    line-height: 1.6;
+}
+
+/* RODAPÉ */
+
+footer {
+    background: #111827;
+    color: white;
+    text-align: center;
+    padding: 25px;
+    margin-top: 30px;
+}
+
+footer p {
+    margin: 0;
+    font-size: 14px;
+}
+
+/* CELULAR */
+
+@media (max-width: 700px) {
+
+    header {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    nav {
+        gap: 15px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .hero {
+        padding: 50px 6%;
+    }
+
+    .hero h1 {
+        font-size: 38px;
+    }
+
+    .hero p {
+        font-size: 17px;
+    }
+
+    .buttons {
+        flex-direction: column;
+    }
+
+    button {
+        width: 100%;
+    }
 }
