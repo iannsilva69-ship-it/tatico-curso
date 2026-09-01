@@ -1,4 +1,3 @@
-```javascript
 const form = document.getElementById("loginForm");
 const mensagem = document.getElementById("mensagem");
 
@@ -11,7 +10,6 @@ form.addEventListener("submit", async function (event) {
 
     mensagem.textContent = "Entrando...";
 
-    // Faz o login
     const { data, error } =
         await supabaseClient.auth.signInWithPassword({
             email: email,
@@ -28,7 +26,6 @@ form.addEventListener("submit", async function (event) {
         return;
     }
 
-    // Busca o perfil do usuário
     const { data: perfil, error: erroPerfil } =
         await supabaseClient
             .from("perfis")
@@ -48,8 +45,7 @@ form.addEventListener("submit", async function (event) {
         return;
     }
 
-    // Verifica se a conta está ativa
-    if (perfil.status !== "ativo") {
+    if (perfil.status.toLowerCase() !== "ativo") {
 
         mensagem.textContent =
             "Sua conta está inativa.";
@@ -62,8 +58,7 @@ form.addEventListener("submit", async function (event) {
     mensagem.textContent =
         "Login realizado com sucesso!";
 
-    // Redireciona conforme o tipo de usuário
-    if (perfil.tipo === "socio") {
+    if (perfil.tipo.toLowerCase() === "socio") {
 
         window.location.href = "admin.html";
 
@@ -74,4 +69,3 @@ form.addEventListener("submit", async function (event) {
     }
 
 });
-```
