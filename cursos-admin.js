@@ -105,22 +105,96 @@ async function carregarCursos() {
 }
 
 
-function editarCurso(id) {
-
-    alert(
-        "A edição do curso será adicionada na próxima etapa."
-    );
-
-}
-
-
 document.getElementById("novoCurso").addEventListener(
     "click",
     function () {
 
-        alert(
-            "O formulário para criar cursos será adicionado na próxima etapa."
-        );
+        document.getElementById("formularioCurso").style.display =
+            "block";
+
+        document.getElementById("nomeCurso").focus();
+
+    }
+);
+
+
+document.getElementById("cancelarCurso").addEventListener(
+    "click",
+    function () {
+
+        document.getElementById("formularioCurso").style.display =
+            "none";
+
+        document.getElementById("cursoForm").reset();
+
+    }
+);
+
+
+document.getElementById("cursoForm").addEventListener(
+    "submit",
+    async function (event) {
+
+        event.preventDefault();
+
+        const mensagem =
+            document.getElementById("mensagemCurso");
+
+        const nome =
+            document.getElementById("nomeCurso").value.trim();
+
+        const descricao =
+            document.getElementById("descricaoCurso").value.trim();
+
+        const preco =
+            document.getElementById("precoCurso").value;
+
+        const imagem =
+            document.getElementById("imagemCurso").value.trim();
+
+        const ativo =
+            document.getElementById("ativoCurso").checked;
+
+        mensagem.textContent = "Salvando curso...";
+
+        const { error } =
+            await supabaseClient
+                .from("cursos")
+                .insert({
+                    nome: nome,
+                    descricao: descricao,
+                    preco: preco || null,
+                    imagem: imagem || null,
+                    ativo: ativo
+                });
+
+        if (error) {
+
+            console.error(error);
+
+            mensagem.textContent =
+                "Erro ao salvar o curso.";
+
+            return;
+        }
+
+        mensagem.textContent =
+            "Curso criado com sucesso!";
+
+        document.getElementById("cursoForm").reset();
+
+        document.getElementById("ativoCurso").checked = true;
+
+        setTimeout(function () {
+
+            document.getElementById("formularioCurso").style.display =
+                "none";
+
+            mensagem.textContent = "";
+
+            carregarCursos();
+
+        }, 1000);
 
     }
 );
