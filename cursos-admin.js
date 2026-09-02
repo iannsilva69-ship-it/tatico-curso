@@ -23,8 +23,10 @@ async function verificarSocio() {
     }
 
     if (
-        !["socio", "sócio"].includes(perfil.tipo.toLowerCase()) ||
-        perfil.status.toLowerCase() !== "ativo"
+        !["socio", "sócio"].includes(
+            (perfil.tipo || "").toLowerCase()
+        ) ||
+        (perfil.status || "").toLowerCase() !== "ativo"
     ) {
         alert("Acesso permitido somente para sócios.");
         window.location.href = "aluno.html";
@@ -34,6 +36,10 @@ async function verificarSocio() {
     return true;
 }
 
+
+// ==============================
+// CARREGAR CURSOS
+// ==============================
 
 async function carregarCursos() {
 
@@ -81,7 +87,7 @@ async function carregarCursos() {
             ${curso.imagem ? `
                 <img
                     src="${curso.imagem}"
-                    alt="${curso.nome}"
+                    alt="${curso.nome || "Curso"}"
                     style="max-width: 100%; border-radius: 10px; margin-bottom: 15px;"
                 >
             ` : ""}
@@ -94,7 +100,9 @@ async function carregarCursos() {
 
             <p>
                 <strong>Preço:</strong>
-                R$ ${curso.preco !== null ? curso.preco : "0,00"}
+                R$ ${curso.preco !== null && curso.preco !== undefined
+                    ? Number(curso.preco).toFixed(2).replace(".", ",")
+                    : "0,00"}
             </p>
 
             <p>
@@ -102,18 +110,42 @@ async function carregarCursos() {
                 ${curso.ativo ? "Ativo" : "Inativo"}
             </p>
 
-            <button onclick="editarCurso(${curso.id})">
+            <button type="button" class="btn-editar">
                 ✏️ Editar
             </button>
         `;
 
         area.appendChild(card);
 
+
+        // ==============================
+        // BOTÃO EDITAR
+        // ==============================
+
+        const botaoEditar =
+            card.querySelector(".btn-editar");
+
+        botaoEditar.addEventListener(
+            "click",
+            function () {
+
+                editarCurso(curso.id);
+
+            }
+        );
+
     });
+
 }
 
 
+// ==============================
+// EDITAR CURSO
+// ==============================
+
 async function editarCurso(id) {
+
+    console.log("Editando curso:", id);
 
     const { data: curso, error } =
         await supabaseClient
@@ -124,12 +156,15 @@ async function editarCurso(id) {
 
     if (error || !curso) {
 
-        console.error(error);
+        console.error("Erro ao carregar curso:", error);
 
         alert("Não foi possível carregar o curso.");
 
         return;
     }
+
+
+    // Preencher formulário
 
     document.getElementById("edicaoId").value =
         curso.id;
@@ -147,17 +182,28 @@ async function editarCurso(id) {
         curso.imagem || "";
 
     document.getElementById("edicaoAtivo").checked =
-        curso.ativo;
+        curso.ativo === true;
+
+
+    // Mostrar formulário
 
     document.getElementById("areaEdicao").style.display =
         "block";
 
+
+    // Rolar até o formulário
+
     document.getElementById("areaEdicao").scrollIntoView({
-        behavior: "smooth"
+        behavior: "smooth",
+        block: "start"
     });
 
 }
 
+
+// ==============================
+// SALVAR ALTERAÇÕES
+// ==============================
 
 document.getElementById("edicaoForm").addEventListener(
     "submit",
@@ -186,8 +232,10 @@ document.getElementById("edicaoForm").addEventListener(
         const ativo =
             document.getElementById("edicaoAtivo").checked;
 
+
         mensagem.textContent =
             "Salvando alterações...";
+
 
         const { error } =
             await supabaseClient
@@ -201,9 +249,13 @@ document.getElementById("edicaoForm").addEventListener(
                 })
                 .eq("id", id);
 
+
         if (error) {
 
-            console.error(error);
+            console.error(
+                "Erro ao atualizar:",
+                error
+            );
 
             mensagem.textContent =
                 "Erro ao atualizar o curso.";
@@ -211,8 +263,10 @@ document.getElementById("edicaoForm").addEventListener(
             return;
         }
 
+
         mensagem.textContent =
             "Curso atualizado com sucesso!";
+
 
         setTimeout(function () {
 
@@ -227,6 +281,10 @@ document.getElementById("edicaoForm").addEventListener(
 );
 
 
+// ==============================
+// NOVO CURSO
+// ==============================
+
 document.getElementById("novoCurso").addEventListener(
     "click",
     function () {
@@ -240,6 +298,10 @@ document.getElementById("novoCurso").addEventListener(
 );
 
 
+// ==============================
+// CANCELAR NOVO CURSO
+// ==============================
+
 document.getElementById("cancelarCurso").addEventListener(
     "click",
     function () {
@@ -252,6 +314,10 @@ document.getElementById("cancelarCurso").addEventListener(
     }
 );
 
+
+// ==============================
+// SALVAR NOVO CURSO
+// ==============================
 
 document.getElementById("cursoForm").addEventListener(
     "submit",
@@ -277,8 +343,10 @@ document.getElementById("cursoForm").addEventListener(
         const ativo =
             document.getElementById("ativoCurso").checked;
 
+
         mensagem.textContent =
             "Salvando curso...";
+
 
         const { error } =
             await supabaseClient
@@ -291,9 +359,13 @@ document.getElementById("cursoForm").addEventListener(
                     ativo: ativo
                 });
 
+
         if (error) {
 
-            console.error(error);
+            console.error(
+                "Erro ao criar curso:",
+                error
+            );
 
             mensagem.textContent =
                 "Erro ao salvar o curso.";
@@ -301,12 +373,16 @@ document.getElementById("cursoForm").addEventListener(
             return;
         }
 
+
         mensagem.textContent =
             "Curso criado com sucesso!";
 
+
         document.getElementById("cursoForm").reset();
 
-        document.getElementById("ativoCurso").checked = true;
+        document.getElementById("ativoCurso").checked =
+            true;
+
 
         setTimeout(function () {
 
@@ -323,6 +399,10 @@ document.getElementById("cursoForm").addEventListener(
 );
 
 
+// ==============================
+// CANCELAR EDIÇÃO
+// ==============================
+
 document.getElementById("cancelarEdicao").addEventListener(
     "click",
     function () {
@@ -336,6 +416,10 @@ document.getElementById("cancelarEdicao").addEventListener(
 );
 
 
+// ==============================
+// SAIR
+// ==============================
+
 document.getElementById("sair").addEventListener(
     "click",
     async function (event) {
@@ -344,10 +428,15 @@ document.getElementById("sair").addEventListener(
 
         await supabaseClient.auth.signOut();
 
-        window.location.href = "login.html";
+        window.location.href =
+            "login.html";
 
     }
 );
 
+
+// ==============================
+// INICIAR
+// ==============================
 
 carregarCursos();
