@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Aulas - Tático Curso</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script src="supabase.js"></script>
+
+</head>
+
+<body>
+
+<header>
+
+    <div class="logo">
+        TÁTICO CURSO
+    </div>
+
+    <nav>
+
+        <a href="admin.html">
+            Painel
+        </a>
+
+        <a href="#" id="sair">
+            Sair
+        </a>
+
+    </nav>
+
+</header>
+
+
+<main>
+
+    <section class="hero">
+
+        <div class="hero-text">
+
+            <span class="tag">
+                GERENCIAR AULAS
+            </span>
+
+            <h1 id="nomeModulo">
+                Carregando módulo...
+            </h1>
+
+            <p>
+                Cadastre e organize as aulas deste módulo.
+            </p>
+
+
+            <button id="novaAula">
+                ➕ Criar nova aula
+            </button>
+
+
+            <div
+                id="formularioAula"
+                style="display:none; margin-top:30px;"
+            >
+
+                <h2>
+                    Nova aula
+                </h2>
+
+
+                <form id="aulaForm">
+
+                    <input
+                        type="text"
+                        id="tituloAula"
+                        placeholder="Título da aula"
+                        required
+                    >
+
+                    <br><br>
+
+
+                    <input
+                        type="url"
+                        id="youtubeAula"
+                        placeholder="Link do vídeo do YouTube"
+                    >
+
+                    <br><br>
+
+
+                    <input
+                        type="url"
+                        id="pdfAula"
+                        placeholder="Link do PDF"
+                    >
+
+                    <br><br>
+
+
+                    <input
+                        type="url"
+                        id="slideAula"
+                        placeholder="Link dos slides"
+                    >
+
+                    <br><br>
+
+
+                    <input
+                        type="number"
+                        id="ordemAula"
+                        placeholder="Ordem da aula"
+                        min="1"
+                        value="1"
+                        required
+                    >
+
+                    <br><br>
+
+
+                    <button type="submit">
+                        💾 Salvar aula
+                    </button>
+
+
+                    <button
+                        type="button"
+                        id="cancelarAula"
+                        class="secondary"
+                    >
+                        Cancelar
+                    </button>
+
+                </form>
+
+
+                <p id="mensagemAula"></p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <section class="courses">
+
+        <h2>
+            Aulas do módulo
+        </h2>
+
+
+        <div id="listaAulas">
+
+            Carregando aulas...
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<script src="aulas-admin.js"></script>
+
+</body>
+
+</html>
