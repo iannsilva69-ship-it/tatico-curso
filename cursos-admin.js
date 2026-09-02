@@ -23,7 +23,7 @@ async function verificarSocio() {
     }
 
     if (
-        perfil.tipo.toLowerCase() !== "socio" ||
+        !["socio", "sócio"].includes(perfil.tipo.toLowerCase()) ||
         perfil.status.toLowerCase() !== "ativo"
     ) {
         alert("Acesso permitido somente para sócios.");
@@ -46,7 +46,7 @@ async function carregarCursos() {
     const { data: cursos, error } =
         await supabaseClient
             .from("cursos")
-            .select("id, nome, descricao, preco, ativo")
+            .select("id, nome, descricao, preco, imagem, ativo")
             .order("id", { ascending: false });
 
     if (error) {
@@ -78,6 +78,14 @@ async function carregarCursos() {
         card.className = "course-card";
 
         card.innerHTML = `
+            ${curso.imagem ? `
+                <img
+                    src="${curso.imagem}"
+                    alt="${curso.nome}"
+                    style="max-width: 100%; border-radius: 10px; margin-bottom: 15px;"
+                >
+            ` : ""}
+
             <h3>${curso.nome || "Curso sem nome"}</h3>
 
             <p>
@@ -86,7 +94,7 @@ async function carregarCursos() {
 
             <p>
                 <strong>Preço:</strong>
-                R$ ${curso.preco || "0,00"}
+                R$ ${curso.preco !== null ? curso.preco : "0,00"}
             </p>
 
             <p>
@@ -103,6 +111,120 @@ async function carregarCursos() {
 
     });
 }
+
+
+async function editarCurso(id) {
+
+    const { data: curso, error } =
+        await supabaseClient
+            .from("cursos")
+            .select("id, nome, descricao, preco, imagem, ativo")
+            .eq("id", id)
+            .single();
+
+    if (error || !curso) {
+
+        console.error(error);
+
+        alert("Não foi possível carregar o curso.");
+
+        return;
+    }
+
+    document.getElementById("edicaoId").value =
+        curso.id;
+
+    document.getElementById("edicaoNome").value =
+        curso.nome || "";
+
+    document.getElementById("edicaoDescricao").value =
+        curso.descricao || "";
+
+    document.getElementById("edicaoPreco").value =
+        curso.preco ?? "";
+
+    document.getElementById("edicaoImagem").value =
+        curso.imagem || "";
+
+    document.getElementById("edicaoAtivo").checked =
+        curso.ativo;
+
+    document.getElementById("areaEdicao").style.display =
+        "block";
+
+    document.getElementById("areaEdicao").scrollIntoView({
+        behavior: "smooth"
+    });
+
+}
+
+
+document.getElementById("edicaoForm").addEventListener(
+    "submit",
+    async function (event) {
+
+        event.preventDefault();
+
+        const mensagem =
+            document.getElementById("mensagemEdicao");
+
+        const id =
+            document.getElementById("edicaoId").value;
+
+        const nome =
+            document.getElementById("edicaoNome").value.trim();
+
+        const descricao =
+            document.getElementById("edicaoDescricao").value.trim();
+
+        const preco =
+            document.getElementById("edicaoPreco").value;
+
+        const imagem =
+            document.getElementById("edicaoImagem").value.trim();
+
+        const ativo =
+            document.getElementById("edicaoAtivo").checked;
+
+        mensagem.textContent =
+            "Salvando alterações...";
+
+        const { error } =
+            await supabaseClient
+                .from("cursos")
+                .update({
+                    nome: nome,
+                    descricao: descricao,
+                    preco: preco || null,
+                    imagem: imagem || null,
+                    ativo: ativo
+                })
+                .eq("id", id);
+
+        if (error) {
+
+            console.error(error);
+
+            mensagem.textContent =
+                "Erro ao atualizar o curso.";
+
+            return;
+        }
+
+        mensagem.textContent =
+            "Curso atualizado com sucesso!";
+
+        setTimeout(function () {
+
+            document.getElementById("areaEdicao").style.display =
+                "none";
+
+            carregarCursos();
+
+        }, 1000);
+
+    }
+);
 
 
 document.getElementById("novoCurso").addEventListener(
@@ -155,7 +277,8 @@ document.getElementById("cursoForm").addEventListener(
         const ativo =
             document.getElementById("ativoCurso").checked;
 
-        mensagem.textContent = "Salvando curso...";
+        mensagem.textContent =
+            "Salvando curso...";
 
         const { error } =
             await supabaseClient
@@ -195,6 +318,19 @@ document.getElementById("cursoForm").addEventListener(
             carregarCursos();
 
         }, 1000);
+
+    }
+);
+
+
+document.getElementById("cancelarEdicao").addEventListener(
+    "click",
+    function () {
+
+        document.getElementById("areaEdicao").style.display =
+            "none";
+
+        document.getElementById("edicaoForm").reset();
 
     }
 );
