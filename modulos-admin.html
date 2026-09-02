@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Módulos - Tático Curso</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script src="supabase.js"></script>
+
+</head>
+
+<body>
+
+<header>
+
+    <div class="logo">
+        TÁTICO CURSO
+    </div>
+
+    <nav>
+
+        <a href="cursos-admin.html">
+            Cursos
+        </a>
+
+        <a href="admin.html">
+            Painel
+        </a>
+
+        <a href="#" id="sair">
+            Sair
+        </a>
+
+    </nav>
+
+</header>
+
+
+<main>
+
+    <section class="hero">
+
+        <div class="hero-text">
+
+            <span class="tag">
+                GERENCIAR MÓDULOS
+            </span>
+
+            <h1 id="nomeCurso">
+                Carregando curso...
+            </h1>
+
+            <p>
+                Crie e organize os módulos deste curso.
+            </p>
+
+
+            <button id="novoModulo">
+                ➕ Criar novo módulo
+            </button>
+
+
+            <div
+                id="formularioModulo"
+                style="display:none; margin-top:30px;"
+            >
+
+                <h2>
+                    Novo módulo
+                </h2>
+
+
+                <form id="moduloForm">
+
+                    <input
+                        type="text"
+                        id="nomeModulo"
+                        placeholder="Nome do módulo"
+                        required
+                    >
+
+                    <br><br>
+
+
+                    <input
+                        type="number"
+                        id="ordemModulo"
+                        placeholder="Ordem do módulo"
+                        min="1"
+                        value="1"
+                        required
+                    >
+
+                    <br><br>
+
+
+                    <button type="submit">
+                        💾 Salvar módulo
+                    </button>
+
+
+                    <button
+                        type="button"
+                        id="cancelarModulo"
+                        class="secondary"
+                    >
+                        Cancelar
+                    </button>
+
+                </form>
+
+
+                <p id="mensagemModulo"></p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <section class="courses">
+
+        <h2>
+            Módulos do curso
+        </h2>
+
+
+        <div id="listaModulos">
+
+            Carregando módulos...
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<script src="modulos-admin.js"></script>
+
+</body>
+
+</html>
