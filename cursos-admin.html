@@ -116,7 +116,79 @@
 
     </form>
 
-    <p id="mensagemCurso"></p>
+   <p id="mensagemCurso"></p>
+
+<div id="areaEdicao" style="display: none; margin-top: 30px;">
+
+    <h2>Editar curso</h2>
+
+    <form id="edicaoForm">
+
+        <input type="hidden" id="edicaoId">
+
+        <input
+            type="text"
+            id="edicaoNome"
+            placeholder="Nome do curso"
+            required
+        >
+
+        <br><br>
+
+        <textarea
+            id="edicaoDescricao"
+            placeholder="Descrição do curso"
+            rows="5"
+            style="width: 100%; max-width: 600px;"
+        ></textarea>
+
+        <br><br>
+
+        <input
+            type="number"
+            id="edicaoPreco"
+            placeholder="Preço do curso"
+            step="0.01"
+            min="0"
+        >
+
+        <br><br>
+
+        <input
+            type="url"
+            id="edicaoImagem"
+            placeholder="Link da imagem do curso"
+        >
+
+        <br><br>
+
+        <label>
+            <input
+                type="checkbox"
+                id="edicaoAtivo"
+            >
+            Curso ativo
+        </label>
+
+        <br><br>
+
+        <button type="submit">
+            💾 Salvar alterações
+        </button>
+
+        <button
+            type="button"
+            id="cancelarEdicao"
+            class="secondary"
+        >
+            Cancelar
+        </button>
+
+    </form>
+
+    <p id="mensagemEdicao"></p>
+
+</div>
 
 </div>
             </div>
