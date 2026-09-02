@@ -49,7 +49,76 @@
                 <button id="novoCurso">
                     ➕ Criar novo curso
                 </button>
+<div id="formularioCurso" style="display: none; margin-top: 30px;">
 
+    <h2>Novo curso</h2>
+
+    <form id="cursoForm">
+
+        <input
+            type="text"
+            id="nomeCurso"
+            placeholder="Nome do curso"
+            required
+        >
+
+        <br><br>
+
+        <textarea
+            id="descricaoCurso"
+            placeholder="Descrição do curso"
+            rows="5"
+            style="width: 100%; max-width: 600px;"
+        ></textarea>
+
+        <br><br>
+
+        <input
+            type="number"
+            id="precoCurso"
+            placeholder="Preço do curso"
+            step="0.01"
+            min="0"
+        >
+
+        <br><br>
+
+        <input
+            type="url"
+            id="imagemCurso"
+            placeholder="Link da imagem do curso"
+        >
+
+        <br><br>
+
+        <label>
+            <input
+                type="checkbox"
+                id="ativoCurso"
+                checked
+            >
+            Curso ativo
+        </label>
+
+        <br><br>
+
+        <button type="submit">
+            💾 Salvar curso
+        </button>
+
+        <button
+            type="button"
+            id="cancelarCurso"
+            class="secondary"
+        >
+            Cancelar
+        </button>
+
+    </form>
+
+    <p id="mensagemCurso"></p>
+
+</div>
             </div>
 
         </section>
