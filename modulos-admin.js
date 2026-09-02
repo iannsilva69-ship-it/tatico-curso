@@ -88,7 +88,6 @@ async function carregarCurso() {
 
     document.getElementById("nomeCurso").textContent =
         curso.nome || "Curso";
-
 }
 
 
@@ -165,10 +164,35 @@ async function carregarModulos() {
                 Módulo ${modulo.ordem}
             </p>
 
+            <button
+                type="button"
+                class="btn-aulas"
+            >
+                🎓 Gerenciar aulas
+            </button>
+
         `;
 
 
         area.appendChild(card);
+
+
+        // ==============================
+        // BOTÃO GERENCIAR AULAS
+        // ==============================
+
+        const botaoAulas =
+            card.querySelector(".btn-aulas");
+
+        botaoAulas.addEventListener(
+            "click",
+            function () {
+
+                window.location.href =
+                    "aulas-admin.html?id=" + modulo.id;
+
+            }
+        );
 
     });
 
@@ -306,9 +330,7 @@ document.getElementById("moduloForm").addEventListener(
                 "formularioModulo"
             ).style.display = "none";
 
-
             mensagem.textContent = "";
-
 
             carregarModulos();
 
