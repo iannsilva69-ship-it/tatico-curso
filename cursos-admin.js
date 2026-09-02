@@ -1,3 +1,7 @@
+// ==============================
+// VERIFICAR SÓCIO
+// ==============================
+
 async function verificarSocio() {
 
     const {
@@ -28,8 +32,11 @@ async function verificarSocio() {
         ) ||
         (perfil.status || "").toLowerCase() !== "ativo"
     ) {
+
         alert("Acesso permitido somente para sócios.");
+
         window.location.href = "aluno.html";
+
         return false;
     }
 
@@ -92,7 +99,9 @@ async function carregarCursos() {
                 >
             ` : ""}
 
-            <h3>${curso.nome || "Curso sem nome"}</h3>
+            <h3>
+                ${curso.nome || "Curso sem nome"}
+            </h3>
 
             <p>
                 ${curso.descricao || "Sem descrição cadastrada."}
@@ -100,9 +109,15 @@ async function carregarCursos() {
 
             <p>
                 <strong>Preço:</strong>
-                R$ ${curso.preco !== null && curso.preco !== undefined
-                    ? Number(curso.preco).toFixed(2).replace(".", ",")
-                    : "0,00"}
+                R$
+                ${
+                    curso.preco !== null &&
+                    curso.preco !== undefined
+                    ? Number(curso.preco)
+                        .toFixed(2)
+                        .replace(".", ",")
+                    : "0,00"
+                }
             </p>
 
             <p>
@@ -110,8 +125,18 @@ async function carregarCursos() {
                 ${curso.ativo ? "Ativo" : "Inativo"}
             </p>
 
-            <button type="button" class="btn-editar">
+            <button
+                type="button"
+                class="btn-editar"
+            >
                 ✏️ Editar
+            </button>
+
+            <button
+                type="button"
+                class="btn-modulos"
+            >
+                📚 Gerenciar módulos
             </button>
         `;
 
@@ -134,6 +159,24 @@ async function carregarCursos() {
             }
         );
 
+
+        // ==============================
+        // BOTÃO GERENCIAR MÓDULOS
+        // ==============================
+
+        const botaoModulos =
+            card.querySelector(".btn-modulos");
+
+        botaoModulos.addEventListener(
+            "click",
+            function () {
+
+                window.location.href =
+                    "modulos-admin.html?id=" + curso.id;
+
+            }
+        );
+
     });
 
 }
@@ -150,21 +193,26 @@ async function editarCurso(id) {
     const { data: curso, error } =
         await supabaseClient
             .from("cursos")
-            .select("id, nome, descricao, preco, imagem, ativo")
+            .select(
+                "id, nome, descricao, preco, imagem, ativo"
+            )
             .eq("id", id)
             .single();
 
     if (error || !curso) {
 
-        console.error("Erro ao carregar curso:", error);
+        console.error(
+            "Erro ao carregar curso:",
+            error
+        );
 
-        alert("Não foi possível carregar o curso.");
+        alert(
+            "Não foi possível carregar o curso."
+        );
 
         return;
     }
 
-
-    // Preencher formulário
 
     document.getElementById("edicaoId").value =
         curso.id;
@@ -185,13 +233,9 @@ async function editarCurso(id) {
         curso.ativo === true;
 
 
-    // Mostrar formulário
-
     document.getElementById("areaEdicao").style.display =
         "block";
 
-
-    // Rolar até o formulário
 
     document.getElementById("areaEdicao").scrollIntoView({
         behavior: "smooth",
@@ -202,7 +246,7 @@ async function editarCurso(id) {
 
 
 // ==============================
-// SALVAR ALTERAÇÕES
+// SALVAR ALTERAÇÕES DO CURSO
 // ==============================
 
 document.getElementById("edicaoForm").addEventListener(
@@ -212,25 +256,39 @@ document.getElementById("edicaoForm").addEventListener(
         event.preventDefault();
 
         const mensagem =
-            document.getElementById("mensagemEdicao");
+            document.getElementById(
+                "mensagemEdicao"
+            );
 
         const id =
-            document.getElementById("edicaoId").value;
+            document.getElementById(
+                "edicaoId"
+            ).value;
 
         const nome =
-            document.getElementById("edicaoNome").value.trim();
+            document.getElementById(
+                "edicaoNome"
+            ).value.trim();
 
         const descricao =
-            document.getElementById("edicaoDescricao").value.trim();
+            document.getElementById(
+                "edicaoDescricao"
+            ).value.trim();
 
         const preco =
-            document.getElementById("edicaoPreco").value;
+            document.getElementById(
+                "edicaoPreco"
+            ).value;
 
         const imagem =
-            document.getElementById("edicaoImagem").value.trim();
+            document.getElementById(
+                "edicaoImagem"
+            ).value.trim();
 
         const ativo =
-            document.getElementById("edicaoAtivo").checked;
+            document.getElementById(
+                "edicaoAtivo"
+            ).checked;
 
 
         mensagem.textContent =
@@ -270,8 +328,9 @@ document.getElementById("edicaoForm").addEventListener(
 
         setTimeout(function () {
 
-            document.getElementById("areaEdicao").style.display =
-                "none";
+            document.getElementById(
+                "areaEdicao"
+            ).style.display = "none";
 
             carregarCursos();
 
@@ -289,10 +348,13 @@ document.getElementById("novoCurso").addEventListener(
     "click",
     function () {
 
-        document.getElementById("formularioCurso").style.display =
-            "block";
+        document.getElementById(
+            "formularioCurso"
+        ).style.display = "block";
 
-        document.getElementById("nomeCurso").focus();
+        document.getElementById(
+            "nomeCurso"
+        ).focus();
 
     }
 );
@@ -306,10 +368,13 @@ document.getElementById("cancelarCurso").addEventListener(
     "click",
     function () {
 
-        document.getElementById("formularioCurso").style.display =
-            "none";
+        document.getElementById(
+            "formularioCurso"
+        ).style.display = "none";
 
-        document.getElementById("cursoForm").reset();
+        document.getElementById(
+            "cursoForm"
+        ).reset();
 
     }
 );
@@ -326,22 +391,34 @@ document.getElementById("cursoForm").addEventListener(
         event.preventDefault();
 
         const mensagem =
-            document.getElementById("mensagemCurso");
+            document.getElementById(
+                "mensagemCurso"
+            );
 
         const nome =
-            document.getElementById("nomeCurso").value.trim();
+            document.getElementById(
+                "nomeCurso"
+            ).value.trim();
 
         const descricao =
-            document.getElementById("descricaoCurso").value.trim();
+            document.getElementById(
+                "descricaoCurso"
+            ).value.trim();
 
         const preco =
-            document.getElementById("precoCurso").value;
+            document.getElementById(
+                "precoCurso"
+            ).value;
 
         const imagem =
-            document.getElementById("imagemCurso").value.trim();
+            document.getElementById(
+                "imagemCurso"
+            ).value.trim();
 
         const ativo =
-            document.getElementById("ativoCurso").checked;
+            document.getElementById(
+                "ativoCurso"
+            ).checked;
 
 
         mensagem.textContent =
@@ -378,16 +455,20 @@ document.getElementById("cursoForm").addEventListener(
             "Curso criado com sucesso!";
 
 
-        document.getElementById("cursoForm").reset();
+        document.getElementById(
+            "cursoForm"
+        ).reset();
 
-        document.getElementById("ativoCurso").checked =
-            true;
+        document.getElementById(
+            "ativoCurso"
+        ).checked = true;
 
 
         setTimeout(function () {
 
-            document.getElementById("formularioCurso").style.display =
-                "none";
+            document.getElementById(
+                "formularioCurso"
+            ).style.display = "none";
 
             mensagem.textContent = "";
 
@@ -403,14 +484,19 @@ document.getElementById("cursoForm").addEventListener(
 // CANCELAR EDIÇÃO
 // ==============================
 
-document.getElementById("cancelarEdicao").addEventListener(
+document.getElementById(
+    "cancelarEdicao"
+).addEventListener(
     "click",
     function () {
 
-        document.getElementById("areaEdicao").style.display =
-            "none";
+        document.getElementById(
+            "areaEdicao"
+        ).style.display = "none";
 
-        document.getElementById("edicaoForm").reset();
+        document.getElementById(
+            "edicaoForm"
+        ).reset();
 
     }
 );
@@ -420,7 +506,9 @@ document.getElementById("cancelarEdicao").addEventListener(
 // SAIR
 // ==============================
 
-document.getElementById("sair").addEventListener(
+document.getElementById(
+    "sair"
+).addEventListener(
     "click",
     async function (event) {
 
