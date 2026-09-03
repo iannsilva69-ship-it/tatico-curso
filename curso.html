@@ -5,36 +5,313 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Curso - Tático Curso</title>
+    <title>Meu Curso - Tático Curso</title>
 
     <link rel="stylesheet" href="style.css">
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabase.js"></script>
+
+    <style>
+
+        /* ==============================
+           PÁGINA DO CURSO
+        ============================== */
+
+        .pagina-curso {
+            min-height: 100vh;
+        }
+
+        /* ==============================
+           CABEÇALHO DO CURSO
+        ============================== */
+
+        .curso-cabecalho {
+            background:
+                linear-gradient(
+                    135deg,
+                    #111827 0%,
+                    #1f2937 50%,
+                    #111827 100%
+                );
+
+            color: white;
+
+            padding: 65px 6%;
+
+            border-bottom: 2px solid #a67c32;
+
+            position: relative;
+            overflow: hidden;
+        }
+
+        .curso-cabecalho::after {
+            content: "";
+
+            position: absolute;
+
+            width: 350px;
+            height: 350px;
+
+            right: -100px;
+            top: -150px;
+
+            border: 2px solid rgba(166, 124, 50, 0.25);
+
+            border-radius: 50%;
+        }
+
+        .curso-cabecalho-conteudo {
+            max-width: 1200px;
+            margin: auto;
+
+            position: relative;
+            z-index: 2;
+        }
+
+        .curso-tag {
+            display: inline-block;
+
+            color: #d6b36a;
+
+            border: 1px solid #a67c32;
+
+            padding: 8px 16px;
+
+            border-radius: 20px;
+
+            font-size: 12px;
+            font-weight: bold;
+
+            letter-spacing: 1px;
+
+            margin-bottom: 18px;
+        }
+
+        .curso-cabecalho h1 {
+            margin: 0;
+
+            font-size: 46px;
+
+            color: #f4f4f4;
+
+            letter-spacing: 0.5px;
+        }
+
+        .curso-cabecalho p {
+            max-width: 750px;
+
+            margin-top: 18px;
+
+            color: #cbd5e1;
+
+            font-size: 18px;
+
+            line-height: 1.7;
+        }
+
+        /* ==============================
+           CONTEÚDO
+        ============================== */
+
+        .conteudo-curso {
+            max-width: 1200px;
+
+            margin: auto;
+
+            padding: 60px 6%;
+        }
+
+        .titulo-conteudo {
+            display: flex;
+
+            align-items: center;
+
+            gap: 15px;
+
+            margin-bottom: 35px;
+        }
+
+        .titulo-conteudo h2 {
+            margin: 0;
+
+            font-size: 30px;
+
+            color: #17202a;
+        }
+
+        .linha-dourada {
+            height: 3px;
+
+            width: 55px;
+
+            background: #a67c32;
+
+            border-radius: 5px;
+        }
+
+        /* ==============================
+           MÓDULOS
+        ============================== */
+
+        #modulos {
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 25px;
+        }
+
+        .modulo-card {
+            background: rgba(255, 255, 255, 0.94);
+
+            border-radius: 14px;
+
+            border-left: 5px solid #a67c32;
+
+            padding: 25px;
+
+            box-shadow:
+                0 8px 25px rgba(0, 0, 0, 0.07);
+        }
+
+        .modulo-card h3 {
+            margin-top: 0;
+
+            color: #1f2937;
+
+            font-size: 22px;
+        }
+
+        /* ==============================
+           AULAS
+        ============================== */
+
+        .aula-card {
+            background: #f8fafc;
+
+            border: 1px solid #e5e7eb;
+
+            border-radius: 10px;
+
+            padding: 20px;
+
+            margin-top: 15px;
+        }
+
+        .aula-card h4 {
+            margin-top: 0;
+
+            color: #374151;
+
+            font-size: 17px;
+        }
+
+        .aula-card a {
+            display: inline-block;
+
+            margin-right: 10px;
+            margin-top: 8px;
+
+            padding: 10px 15px;
+
+            border-radius: 7px;
+
+            text-decoration: none;
+
+            font-size: 14px;
+
+            font-weight: bold;
+        }
+
+        .link-video {
+            background: #111827;
+
+            color: white;
+        }
+
+        .link-material {
+            background: #e5e7eb;
+
+            color: #374151;
+        }
+
+        .aula-card a:hover {
+            opacity: 0.85;
+        }
+
+        /* ==============================
+           MOBILE
+        ============================== */
+
+        @media (max-width: 700px) {
+
+            .curso-cabecalho {
+                padding: 45px 6%;
+            }
+
+            .curso-cabecalho h1 {
+                font-size: 34px;
+            }
+
+            .curso-cabecalho p {
+                font-size: 16px;
+            }
+
+            .conteudo-curso {
+                padding: 45px 6%;
+            }
+
+            .titulo-conteudo h2 {
+                font-size: 25px;
+            }
+
+            .aula-card a {
+                display: block;
+
+                text-align: center;
+
+                margin-right: 0;
+            }
+        }
+
+    </style>
 </head>
 
 <body>
 
-    <header>
+    <div class="pagina-curso">
 
-        <div class="logo">
-            TÁTICO CURSO
-        </div>
+        <!-- ==============================
+             CABEÇALHO
+        ============================== -->
 
-        <nav>
-            <a href="aluno.html">Minha área</a>
-            <a href="#" id="sair">Sair</a>
-        </nav>
+        <header>
 
-    </header>
+            <div class="logo">
+                TÁTICO CURSO
+            </div>
 
-    <main>
+            <nav>
+                <a href="aluno.html">Minha área</a>
 
-        <section class="hero">
+                <a href="#" id="sair">
+                    Sair
+                </a>
+            </nav>
 
-            <div class="hero-text">
+        </header>
 
-                <span class="tag">
+
+        <!-- ==============================
+             INFORMAÇÕES DO CURSO
+        ============================== -->
+
+        <section class="curso-cabecalho">
+
+            <div class="curso-cabecalho-conteudo">
+
+                <span class="curso-tag">
                     MEU CURSO
                 </span>
 
@@ -50,19 +327,34 @@
 
         </section>
 
-        <section class="courses">
 
-            <h2>
-                Conteúdo do curso
-            </h2>
+        <!-- ==============================
+             CONTEÚDO
+        ============================== -->
 
-            <div id="modulos">
-                Carregando módulos...
+        <main class="conteudo-curso">
+
+            <div class="titulo-conteudo">
+
+                <div class="linha-dourada"></div>
+
+                <h2>
+                    Conteúdo do curso
+                </h2>
+
             </div>
 
-        </section>
 
-    </main>
+            <div id="modulos">
+
+                Carregando módulos...
+
+            </div>
+
+        </main>
+
+    </div>
+
 
     <script src="curso.js"></script>
 
