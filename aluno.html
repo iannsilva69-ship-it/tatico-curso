@@ -11,30 +11,278 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabase.js"></script>
+
+    <style>
+
+        /* ==============================
+           ÁREA DO ALUNO
+        ============================== */
+
+        .area-aluno {
+            min-height: 100vh;
+        }
+
+        /* ==============================
+           CABEÇALHO
+        ============================== */
+
+        .aluno-banner {
+            background:
+                linear-gradient(
+                    135deg,
+                    #111827,
+                    #1f2937,
+                    #111827
+                );
+
+            color: white;
+
+            padding: 60px 6%;
+
+            border-bottom: 2px solid #a67c32;
+        }
+
+        .aluno-banner-conteudo {
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        .aluno-tag {
+            display: inline-block;
+
+            color: #d6b36a;
+
+            border: 1px solid #a67c32;
+
+            padding: 8px 16px;
+
+            border-radius: 20px;
+
+            font-size: 12px;
+
+            font-weight: bold;
+
+            letter-spacing: 1px;
+
+            margin-bottom: 18px;
+        }
+
+        .aluno-banner h1 {
+            margin: 0;
+
+            font-size: 42px;
+
+            color: #f4f4f4;
+        }
+
+        .aluno-banner p {
+            margin-top: 15px;
+
+            color: #cbd5e1;
+
+            font-size: 17px;
+        }
+
+        /* ==============================
+           CURSOS
+        ============================== */
+
+        .area-cursos {
+            max-width: 1200px;
+
+            margin: auto;
+
+            padding: 55px 6%;
+        }
+
+        .titulo-cursos {
+            display: flex;
+
+            align-items: center;
+
+            gap: 15px;
+
+            margin-bottom: 30px;
+        }
+
+        .titulo-cursos h2 {
+            margin: 0;
+
+            font-size: 30px;
+
+            color: #17202a;
+        }
+
+        .linha-dourada {
+            width: 55px;
+
+            height: 3px;
+
+            background: #a67c32;
+
+            border-radius: 5px;
+        }
+
+        #cursos {
+            display: grid;
+
+            grid-template-columns:
+                repeat(
+                    auto-fit,
+                    minmax(280px, 1fr)
+                );
+
+            gap: 25px;
+        }
+
+        /* ==============================
+           CARD DO CURSO
+        ============================== */
+
+        #cursos .course-card {
+            width: 100%;
+
+            max-width: none;
+
+            background:
+                rgba(255, 255, 255, 0.94);
+
+            border-top: 4px solid #a67c32;
+
+            border-radius: 14px;
+
+            padding: 25px;
+
+            box-shadow:
+                0 8px 25px
+                rgba(0, 0, 0, 0.08);
+
+            transition:
+                transform 0.2s ease,
+                box-shadow 0.2s ease;
+        }
+
+        #cursos .course-card:hover {
+            transform: translateY(-4px);
+
+            box-shadow:
+                0 14px 30px
+                rgba(0, 0, 0, 0.12);
+        }
+
+        #cursos .course-card h3 {
+            color: #1f2937;
+
+            font-size: 22px;
+
+            margin-bottom: 12px;
+        }
+
+        #cursos .course-card p {
+            color: #667085;
+
+            line-height: 1.6;
+        }
+
+        /* ==============================
+           BOTÃO ACESSAR
+        ============================== */
+
+        #cursos .course-card button {
+            width: 100%;
+
+            margin-top: 15px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #a67c32,
+                    #c49a4a
+                );
+
+            color: white;
+
+            border: none;
+
+            padding: 14px;
+
+            border-radius: 8px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+        }
+
+        #cursos .course-card button:hover {
+            opacity: 0.9;
+        }
+
+        /* ==============================
+           CELULAR
+        ============================== */
+
+        @media (max-width: 700px) {
+
+            .aluno-banner {
+                padding: 45px 6%;
+            }
+
+            .aluno-banner h1 {
+                font-size: 32px;
+            }
+
+            .area-cursos {
+                padding: 45px 6%;
+            }
+
+            .titulo-cursos h2 {
+                font-size: 25px;
+            }
+
+        }
+
+    </style>
+
 </head>
 
 <body>
 
-    <header>
+    <div class="area-aluno">
 
-        <div class="logo">
-            TÁTICO CURSO
-        </div>
+        <!-- ==============================
+             CABEÇALHO
+        ============================== -->
 
-        <nav>
-            <a href="index.html">Início</a>
-            <a href="#" id="sair">Sair</a>
-        </nav>
+        <header>
 
-    </header>
+            <div class="logo">
+                TÁTICO CURSO
+            </div>
 
-    <main>
+            <nav>
 
-        <section class="hero">
+                <a href="index.html">
+                    Início
+                </a>
 
-            <div class="hero-text">
+                <a href="#" id="sair">
+                    Sair
+                </a>
 
-                <span class="tag">
+            </nav>
+
+        </header>
+
+
+        <!-- ==============================
+             BANNER
+        ============================== -->
+
+        <section class="aluno-banner">
+
+            <div class="aluno-banner-conteudo">
+
+                <span class="aluno-tag">
                     ÁREA DO ALUNO
                 </span>
 
@@ -46,22 +294,39 @@
                     Carregando seus dados...
                 </p>
 
-                <h2>
-                    Meus cursos
-                </h2>
-
-                <div id="cursos">
-                    Carregando cursos...
-                </div>
-
             </div>
 
         </section>
 
-    </main>
+
+        <!-- ==============================
+             CURSOS
+        ============================== -->
+
+        <main class="area-cursos">
+
+            <div class="titulo-cursos">
+
+                <div class="linha-dourada"></div>
+
+                <h2>
+                    Meus cursos
+                </h2>
+
+            </div>
+
+
+            <div id="cursos">
+                Carregando cursos...
+            </div>
+
+        </main>
+
+    </div>
+
 
     <script src="aluno.js"></script>
 
 </body>
 
-</html>
+</html>                
