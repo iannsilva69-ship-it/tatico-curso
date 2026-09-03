@@ -1,5 +1,10 @@
+// ==============================
+// CARREGAR ÁREA DO ALUNO
+// ==============================
+
 async function carregarAluno() {
 
+    // Verificar usuário logado
     const {
         data: { user },
         error
@@ -10,20 +15,34 @@ async function carregarAluno() {
         return;
     }
 
+
+    // Mostrar e-mail
     document.getElementById("usuarioEmail").textContent =
         "Você está conectado como: " + user.email;
 
-    const { data: perfil } = await supabaseClient
-        .from("perfis")
-        .select("id, nome")
-        .eq("auth_user_id", user.id)
-        .single();
 
-    if (!perfil) {
-        document.getElementById("cursos").textContent =
-            "Perfil do aluno não encontrado.";
+    // Buscar perfil
+    const { data: perfil, error: erroPerfil } =
+        await supabaseClient
+            .from("perfis")
+            .select("id, nome")
+            .eq("auth_user_id", user.id)
+            .single();
+
+
+    if (erroPerfil || !perfil) {
+
+        document.getElementById("cursos").innerHTML = `
+            <p>Perfil do aluno não encontrado.</p>
+        `;
+
         return;
     }
+
+
+    // ==============================
+    // BUSCAR MATRÍCULAS
+    // ==============================
 
     const { data: matriculas, error: erroMatriculas } =
         await supabaseClient
@@ -42,67 +61,172 @@ async function carregarAluno() {
             .eq("usuario_id", perfil.id)
             .eq("status", "ativo");
 
+
     if (erroMatriculas) {
+
         console.error(erroMatriculas);
 
-        document.getElementById("cursos").textContent =
-            "Não foi possível carregar seus cursos.";
+        document.getElementById("cursos").innerHTML = `
+            <p>Não foi possível carregar seus cursos.</p>
+        `;
 
         return;
     }
 
-    const areaCursos = document.getElementById("cursos");
+
+    // ==============================
+    // ÁREA DOS CURSOS
+    // ==============================
+
+    const areaCursos =
+        document.getElementById("cursos");
+
 
     if (!matriculas || matriculas.length === 0) {
+
         areaCursos.innerHTML = `
-            <p>Você ainda não possui cursos ativos.</p>
+            <p>
+                Você ainda não possui cursos ativos.
+            </p>
         `;
+
         return;
     }
 
+
     areaCursos.innerHTML = "";
+
+
+    // ==============================
+    // CRIAR CARDS
+    // ==============================
 
     matriculas.forEach(function (matricula) {
 
         const curso = matricula.cursos;
 
+
         if (!curso) return;
 
-        const card = document.createElement("div");
 
-        card.className = "course-card";
+        const card =
+            document.createElement("div");
+
+        card.className =
+            "course-card";
+
 
         card.innerHTML = `
-            <h3>${curso.nome}</h3>
+
+            ${
+                curso.imagem
+                ? `
+                    <img
+                        src="${curso.imagem}"
+                        alt="${curso.nome}"
+                        style="
+                            width:100%;
+                            max-height:200px;
+                            object-fit:cover;
+                            border-radius:10px;
+                            margin-bottom:15px;
+                        "
+                    >
+                `
+                : ""
+            }
+
+
+            <h3>
+                ${curso.nome}
+            </h3>
+
 
             <p>
                 ${curso.descricao || "Curso disponível para você."}
             </p>
 
-            <button onclick="abrirCurso(${curso.id})">
-                Acessar curso
+
+            ${
+                matricula.data_vencimento
+                ? `
+                    <p>
+                        📅 Acesso até:
+                        ${matricula.data_vencimento}
+                    </p>
+                `
+                : ""
+            }
+
+
+            <button
+                type="button"
+                class="btn-acessar-curso"
+            >
+                📚 Acessar curso
             </button>
+
         `;
 
+
+        // ==============================
+        // BOTÃO ACESSAR CURSO
+        // ==============================
+
+        card
+            .querySelector(".btn-acessar-curso")
+            .addEventListener(
+                "click",
+                function () {
+
+                    abrirCurso(curso.id);
+
+                }
+            );
+
+
         areaCursos.appendChild(card);
+
     });
+
 }
 
 
-async function abrirCurso(cursoId) {
+// ==============================
+// ABRIR CURSO
+// ==============================
 
-    window.location.href = "curso.html?id=" + cursoId;
+function abrirCurso(cursoId) {
+
+    window.location.href =
+        "curso.html?id=" + cursoId;
+
 }
 
 
-document.getElementById("sair").addEventListener("click", async function (event) {
+// ==============================
+// SAIR
+// ==============================
 
-    event.preventDefault();
+document
+    .getElementById("sair")
+    .addEventListener(
+        "click",
+        async function (event) {
 
-    await supabaseClient.auth.signOut();
+            event.preventDefault();
 
-    window.location.href = "login.html";
-});
+            await supabaseClient.auth.signOut();
 
+            window.location.href =
+                "login.html";
+
+        }
+    );
+
+
+// ==============================
+// INICIAR
+// ==============================
 
 carregarAluno();
