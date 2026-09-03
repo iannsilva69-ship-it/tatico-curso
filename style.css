@@ -9,15 +9,50 @@ body {
     color: #17202a;
 }
 
-/* CABEÇALHO */
+/* ==============================
+   MARCA D'ÁGUA
+   ============================== */
+
+body::before {
+    content: "";
+    position: fixed;
+
+    top: 50%;
+    left: 50%;
+
+    transform: translate(-50%, -50%);
+
+    width: min(520px, 65vw);
+
+    aspect-ratio: 1 / 1;
+
+    background-image: url("marca-dagua.png");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+
+    opacity: 0.10;
+
+    pointer-events: none;
+
+    z-index: 10;
+}
+
+/* ==============================
+   CABEÇALHO
+   ============================== */
 
 header {
     background: #111827;
     color: white;
     padding: 18px 6%;
+
     display: flex;
     align-items: center;
     justify-content: space-between;
+
+    position: relative;
+    z-index: 20;
 }
 
 .logo {
@@ -41,21 +76,34 @@ nav a:hover {
     opacity: 0.7;
 }
 
-/* ÁREA PRINCIPAL */
+/* ==============================
+   ÁREA PRINCIPAL
+   ============================== */
 
 main {
     max-width: 1200px;
     margin: auto;
+
+    position: relative;
+    z-index: 5;
 }
 
-/* HERO */
+/* ==============================
+   HERO
+   ============================== */
 
 .hero {
     min-height: 500px;
+
     display: flex;
     align-items: center;
+
     padding: 70px 6%;
-    background: white;
+
+    background: rgba(255, 255, 255, 0.94);
+
+    position: relative;
+    z-index: 5;
 }
 
 .hero-text {
@@ -64,10 +112,14 @@ main {
 
 .tag {
     display: inline-block;
+
     background: #e5e7eb;
     color: #111827;
+
     padding: 8px 14px;
+
     border-radius: 20px;
+
     font-size: 12px;
     font-weight: bold;
 }
@@ -75,16 +127,20 @@ main {
 .hero h1 {
     font-size: 52px;
     line-height: 1.1;
+
     margin: 20px 0;
 }
 
 .hero p {
     font-size: 19px;
     color: #667085;
+
     line-height: 1.6;
 }
 
-/* BOTÕES */
+/* ==============================
+   BOTÕES
+   ============================== */
 
 .buttons {
     display: flex;
@@ -95,10 +151,15 @@ main {
 button {
     background: #111827;
     color: white;
+
     border: none;
+
     padding: 14px 25px;
+
     border-radius: 8px;
+
     cursor: pointer;
+
     font-size: 15px;
     font-weight: bold;
 }
@@ -110,10 +171,13 @@ button:hover {
 button.secondary {
     background: white;
     color: #111827;
+
     border: 1px solid #d1d5db;
 }
 
-/* CURSOS */
+/* ==============================
+   CURSOS
+   ============================== */
 
 .courses {
     padding: 70px 6%;
@@ -125,11 +189,19 @@ button.secondary {
 }
 
 .course-card {
-    background: white;
+    background: rgba(255, 255, 255, 0.94);
+
     padding: 30px;
+
     border-radius: 15px;
+
     max-width: 500px;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+
+    box-shadow:
+        0 8px 25px rgba(0, 0, 0, 0.06);
+
+    position: relative;
+    z-index: 5;
 }
 
 .course-card h3 {
@@ -141,14 +213,22 @@ button.secondary {
     line-height: 1.6;
 }
 
-/* RODAPÉ */
+/* ==============================
+   RODAPÉ
+   ============================== */
 
 footer {
     background: #111827;
     color: white;
+
     text-align: center;
+
     padding: 25px;
+
     margin-top: 30px;
+
+    position: relative;
+    z-index: 20;
 }
 
 footer p {
@@ -156,9 +236,16 @@ footer p {
     font-size: 14px;
 }
 
-/* CELULAR */
+/* ==============================
+   CELULAR
+   ============================== */
 
 @media (max-width: 700px) {
+
+    body::before {
+        width: 75vw;
+        opacity: 0.08;
+    }
 
     header {
         flex-direction: column;
