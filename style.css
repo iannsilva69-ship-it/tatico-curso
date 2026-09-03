@@ -7,40 +7,37 @@ body {
     font-family: Arial, sans-serif;
     background: #f4f6f8;
     color: #17202a;
+    position: relative;
 }
 
 /* ==============================
    MARCA D'ÁGUA
-   ============================== */
+============================== */
 
 body::before {
     content: "";
     position: fixed;
-
     top: 50%;
     left: 50%;
-
     transform: translate(-50%, -50%);
 
-    width: min(520px, 65vw);
+    width: min(600px, 70vw);
+    height: min(600px, 70vh);
 
-    aspect-ratio: 1 / 1;
-
-    background-image: url("marca-dagua.png");
+    background-image: url("/marca-dagua.png");
     background-repeat: no-repeat;
     background-position: center;
     background-size: contain;
 
-    opacity: 0.10;
+    opacity: 0.12;
 
     pointer-events: none;
-
-    z-index: 10;
+    z-index: 999;
 }
 
 /* ==============================
    CABEÇALHO
-   ============================== */
+============================== */
 
 header {
     background: #111827;
@@ -52,7 +49,7 @@ header {
     justify-content: space-between;
 
     position: relative;
-    z-index: 20;
+    z-index: 1000;
 }
 
 .logo {
@@ -78,19 +75,19 @@ nav a:hover {
 
 /* ==============================
    ÁREA PRINCIPAL
-   ============================== */
+============================== */
 
 main {
     max-width: 1200px;
     margin: auto;
 
     position: relative;
-    z-index: 5;
+    z-index: 1;
 }
 
 /* ==============================
    HERO
-   ============================== */
+============================== */
 
 .hero {
     min-height: 500px;
@@ -100,10 +97,10 @@ main {
 
     padding: 70px 6%;
 
-    background: rgba(255, 255, 255, 0.94);
+    background: rgba(255, 255, 255, 0.90);
 
     position: relative;
-    z-index: 5;
+    z-index: 1;
 }
 
 .hero-text {
@@ -127,20 +124,18 @@ main {
 .hero h1 {
     font-size: 52px;
     line-height: 1.1;
-
     margin: 20px 0;
 }
 
 .hero p {
     font-size: 19px;
     color: #667085;
-
     line-height: 1.6;
 }
 
 /* ==============================
    BOTÕES
-   ============================== */
+============================== */
 
 .buttons {
     display: flex;
@@ -171,13 +166,12 @@ button:hover {
 button.secondary {
     background: white;
     color: #111827;
-
     border: 1px solid #d1d5db;
 }
 
 /* ==============================
    CURSOS
-   ============================== */
+============================== */
 
 .courses {
     padding: 70px 6%;
@@ -189,7 +183,7 @@ button.secondary {
 }
 
 .course-card {
-    background: rgba(255, 255, 255, 0.94);
+    background: rgba(255, 255, 255, 0.90);
 
     padding: 30px;
 
@@ -201,7 +195,7 @@ button.secondary {
         0 8px 25px rgba(0, 0, 0, 0.06);
 
     position: relative;
-    z-index: 5;
+    z-index: 1;
 }
 
 .course-card h3 {
@@ -215,7 +209,7 @@ button.secondary {
 
 /* ==============================
    RODAPÉ
-   ============================== */
+============================== */
 
 footer {
     background: #111827;
@@ -228,7 +222,7 @@ footer {
     margin-top: 30px;
 
     position: relative;
-    z-index: 20;
+    z-index: 1000;
 }
 
 footer p {
@@ -238,13 +232,14 @@ footer p {
 
 /* ==============================
    CELULAR
-   ============================== */
+============================== */
 
 @media (max-width: 700px) {
 
     body::before {
-        width: 75vw;
-        opacity: 0.08;
+        width: 80vw;
+        height: 70vh;
+        opacity: 0.10;
     }
 
     header {
