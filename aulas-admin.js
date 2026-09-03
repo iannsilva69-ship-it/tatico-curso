@@ -3,7 +3,6 @@
 // ==============================
 
 async function verificarSocio() {
-
     const {
         data: { user },
         error
@@ -32,11 +31,8 @@ async function verificarSocio() {
         ) ||
         (perfil.status || "").toLowerCase() !== "ativo"
     ) {
-
         alert("Acesso permitido somente para sócios.");
-
         window.location.href = "aluno.html";
-
         return false;
     }
 
@@ -53,6 +49,13 @@ const parametros =
 
 const moduloId =
     parametros.get("id");
+
+
+// ==============================
+// ID DA AULA EM EDIÇÃO
+// ==============================
+
+let aulaEditandoId = null;
 
 
 // ==============================
@@ -88,7 +91,6 @@ async function carregarModulo() {
 
     document.getElementById("nomeModulo").textContent =
         modulo.nome || "Módulo";
-
 }
 
 
@@ -171,6 +173,7 @@ async function carregarAulas() {
                         <a
                             href="${aula.link_youtube}"
                             target="_blank"
+                            rel="noopener noreferrer"
                         >
                             Vídeo do YouTube
                         </a>
@@ -187,6 +190,7 @@ async function carregarAulas() {
                         <a
                             href="${aula.link_pdf}"
                             target="_blank"
+                            rel="noopener noreferrer"
                         >
                             Material PDF
                         </a>
@@ -203,6 +207,7 @@ async function carregarAulas() {
                         <a
                             href="${aula.link_slide}"
                             target="_blank"
+                            rel="noopener noreferrer"
                         >
                             Slides
                         </a>
@@ -211,7 +216,51 @@ async function carregarAulas() {
                 : ""
             }
 
+            <div style="margin-top:20px;">
+
+                <button
+                    type="button"
+                    class="btn-editar-aula"
+                >
+                    ✏️ Editar
+                </button>
+
+                <button
+                    type="button"
+                    class="btn-excluir-aula secondary"
+                >
+                    🗑️ Excluir
+                </button>
+
+            </div>
+
         `;
+
+
+        // ==============================
+        // BOTÃO EDITAR
+        // ==============================
+
+        card
+            .querySelector(".btn-editar-aula")
+            .addEventListener("click", function () {
+
+                editarAula(aula);
+
+            });
+
+
+        // ==============================
+        // BOTÃO EXCLUIR
+        // ==============================
+
+        card
+            .querySelector(".btn-excluir-aula")
+            .addEventListener("click", function () {
+
+                excluirAula(aula.id);
+
+            });
 
 
         area.appendChild(card);
@@ -229,6 +278,8 @@ document.getElementById("novaAula").addEventListener(
     "click",
     function () {
 
+        aulaEditandoId = null;
+
         document.getElementById(
             "formularioAula"
         ).style.display = "block";
@@ -237,8 +288,72 @@ document.getElementById("novaAula").addEventListener(
             "tituloAula"
         ).focus();
 
+        document.getElementById(
+            "aulaForm"
+        ).reset();
+
+        document.getElementById(
+            "ordemAula"
+        ).value = 1;
+
+        document.getElementById(
+            "mensagemAula"
+        ).textContent = "";
+
     }
 );
+
+
+// ==============================
+// EDITAR AULA
+// ==============================
+
+function editarAula(aula) {
+
+    aulaEditandoId = aula.id;
+
+
+    document.getElementById(
+        "formularioAula"
+    ).style.display = "block";
+
+
+    document.getElementById(
+        "tituloAula"
+    ).value = aula.titulo || "";
+
+
+    document.getElementById(
+        "youtubeAula"
+    ).value = aula.link_youtube || "";
+
+
+    document.getElementById(
+        "pdfAula"
+    ).value = aula.link_pdf || "";
+
+
+    document.getElementById(
+        "slideAula"
+    ).value = aula.link_slide || "";
+
+
+    document.getElementById(
+        "ordemAula"
+    ).value = aula.ordem || 1;
+
+
+    document.getElementById(
+        "mensagemAula"
+    ).textContent =
+        "Editando aula...";
+
+
+    document.getElementById(
+        "tituloAula"
+    ).focus();
+
+}
 
 
 // ==============================
@@ -248,6 +363,8 @@ document.getElementById("novaAula").addEventListener(
 document.getElementById("cancelarAula").addEventListener(
     "click",
     function () {
+
+        aulaEditandoId = null;
 
         document.getElementById(
             "formularioAula"
@@ -261,12 +378,16 @@ document.getElementById("cancelarAula").addEventListener(
             "ordemAula"
         ).value = 1;
 
+        document.getElementById(
+            "mensagemAula"
+        ).textContent = "";
+
     }
 );
 
 
 // ==============================
-// SALVAR AULA
+// SALVAR / ATUALIZAR AULA
 // ==============================
 
 document.getElementById("aulaForm").addEventListener(
@@ -322,45 +443,102 @@ document.getElementById("aulaForm").addEventListener(
 
 
         mensagem.textContent =
-            "Salvando aula...";
+            aulaEditandoId
+                ? "Atualizando aula..."
+                : "Salvando aula...";
 
 
-        const { error } =
-            await supabaseClient
-                .from("aulas")
-                .insert({
+        // ==============================
+        // ATUALIZAR AULA
+        // ==============================
 
-                    modulo_id: moduloId,
+        if (aulaEditandoId) {
 
-                    titulo: titulo,
+            const { error } =
+                await supabaseClient
+                    .from("aulas")
+                    .update({
 
-                    link_youtube:
-                        youtube || null,
+                        titulo: titulo,
 
-                    link_pdf:
-                        pdf || null,
+                        link_youtube:
+                            youtube || null,
 
-                    link_slide:
-                        slide || null,
+                        link_pdf:
+                            pdf || null,
 
-                    ordem: ordem
+                        link_slide:
+                            slide || null,
 
-                });
+                        ordem: ordem
+
+                    })
+                    .eq("id", aulaEditandoId);
 
 
-        if (error) {
+            if (error) {
 
-            console.error(error);
+                console.error(error);
+
+                mensagem.textContent =
+                    "Erro ao atualizar a aula.";
+
+                return;
+            }
+
 
             mensagem.textContent =
-                "Erro ao salvar a aula.";
+                "Aula atualizada com sucesso!";
 
-            return;
+        }
+
+        // ==============================
+        // CRIAR AULA
+        // ==============================
+
+        else {
+
+            const { error } =
+                await supabaseClient
+                    .from("aulas")
+                    .insert({
+
+                        modulo_id: moduloId,
+
+                        titulo: titulo,
+
+                        link_youtube:
+                            youtube || null,
+
+                        link_pdf:
+                            pdf || null,
+
+                        link_slide:
+                            slide || null,
+
+                        ordem: ordem
+
+                    });
+
+
+            if (error) {
+
+                console.error(error);
+
+                mensagem.textContent =
+                    "Erro ao salvar a aula.";
+
+                return;
+            }
+
+
+            mensagem.textContent =
+                "Aula criada com sucesso!";
+
         }
 
 
-        mensagem.textContent =
-            "Aula criada com sucesso!";
+        aulaEditandoId = null;
 
 
         document.getElementById(
@@ -387,6 +565,50 @@ document.getElementById("aulaForm").addEventListener(
 
     }
 );
+
+
+// ==============================
+// EXCLUIR AULA
+// ==============================
+
+async function excluirAula(id) {
+
+    const confirmar =
+        confirm(
+            "Tem certeza que deseja excluir esta aula?"
+        );
+
+
+    if (!confirmar) return;
+
+
+    const { error } =
+        await supabaseClient
+            .from("aulas")
+            .delete()
+            .eq("id", id);
+
+
+    if (error) {
+
+        console.error(error);
+
+        alert(
+            "Erro ao excluir a aula."
+        );
+
+        return;
+    }
+
+
+    alert(
+        "Aula excluída com sucesso!"
+    );
+
+
+    carregarAulas();
+
+}
 
 
 // ==============================
