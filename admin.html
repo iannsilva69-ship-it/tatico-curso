@@ -1,90 +1,60 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Painel Administrativo - Tático Curso</title>
+    <title>Área do Sócio - Tático Curso</title>
 
     <link rel="stylesheet" href="style.css">
-
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="supabase.js"></script>
 </head>
 
 <body>
 
-    <header>
+<header>
+    <div>
+        <h1>TÁTICO CURSO</h1>
+        <p>Área do Sócio</p>
+    </div>
 
-        <div class="logo">
-            TÁTICO CURSO
+    <button id="logout">Sair</button>
+</header>
+
+<main>
+
+    <section class="boas-vindas">
+        <h2>Administrador</h2>
+        <p>Gerencie os conteúdos e alunos da plataforma.</p>
+    </section>
+
+    <section>
+
+        <h2>⚙️ Administração</h2>
+
+        <div class="admin-menu">
+
+            <button
+                onclick="window.location.href='cursos-admin.html'"
+            >
+                📚 Gerenciar Cursos
+            </button>
+
+            <button
+                onclick="window.location.href='simulados-admin.html'"
+            >
+                📝 Gerenciar Simulados
+            </button>
+
         </div>
 
-        <nav>
-            <a href="index.html">Início</a>
-            <a href="#" id="sair">Sair</a>
-        </nav>
+    </section>
 
-    </header>
+</main>
 
-    <main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-        <section class="hero">
-
-            <div class="hero-text">
-
-                <span class="tag">
-                    PAINEL ADMINISTRATIVO
-                </span>
-
-                <h1>
-                    Área do Sócio
-                </h1>
-
-                <p id="usuarioEmail">
-                    Carregando...
-                </p>
-
-                <h2>
-                    Administração do Tático Curso
-                </h2>
-
-                <p>
-                    Gerencie toda a plataforma por aqui.
-                </p>
-
-            </div>
-
-        </section>
-
-        <section class="courses">
-
-            <h2>
-                Administração
-            </h2>
-
-            <div class="course-card">
-
-                <h3>📚 Cursos</h3>
-
-                <p>
-                    Criar, editar e gerenciar os cursos disponíveis
-                    na plataforma.
-                </p>
-
-                <button onclick="window.location.href='cursos-admin.html'">
-                    Gerenciar cursos
-                </button>
-
-            </div>
-
-        </section>
-
-    </main>
-
-    <script src="admin.js"></script>
+<script src="supabase.js"></script>
+<script src="admin.js"></script>
 
 </body>
-
 </html>
