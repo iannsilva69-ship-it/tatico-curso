@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Simulados - Tático Curso</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script src="supabase.js"></script>
+
+</head>
+
+<body>
+
+<header>
+
+    <div class="logo">
+        TÁTICO CURSO
+    </div>
+
+    <nav>
+
+        <a href="admin.html">
+            Painel
+        </a>
+
+        <a href="#" id="sair">
+            Sair
+        </a>
+
+    </nav>
+
+</header>
+
+
+<main>
+
+    <section class="hero">
+
+        <div class="hero-text">
+
+            <span class="tag">
+                GERENCIAR SIMULADOS
+            </span>
+
+            <h1>
+                Simulados
+            </h1>
+
+            <p>
+                Cadastre provas e simulados completos em PDF.
+            </p>
+
+
+            <button id="novoSimulado">
+                ➕ Criar novo simulado
+            </button>
+
+
+            <!-- FORMULÁRIO -->
+
+            <div
+                id="formularioSimulado"
+                style="display:none; margin-top:30px;"
+            >
+
+                <h2 id="tituloFormulario">
+                    Novo simulado
+                </h2>
+
+
+                <form id="simuladoForm">
+
+
+                    <input
+                        type="text"
+                        id="tituloSimulado"
+                        placeholder="Nome do simulado"
+                        required
+                    >
+
+                    <br><br>
+
+
+                    <textarea
+                        id="descricaoSimulado"
+                        placeholder="Descrição do simulado"
+                        rows="4"
+                        style="
+                            width:100%;
+                            padding:12px;
+                            border-radius:8px;
+                            border:1px solid #ccc;
+                            resize:vertical;
+                        "
+                    ></textarea>
+
+                    <br><br>
+
+
+                    <input
+                        type="url"
+                        id="pdfSimulado"
+                        placeholder="Link do PDF do simulado"
+                        required
+                    >
+
+                    <br><br>
+
+
+                    <label>
+                        Status do simulado
+                    </label>
+
+                    <br>
+
+                    <select id="ativoSimulado">
+
+                        <option value="true">
+                            Ativo
+                        </option>
+
+                        <option value="false">
+                            Inativo
+                        </option>
+
+                    </select>
+
+                    <br><br>
+
+
+                    <button type="submit">
+                        💾 Salvar simulado
+                    </button>
+
+
+                    <button
+                        type="button"
+                        id="cancelarSimulado"
+                        class="secondary"
+                    >
+                        Cancelar
+                    </button>
+
+
+                </form>
+
+
+                <p id="mensagemSimulado"></p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- LISTA -->
+
+    <section class="courses">
+
+        <h2>
+            Simulados cadastrados
+        </h2>
+
+
+        <div id="listaSimulados">
+
+            Carregando simulados...
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<script src="simulados-admin.js"></script>
+
+</body>
+
+</html>
