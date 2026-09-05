@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Questões - Tático Curso</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase.js"></script>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">TÁTICO CURSO</div>
+
+    <nav>
+        <a href="admin.html">Painel</a>
+        <a href="#" id="sair">Sair</a>
+    </nav>
+</header>
+
+
+<main>
+
+    <section class="hero">
+
+        <div class="hero-text">
+
+            <span class="tag">
+                GERENCIAR QUESTÕES
+            </span>
+
+            <h1 id="nomeAula">
+                Carregando aula...
+            </h1>
+
+            <p>
+                Crie e organize as questões desta aula.
+            </p>
+
+
+            <button id="novaQuestao">
+                ➕ Criar nova questão
+            </button>
+
+
+            <!-- FORMULÁRIO -->
+
+            <div
+                id="formularioQuestao"
+                style="
+                    display:none;
+                    margin-top:30px;
+                "
+            >
+
+                <h2 id="tituloFormulario">
+                    Nova questão
+                </h2>
+
+
+                <form id="questaoForm">
+
+
+                    <label>
+                        Enunciado
+                    </label>
+
+                    <textarea
+                        id="enunciado"
+                        placeholder="Digite o enunciado da questão"
+                        required
+                        rows="5"
+                        style="
+                            width:100%;
+                            padding:12px;
+                            margin-top:8px;
+                            border-radius:8px;
+                            border:1px solid #ccc;
+                            resize:vertical;
+                        "
+                    ></textarea>
+
+                    <br><br>
+
+
+                    <label>
+                        Alternativa A
+                    </label>
+
+                    <input
+                        type="text"
+                        id="alternativaA"
+                        placeholder="Alternativa A"
+                        required
+                    >
+
+                    <br><br>
+
+
+                    <label>
+                        Alternativa B
+                    </label>
+
+                    <input
+                        type="text"
+                        id="alternativaB"
+                        placeholder="Alternativa B"
+                        required
+                    >
+
+                    <br><br>
+
+
+                    <label>
+                        Alternativa C
+                    </label>
+
+                    <input
+                        type="text"
+                        id="alternativaC"
+                        placeholder="Alternativa C"
+                        required
+                    >
+
+                    <br><br>
+
+
+                    <label>
+                        Alternativa D
+                    </label>
+
+                    <input
+                        type="text"
+                        id="alternativaD"
+                        placeholder="Alternativa D"
+                        required
+                    >
+
+                    <br><br>
+
+
+                    <label>
+                        Alternativa E
+                    </label>
+
+                    <input
+                        type="text"
+                        id="alternativaE"
+                        placeholder="Alternativa E"
+                        required
+                    >
+
+                    <br><br>
+
+
+                    <label>
+                        Resposta correta
+                    </label>
+
+                    <select
+                        id="respostaCorreta"
+                        required
+                    >
+
+                        <option value="">
+                            Selecione a resposta correta
+                        </option>
+
+                        <option value="A">
+                            A
+                        </option>
+
+                        <option value="B">
+                            B
+                        </option>
+
+                        <option value="C">
+                            C
+                        </option>
+
+                        <option value="D">
+                            D
+                        </option>
+
+                        <option value="E">
+                            E
+                        </option>
+
+                    </select>
+
+                    <br><br>
+
+
+                    <label>
+                        Explicação da resposta
+                    </label>
+
+                    <textarea
+                        id="explicacao"
+                        placeholder="Explique por que essa é a resposta correta"
+                        rows="5"
+                        style="
+                            width:100%;
+                            padding:12px;
+                            margin-top:8px;
+                            border-radius:8px;
+                            border:1px solid #ccc;
+                            resize:vertical;
+                        "
+                    ></textarea>
+
+                    <br><br>
+
+
+                    <button type="submit">
+                        💾 Salvar questão
+                    </button>
+
+                    <button
+                        type="button"
+                        id="cancelarQuestao"
+                        class="secondary"
+                    >
+                        Cancelar
+                    </button>
+
+
+                </form>
+
+
+                <p id="mensagemQuestao"></p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- LISTA DE QUESTÕES -->
+
+    <section class="courses">
+
+        <h2>
+            Questões da aula
+        </h2>
+
+        <div id="listaQuestoes">
+            Carregando questões...
+        </div>
+
+    </section>
+
+</main>
+
+
+<script src="questoes-admin.js"></script>
+
+</body>
+
+</html>
