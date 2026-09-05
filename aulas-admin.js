@@ -216,7 +216,12 @@ async function carregarAulas() {
                 : ""
             }
 
-            <div style="margin-top:20px;">
+            <div style="
+                margin-top:20px;
+                display:flex;
+                gap:8px;
+                flex-wrap:wrap;
+            ">
 
                 <button
                     type="button"
@@ -230,6 +235,13 @@ async function carregarAulas() {
                     class="btn-excluir-aula secondary"
                 >
                     🗑️ Excluir
+                </button>
+
+                <button
+                    type="button"
+                    class="btn-questoes-aula"
+                >
+                    📝 Questões
                 </button>
 
             </div>
@@ -259,6 +271,20 @@ async function carregarAulas() {
             .addEventListener("click", function () {
 
                 excluirAula(aula.id);
+
+            });
+
+
+        // ==============================
+        // BOTÃO QUESTÕES
+        // ==============================
+
+        card
+            .querySelector(".btn-questoes-aula")
+            .addEventListener("click", function () {
+
+                window.location.href =
+                    "questoes-admin.html?id=" + aula.id;
 
             });
 
