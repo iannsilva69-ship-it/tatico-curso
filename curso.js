@@ -18,36 +18,33 @@ async function carregarCurso() {
     // PEGAR ID DO CURSO
     // ==============================
 
-    const parametros =
-        new URLSearchParams(window.location.search);
+    const parametros = new URLSearchParams(
+        window.location.search
+    );
 
-    const cursoId =
-        parametros.get("id");
+    const cursoId = parametros.get("id");
 
     if (!cursoId) {
-
         document.getElementById("nomeCurso").textContent =
             "Curso não encontrado.";
-
         return;
     }
 
     // ==============================
-    // BUSCAR PERFIL DO ALUNO
+    // BUSCAR PERFIL
     // ==============================
 
-    const { data: perfil } =
-        await supabaseClient
-            .from("perfis")
-            .select("id")
-            .eq("auth_user_id", user.id)
-            .single();
+    const {
+        data: perfil,
+        error: erroPerfil
+    } = await supabaseClient
+        .from("perfis")
+        .select("id")
+        .eq("auth_user_id", user.id)
+        .single();
 
-    if (!perfil) {
-
-        window.location.href =
-            "aluno.html";
-
+    if (erroPerfil || !perfil) {
+        window.location.href = "aluno.html";
         return;
     }
 
@@ -55,24 +52,27 @@ async function carregarCurso() {
     // VERIFICAR MATRÍCULA
     // ==============================
 
-    const { data: matricula } =
-        await supabaseClient
-            .from("matriculas")
-            .select("id")
-            .eq("usuario_id", perfil.id)
-            .eq("curso_id", cursoId)
-            .eq("status", "ativo")
-            .maybeSingle();
+    const {
+        data: matricula,
+        error: erroMatricula
+    } = await supabaseClient
+        .from("matriculas")
+        .select("id")
+        .eq("usuario_id", perfil.id)
+        .eq("curso_id", cursoId)
+        .eq("status", "ativo")
+        .maybeSingle();
+
+    if (erroMatricula) {
+        console.error(
+            "Erro ao verificar matrícula:",
+            erroMatricula
+        );
+    }
 
     if (!matricula) {
-
-        alert(
-            "Você não possui acesso a este curso."
-        );
-
-        window.location.href =
-            "aluno.html";
-
+        alert("Você não possui acesso a este curso.");
+        window.location.href = "aluno.html";
         return;
     }
 
@@ -90,6 +90,10 @@ async function carregarCurso() {
         .single();
 
     if (erroCurso || !curso) {
+        console.error(
+            "Erro ao carregar curso:",
+            erroCurso
+        );
 
         document.getElementById("nomeCurso").textContent =
             "Curso não encontrado.";
@@ -100,9 +104,13 @@ async function carregarCurso() {
     document.getElementById("nomeCurso").textContent =
         curso.nome;
 
-    document.getElementById("descricaoCurso").textContent =
-        curso.descricao ||
-        "Conteúdo do curso.";
+    const descricao =
+        document.getElementById("descricaoCurso");
+
+    if (descricao) {
+        descricao.textContent =
+            curso.descricao || "Conteúdo do curso.";
+    }
 
     // ==============================
     // BUSCAR MÓDULOS
@@ -120,17 +128,29 @@ async function carregarCurso() {
         });
 
     if (erroModulos) {
+        console.error(
+            "Erro ao carregar módulos:",
+            erroModulos
+        );
 
-        console.error(erroModulos);
-
-        document.getElementById("modulos").textContent =
-            "Não foi possível carregar os módulos.";
+        document.getElementById("modulos").innerHTML = `
+            <p>
+                Não foi possível carregar os módulos.
+            </p>
+        `;
 
         return;
     }
 
     const areaModulos =
         document.getElementById("modulos");
+
+    if (!areaModulos) {
+        console.error(
+            "Elemento #modulos não encontrado."
+        );
+        return;
+    }
 
     if (!modulos || modulos.length === 0) {
 
@@ -144,15 +164,7 @@ async function carregarCurso() {
     }
 
     // ==============================
-    // CONTADORES DE PROGRESSO
-    // ==============================
-
-    let totalAulas = 0;
-
-    let aulasConcluidas = 0;
-
-    // ==============================
-    // BUSCAR PROGRESSO DO ALUNO
+    // BUSCAR PROGRESSO
     // ==============================
 
     const {
@@ -164,12 +176,18 @@ async function carregarCurso() {
         .eq("usuario_id", perfil.id);
 
     if (erroProgresso) {
-
         console.error(
             "Erro ao buscar progresso:",
             erroProgresso
         );
     }
+
+    // ==============================
+    // CONTADORES
+    // ==============================
+
+    let totalAulas = 0;
+    let aulasConcluidas = 0;
 
     // ==============================
     // ÁREA DO PROGRESSO
@@ -182,22 +200,21 @@ async function carregarCurso() {
         "progressoCurso";
 
     areaProgresso.style.cssText = `
-        background: #111827;
-        color: white;
-        padding: 25px;
-        border-radius: 14px;
-        margin-bottom: 35px;
-        border: 1px solid #a67c32;
+        background:#111827;
+        color:white;
+        padding:25px;
+        border-radius:14px;
+        margin-bottom:35px;
+        border:1px solid #a67c32;
     `;
 
     areaProgresso.innerHTML = `
+
         <div style="
             display:flex;
             justify-content:space-between;
             align-items:center;
             margin-bottom:12px;
-            gap:15px;
-            flex-wrap:wrap;
         ">
 
             <strong>
@@ -251,22 +268,36 @@ async function carregarCurso() {
                 (aulasConcluidas / totalAulas) * 100
             );
 
-        document.getElementById(
-            "porcentagemProgresso"
-        ).textContent =
-            porcentagem + "%";
+        const texto =
+            document.getElementById(
+                "porcentagemProgresso"
+            );
 
-        document.getElementById(
-            "barraProgresso"
-        ).style.width =
-            porcentagem + "%";
+        const barra =
+            document.getElementById(
+                "barraProgresso"
+            );
+
+        if (texto) {
+            texto.textContent =
+                porcentagem + "%";
+        }
+
+        if (barra) {
+            barra.style.width =
+                porcentagem + "%";
+        }
     }
 
     // ==============================
-    // CARREGAR MÓDULOS
+    // LIMPAR MÓDULOS
     // ==============================
 
     areaModulos.innerHTML = "";
+
+    // ==============================
+    // PERCORRER MÓDULOS
+    // ==============================
 
     for (const modulo of modulos) {
 
@@ -320,20 +351,286 @@ async function carregarCurso() {
                 `modulo-${modulo.id}`
             );
 
+        if (!areaAulas) {
+            continue;
+        }
+
         if (erroAulas) {
 
-            console.error(erroAulas);
+            console.error(
+                "Erro ao carregar aulas:",
+                erroAulas
+            );
 
-            areaAulas.textContent =
-                "Erro ao carregar as aulas.";
+            areaAulas.innerHTML = `
+                <p>
+                    Erro ao carregar as aulas.
+                </p>
+            `;
 
             continue;
         }
 
         if (!aulas || aulas.length === 0) {
 
-            areaAulas.innerHTML =
-                "<p>Nenhuma aula cadastrada.</p>";
+            areaAulas.innerHTML = `
+                <p>
+                    Nenhuma aula cadastrada.
+                </p>
+            `;
 
             continue;
         }
+
+        areaAulas.innerHTML = "";
+
+        // ==============================
+        // PERCORRER AULAS
+        // ==============================
+
+        aulas.forEach(function (aula) {
+
+            totalAulas++;
+
+            const registro =
+                progresso?.find(
+                    function (item) {
+                        return item.aula_id === aula.id;
+                    }
+                );
+
+            let concluida =
+                registro?.concluida === true;
+
+            if (concluida) {
+                aulasConcluidas++;
+            }
+
+            // ==============================
+            // DIV DA AULA
+            // ==============================
+
+            const aulaDiv =
+                document.createElement("div");
+
+            aulaDiv.style.cssText = `
+                margin-top:20px;
+                padding:20px;
+                border:1px solid #e5e7eb;
+                border-radius:10px;
+                background:#f8fafc;
+            `;
+
+            let conteudo = `
+
+                <strong>
+                    ${concluida ? "✅" : "📖"}
+                    ${aula.titulo}
+                </strong>
+
+            `;
+
+            // ==============================
+            // VÍDEO
+            // ==============================
+
+            if (aula.link_youtube) {
+
+                conteudo += `
+
+                    <br><br>
+
+                    <a
+                        href="${aula.link_youtube}"
+                        target="_blank"
+                        style="
+                            display:inline-block;
+                            background:#111827;
+                            color:white;
+                            padding:10px 15px;
+                            border-radius:7px;
+                            text-decoration:none;
+                            font-weight:bold;
+                            margin-right:8px;
+                            margin-bottom:8px;
+                        "
+                    >
+                        ▶️ Assistir videoaula
+                    </a>
+
+                `;
+            }
+
+            // ==============================
+            // PDF DA AULA
+            // ==============================
+
+            if (aula.link_pdf) {
+
+                conteudo += `
+
+                    <a
+                        href="${aula.link_pdf}"
+                        target="_blank"
+                        style="
+                            display:inline-block;
+                            background:#e5e7eb;
+                            color:#374151;
+                            padding:10px 15px;
+                            border-radius:7px;
+                            text-decoration:none;
+                            font-weight:bold;
+                            margin-right:8px;
+                            margin-bottom:8px;
+                        "
+                    >
+                        📄 Abrir PDF
+                    </a>
+
+                `;
+            }
+
+            // ==============================
+            // PDF DE QUESTÕES
+            // ==============================
+
+            if (aula.link_questoes) {
+
+                conteudo += `
+
+                    <a
+                        href="${aula.link_questoes}"
+                        target="_blank"
+                        style="
+                            display:inline-block;
+                            background:#a67c32;
+                            color:white;
+                            padding:10px 15px;
+                            border-radius:7px;
+                            text-decoration:none;
+                            font-weight:bold;
+                            margin-right:8px;
+                            margin-bottom:8px;
+                        "
+                    >
+                        📝 Questões da aula
+                    </a>
+
+                `;
+            }
+
+            // ==============================
+            // SLIDES
+            // ==============================
+
+            if (aula.link_slide) {
+
+                conteudo += `
+
+                    <a
+                        href="${aula.link_slide}"
+                        target="_blank"
+                        style="
+                            display:inline-block;
+                            background:#e5e7eb;
+                            color:#374151;
+                            padding:10px 15px;
+                            border-radius:7px;
+                            text-decoration:none;
+                            font-weight:bold;
+                            margin-right:8px;
+                            margin-bottom:8px;
+                        "
+                    >
+                        📊 Abrir slides
+                    </a>
+
+                `;
+            }
+
+            // ==============================
+            // BOTÃO DE CONCLUSÃO
+            // ==============================
+
+            conteudo += `
+
+                <br><br>
+
+                <button
+                    type="button"
+                    class="botao-conclusao"
+                    style="
+                        background:${concluida ? "#a67c32" : "#111827"};
+                        color:white;
+                        padding:10px 15px;
+                        border:none;
+                        border-radius:7px;
+                        cursor:pointer;
+                        font-weight:bold;
+                    "
+                >
+                    ${
+                        concluida
+                        ? "✅ Aula concluída"
+                        : "☑️ Marcar como concluída"
+                    }
+                </button>
+
+            `;
+
+            aulaDiv.innerHTML =
+                conteudo;
+
+            areaAulas.appendChild(
+                aulaDiv
+            );
+
+            // ==============================
+            // BOTÃO CONCLUSÃO
+            // ==============================
+
+            const botaoConclusao =
+                aulaDiv.querySelector(
+                    ".botao-conclusao"
+                );
+
+            botaoConclusao.addEventListener(
+                "click",
+                async function () {
+
+                    botaoConclusao.disabled =
+                        true;
+
+                    if (concluida) {
+
+                        const {
+                            error
+                        } = await supabaseClient
+                            .from("progresso_aulas")
+                            .update({
+                                concluida: false
+                            })
+                            .eq(
+                                "usuario_id",
+                                perfil.id
+                            )
+                            .eq(
+                                "aula_id",
+                                aula.id
+                            );
+
+                        if (error) {
+
+                            console.error(error);
+
+                            alert(
+                                "Não foi possível alterar o progresso."
+                            );
+
+                            botaoConclusao.disabled =
+                                false;
+
+                            return;
+                        }
+
+                        concluida = false
