@@ -116,7 +116,7 @@ async function carregarAulas() {
         await supabaseClient
             .from("aulas")
             .select(
-                "id, titulo, link_youtube, link_pdf, link_slide, ordem"
+                "id, titulo, link_youtube, link_pdf, link_questoes, link_slide, ordem"
             )
             .eq("modulo_id", moduloId)
             .order("ordem", {
@@ -200,6 +200,23 @@ async function carregarAulas() {
             }
 
             ${
+                aula.link_questoes
+                ? `
+                    <p>
+                        📝
+                        <a
+                            href="${aula.link_questoes}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            PDF de questões
+                        </a>
+                    </p>
+                `
+                : ""
+            }
+
+            ${
                 aula.link_slide
                 ? `
                     <p>
@@ -237,13 +254,6 @@ async function carregarAulas() {
                     🗑️ Excluir
                 </button>
 
-                <button
-                    type="button"
-                    class="btn-questoes-aula"
-                >
-                    📝 Questões
-                </button>
-
             </div>
 
         `;
@@ -275,20 +285,6 @@ async function carregarAulas() {
             });
 
 
-        // ==============================
-        // BOTÃO QUESTÕES
-        // ==============================
-
-        card
-            .querySelector(".btn-questoes-aula")
-            .addEventListener("click", function () {
-
-                window.location.href =
-                    "questoes-admin.html?id=" + aula.id;
-
-            });
-
-
         area.appendChild(card);
 
     });
@@ -311,10 +307,6 @@ document.getElementById("novaAula").addEventListener(
         ).style.display = "block";
 
         document.getElementById(
-            "tituloAula"
-        ).focus();
-
-        document.getElementById(
             "aulaForm"
         ).reset();
 
@@ -325,6 +317,10 @@ document.getElementById("novaAula").addEventListener(
         document.getElementById(
             "mensagemAula"
         ).textContent = "";
+
+        document.getElementById(
+            "tituloAula"
+        ).focus();
 
     }
 );
@@ -357,6 +353,11 @@ function editarAula(aula) {
     document.getElementById(
         "pdfAula"
     ).value = aula.link_pdf || "";
+
+
+    document.getElementById(
+        "questoesAula"
+    ).value = aula.link_questoes || "";
 
 
     document.getElementById(
@@ -447,6 +448,12 @@ document.getElementById("aulaForm").addEventListener(
             ).value.trim();
 
 
+        const questoes =
+            document.getElementById(
+                "questoesAula"
+            ).value.trim();
+
+
         const slide =
             document.getElementById(
                 "slideAula"
@@ -493,6 +500,9 @@ document.getElementById("aulaForm").addEventListener(
                         link_pdf:
                             pdf || null,
 
+                        link_questoes:
+                            questoes || null,
+
                         link_slide:
                             slide || null,
 
@@ -538,6 +548,9 @@ document.getElementById("aulaForm").addEventListener(
 
                         link_pdf:
                             pdf || null,
+
+                        link_questoes:
+                            questoes || null,
 
                         link_slide:
                             slide || null,
