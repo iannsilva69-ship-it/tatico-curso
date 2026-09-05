@@ -1,10 +1,11 @@
-// ==============================
-// CARREGAR ÁREA DO ALUNO
-// ==============================
+const { createClient } = window.supabase;
 
-async function carregarAluno() {
+// ===============================
+// VERIFICAR USUÁRIO
+// ===============================
 
-    // Verificar usuário logado
+async function verificarUsuario() {
+
     const {
         data: { user },
         error
@@ -12,78 +13,74 @@ async function carregarAluno() {
 
     if (error || !user) {
         window.location.href = "login.html";
-        return;
+        return null;
     }
 
-    // Mostrar e-mail
-    document.getElementById("usuarioEmail").textContent =
-        "Você está conectado como: " + user.email;
+    return user;
+}
 
-    // Buscar perfil
-    const { data: perfil, error: erroPerfil } =
-        await supabaseClient
-            .from("perfis")
-            .select("id, nome")
-            .eq("auth_user_id", user.id)
-            .single();
 
-    if (erroPerfil || !perfil) {
-        document.getElementById("cursos").innerHTML = `
-            <p>Perfil do aluno não encontrado.</p>
-        `;
-        return;
+// ===============================
+// CARREGAR PERFIL
+// ===============================
+
+async function carregarPerfil(user) {
+
+    const { data, error } = await supabaseClient
+        .from("perfis")
+        .select("*")
+        .eq("auth_user_id", user.id)
+        .single();
+
+    if (error || !data) {
+        console.error("Erro ao carregar perfil:", error);
+        return null;
     }
 
-    // ==============================
-    // BUSCAR MATRÍCULAS
-    // ==============================
+    return data;
+}
 
-    const { data: matriculas, error: erroMatriculas } =
-        await supabaseClient
-            .from("matriculas")
-            .select(`
+
+// ===============================
+// CARREGAR CURSOS
+// ===============================
+
+async function carregarCursos(perfil) {
+
+    const { data: matriculas, error } = await supabaseClient
+        .from("matriculas")
+        .select(`
+            id,
+            status,
+            data_fim,
+            curso_id,
+            cursos (
                 id,
-                status,
-                data_vencimento,
-                cursos (
-                    id,
-                    nome,
-                    descricao,
-                    imagem
-                )
-            `)
-            .eq("usuario_id", perfil.id)
-            .eq("status", "ativo");
+                nome,
+                descricao,
+                imagem
+            )
+        `)
+        .eq("usuario_id", perfil.id)
+        .eq("status", "ativo");
 
-    if (erroMatriculas) {
-        console.error(erroMatriculas);
+    if (error) {
+        console.error("Erro ao carregar cursos:", error);
 
-        document.getElementById("cursos").innerHTML = `
-            <p>Não foi possível carregar seus cursos.</p>
-        `;
+        document.getElementById("listaCursos").innerHTML =
+            "<p>Não foi possível carregar seus cursos.</p>";
 
         return;
     }
 
-    const areaCursos =
-        document.getElementById("cursos");
+    const lista = document.getElementById("listaCursos");
 
     if (!matriculas || matriculas.length === 0) {
-
-        areaCursos.innerHTML = `
-            <p>
-                Você ainda não possui cursos ativos.
-            </p>
-        `;
-
+        lista.innerHTML = "<p>Você ainda não possui cursos ativos.</p>";
         return;
     }
 
-    areaCursos.innerHTML = "";
-
-    // ==============================
-    // PROCESSAR CADA CURSO
-    // ==============================
+    lista.innerHTML = "";
 
     for (const matricula of matriculas) {
 
@@ -91,250 +88,197 @@ async function carregarAluno() {
 
         if (!curso) continue;
 
-        // ==============================
-        // BUSCAR MÓDULOS DO CURSO
-        // ==============================
+        // Buscar módulos
+        const { data: modulos } = await supabaseClient
+            .from("modulos")
+            .select("id")
+            .eq("curso_id", curso.id);
 
-        const { data: modulos, error: erroModulos } =
-            await supabaseClient
-                .from("modulos")
-                .select("id")
-                .eq("curso_id", curso.id);
-
-        if (erroModulos) {
-            console.error(erroModulos);
-        }
-
-        const idsModulos =
-            modulos
-                ? modulos.map(modulo => modulo.id)
-                : [];
+        const moduloIds = (modulos || []).map(m => m.id);
 
         let totalAulas = 0;
         let aulasConcluidas = 0;
 
-        // ==============================
-        // BUSCAR AULAS
-        // ==============================
+        if (moduloIds.length > 0) {
 
-        if (idsModulos.length > 0) {
+            const { data: aulas } = await supabaseClient
+                .from("aulas")
+                .select("id")
+                .in("modulo_id", moduloIds);
 
-            const { data: aulas, error: erroAulas } =
-                await supabaseClient
-                    .from("aulas")
-                    .select("id")
-                    .in("modulo_id", idsModulos);
+            totalAulas = aulas ? aulas.length : 0;
 
-            if (erroAulas) {
-                console.error(erroAulas);
-            }
+            if (totalAulas > 0) {
 
-            if (aulas && aulas.length > 0) {
+                const aulaIds = aulas.map(a => a.id);
 
-                totalAulas = aulas.length;
+                const { data: progresso } = await supabaseClient
+                    .from("progresso_aulas")
+                    .select("aula_id, concluida")
+                    .eq("usuario_id", perfil.id)
+                    .in("aula_id", aulaIds);
 
-                const idsAulas =
-                    aulas.map(aula => aula.id);
-
-                // ==============================
-                // BUSCAR PROGRESSO DO ALUNO
-                // ==============================
-
-                const { data: progresso, error: erroProgresso } =
-                    await supabaseClient
-                        .from("progresso_aulas")
-                        .select("aula_id, concluida")
-                        .eq("usuario_id", perfil.id)
-                        .in("aula_id", idsAulas);
-
-                if (erroProgresso) {
-                    console.error(erroProgresso);
-                }
-
-                if (progresso) {
-
-                    aulasConcluidas =
-                        progresso.filter(
-                            item => item.concluida === true
-                        ).length;
-                }
+                aulasConcluidas = (progresso || [])
+                    .filter(p => p.concluida === true)
+                    .length;
             }
         }
 
-        // ==============================
-        // CALCULAR PERCENTUAL
-        // ==============================
-
-        let percentual = 0;
+        let porcentagem = 0;
 
         if (totalAulas > 0) {
-
-            percentual =
-                Math.round(
-                    (aulasConcluidas / totalAulas) * 100
-                );
+            porcentagem = Math.round(
+                (aulasConcluidas / totalAulas) * 100
+            );
         }
 
-        // ==============================
-        // CRIAR CARD
-        // ==============================
+        const card = document.createElement("div");
 
-        const card =
-            document.createElement("div");
-
-        card.className =
-            "course-card";
+        card.className = "card";
 
         card.innerHTML = `
             ${
                 curso.imagem
-                ? `
-                    <img
-                        src="${curso.imagem}"
-                        alt="${curso.nome}"
-                        style="
-                            width:100%;
-                            max-height:200px;
-                            object-fit:cover;
-                            border-radius:10px;
-                            margin-bottom:15px;
-                        "
-                    >
-                `
+                ? `<img src="${curso.imagem}" alt="${curso.nome}">`
                 : ""
             }
 
             <h3>${curso.nome}</h3>
 
+            <p>${curso.descricao || ""}</p>
+
             <p>
-                ${curso.descricao || "Curso disponível para você."}
+                <strong>Progresso:</strong>
+                ${porcentagem}%
+            </p>
+
+            <div style="
+                width:100%;
+                height:10px;
+                background:#ddd;
+                border-radius:10px;
+                overflow:hidden;
+                margin:8px 0 12px;
+            ">
+                <div style="
+                    width:${porcentagem}%;
+                    height:100%;
+                    background:#d4af37;
+                "></div>
+            </div>
+
+            <p>
+                ${aulasConcluidas} de ${totalAulas} aulas concluídas
             </p>
 
             ${
-                matricula.data_vencimento
-                ? `
-                    <p>
-                        📅 Acesso até:
-                        ${matricula.data_vencimento}
-                    </p>
-                `
+                matricula.data_fim
+                ? `<p><strong>Acesso até:</strong>
+                    ${new Date(matricula.data_fim).toLocaleDateString("pt-BR")}
+                   </p>`
                 : ""
             }
 
-            <div style="
-                margin-top:20px;
-                margin-bottom:20px;
-            ">
-
-                <div style="
-                    display:flex;
-                    justify-content:space-between;
-                    align-items:center;
-                    margin-bottom:8px;
-                    font-weight:bold;
-                ">
-
-                    <span>📊 Seu progresso</span>
-
-                    <span>
-                        ${percentual}%
-                    </span>
-
-                </div>
-
-                <div style="
-                    width:100%;
-                    height:12px;
-                    background:#ddd;
-                    border-radius:10px;
-                    overflow:hidden;
-                ">
-
-                    <div style="
-                        width:${percentual}%;
-                        height:100%;
-                        background:linear-gradient(
-                            90deg,
-                            #b8860b,
-                            #d4af37
-                        );
-                        border-radius:10px;
-                        transition:width 0.4s ease;
-                    "></div>
-
-                </div>
-
-                <p style="
-                    margin-top:8px;
-                    font-size:14px;
-                ">
-                    ${aulasConcluidas} de ${totalAulas}
-                    aulas concluídas
-                </p>
-
-            </div>
-
-            <button
-                type="button"
-                class="btn-acessar-curso"
-            >
-                📚 Acessar curso
+            <button onclick="window.location.href='curso.html?id=${curso.id}'">
+                Acessar Curso
             </button>
         `;
 
-        // ==============================
-        // BOTÃO ACESSAR CURSO
-        // ==============================
-
-        card
-            .querySelector(".btn-acessar-curso")
-            .addEventListener(
-                "click",
-                function () {
-
-                    abrirCurso(curso.id);
-
-                }
-            );
-
-        areaCursos.appendChild(card);
+        lista.appendChild(card);
     }
 }
 
 
-// ==============================
-// ABRIR CURSO
-// ==============================
+// ===============================
+// CARREGAR SIMULADOS
+// ===============================
 
-function abrirCurso(cursoId) {
+async function carregarSimulados() {
 
-    window.location.href =
-        "curso.html?id=" + cursoId;
+    const lista = document.getElementById("listaSimulados");
+
+    const { data: simulados, error } = await supabaseClient
+        .from("simulados")
+        .select("id, titulo, descricao, link_pdf")
+        .eq("ativo", true)
+        .order("created_at", { ascending: false });
+
+    if (error) {
+
+        console.error("Erro ao carregar simulados:", error);
+
+        lista.innerHTML =
+            "<p>Não foi possível carregar os simulados.</p>";
+
+        return;
+    }
+
+    if (!simulados || simulados.length === 0) {
+
+        lista.innerHTML =
+            "<p>Nenhum simulado disponível no momento.</p>";
+
+        return;
+    }
+
+    lista.innerHTML = "";
+
+    simulados.forEach(simulado => {
+
+        const card = document.createElement("div");
+
+        card.className = "card";
+
+        card.innerHTML = `
+            <h3>📝 ${simulado.titulo}</h3>
+
+            <p>
+                ${simulado.descricao || ""}
+            </p>
+
+            <button
+                onclick="window.open('${simulado.link_pdf}', '_blank')"
+            >
+                📄 Abrir Simulado
+            </button>
+        `;
+
+        lista.appendChild(card);
+    });
 }
 
 
-// ==============================
-// SAIR
-// ==============================
+// ===============================
+// LOGOUT
+// ===============================
 
 document
-    .getElementById("sair")
-    .addEventListener(
-        "click",
-        async function (event) {
+    .getElementById("logout")
+    .addEventListener("click", async () => {
 
-            event.preventDefault();
+        await supabaseClient.auth.signOut();
 
-            await supabaseClient.auth.signOut();
-
-            window.location.href =
-                "login.html";
-        }
-    );
+        window.location.href = "login.html";
+    });
 
 
-// ==============================
+// ===============================
 // INICIAR
-// ==============================
+// ===============================
 
-carregarAluno();
+async function iniciarAluno() {
+
+    const user = await verificarUsuario();
+
+    if (!user) return;
+
+    const perfil = await carregarPerfil(user);
+
+    if (!perfil) return;
+
+    await carregarCursos(perfil);
+
+    await carregarSimulados();
+}
+
+iniciarAluno();
