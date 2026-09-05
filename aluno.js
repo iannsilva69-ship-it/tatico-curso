@@ -3,6 +3,7 @@
 // ==========================================
 
 async function verificarUsuario() {
+
     const {
         data: { user },
         error
@@ -22,14 +23,23 @@ async function verificarUsuario() {
 // ==========================================
 
 async function carregarPerfil(user) {
-    const { data, error } = await supabaseClient
+
+    const {
+        data,
+        error
+    } = await supabaseClient
         .from("perfis")
         .select("*")
         .eq("auth_user_id", user.id)
         .single();
 
     if (error) {
-        console.error("Erro ao carregar perfil:", error);
+
+        console.error(
+            "Erro ao carregar perfil:",
+            error
+        );
+
         return null;
     }
 
@@ -43,27 +53,30 @@ async function carregarPerfil(user) {
 
 async function carregarCursos(perfil) {
 
-    const lista = document.getElementById("listaCursos");
+    const lista =
+        document.getElementById("listaCursos");
 
-    const { data: matriculas, error } = await supabaseClient
+
+    // ==========================================
+    // BUSCAR MATRÍCULAS
+    // ==========================================
+
+    const {
+        data: matriculas,
+        error: erroMatriculas
+    } = await supabaseClient
         .from("matriculas")
-        .select(`
-            id,
-            status,
-            data_fim,
-            curso_id,
-            cursos (
-                id,
-                nome,
-                descricao,
-                imagem
-            )
-        `)
+        .select("*")
         .eq("usuario_id", perfil.id)
         .eq("status", "ativo");
 
-    if (error) {
-        console.error("ERRO AO CARREGAR CURSOS:", error);
+
+    if (erroMatriculas) {
+
+        console.error(
+            "ERRO AO CARREGAR MATRÍCULAS:",
+            erroMatriculas
+        );
 
         lista.innerHTML =
             "<p>Não foi possível carregar seus cursos.</p>";
@@ -71,108 +84,209 @@ async function carregarCursos(perfil) {
         return;
     }
 
+
     if (!matriculas || matriculas.length === 0) {
+
         lista.innerHTML =
             "<p>Você ainda não possui cursos ativos.</p>";
 
         return;
     }
 
+
     lista.innerHTML = "";
+
+
+    // ==========================================
+    // CADA MATRÍCULA
+    // ==========================================
 
     for (const matricula of matriculas) {
 
-        const curso = matricula.cursos;
+        const cursoId =
+            matricula.curso_id;
 
-        if (!curso) continue;
 
-        // ==========================================
-        // MÓDULOS DO CURSO
-        // ==========================================
-
-        const { data: modulos, error: erroModulos } =
-            await supabaseClient
-                .from("modulos")
-                .select("id")
-                .eq("curso_id", curso.id);
-
-        if (erroModulos) {
-            console.error("Erro ao carregar módulos:", erroModulos);
+        if (!cursoId) {
             continue;
         }
 
-        const moduloIds = (modulos || []).map(modulo => modulo.id);
-
-        let totalAulas = 0;
-        let aulasConcluidas = 0;
 
         // ==========================================
-        // AULAS
+        // BUSCAR CURSO
+        // ==========================================
+
+        const {
+            data: curso,
+            error: erroCurso
+        } = await supabaseClient
+            .from("cursos")
+            .select("*")
+            .eq("id", cursoId)
+            .single();
+
+
+        if (erroCurso || !curso) {
+
+            console.error(
+                "Erro ao carregar curso:",
+                erroCurso
+            );
+
+            continue;
+        }
+
+
+        // ==========================================
+        // BUSCAR MÓDULOS
+        // ==========================================
+
+        const {
+            data: modulos,
+            error: erroModulos
+        } = await supabaseClient
+            .from("modulos")
+            .select("id")
+            .eq("curso_id", curso.id);
+
+
+        if (erroModulos) {
+
+            console.error(
+                "Erro ao carregar módulos:",
+                erroModulos
+            );
+
+            continue;
+        }
+
+
+        const moduloIds =
+            (modulos || []).map(
+                modulo => modulo.id
+            );
+
+
+        let totalAulas = 0;
+
+        let aulasConcluidas = 0;
+
+
+        // ==========================================
+        // BUSCAR AULAS
         // ==========================================
 
         if (moduloIds.length > 0) {
 
-            const { data: aulas, error: erroAulas } =
-                await supabaseClient
-                    .from("aulas")
-                    .select("id")
-                    .in("modulo_id", moduloIds);
+            const {
+                data: aulas,
+                error: erroAulas
+            } = await supabaseClient
+                .from("aulas")
+                .select("id")
+                .in(
+                    "modulo_id",
+                    moduloIds
+                );
+
 
             if (erroAulas) {
-                console.error("Erro ao carregar aulas:", erroAulas);
+
+                console.error(
+                    "Erro ao carregar aulas:",
+                    erroAulas
+                );
+
             } else {
 
-                totalAulas = aulas ? aulas.length : 0;
+                totalAulas =
+                    aulas
+                        ? aulas.length
+                        : 0;
+
 
                 // ==========================================
-                // PROGRESSO
+                // BUSCAR PROGRESSO
                 // ==========================================
 
                 if (totalAulas > 0) {
 
-                    const aulaIds = aulas.map(aula => aula.id);
+                    const aulaIds =
+                        aulas.map(
+                            aula => aula.id
+                        );
 
-                    const { data: progresso, error: erroProgresso } =
-                        await supabaseClient
-                            .from("progresso_aulas")
-                            .select("aula_id, concluida")
-                            .eq("usuario_id", perfil.id)
-                            .in("aula_id", aulaIds);
+
+                    const {
+                        data: progresso,
+                        error: erroProgresso
+                    } = await supabaseClient
+                        .from("progresso_aulas")
+                        .select(
+                            "aula_id, concluida"
+                        )
+                        .eq(
+                            "usuario_id",
+                            perfil.id
+                        )
+                        .in(
+                            "aula_id",
+                            aulaIds
+                        );
+
 
                     if (erroProgresso) {
+
                         console.error(
                             "Erro ao carregar progresso:",
                             erroProgresso
                         );
+
                     } else {
 
-                        aulasConcluidas = (progresso || [])
-                            .filter(item => item.concluida === true)
-                            .length;
+                        aulasConcluidas =
+                            (progresso || [])
+                                .filter(
+                                    item =>
+                                        item.concluida === true
+                                )
+                                .length;
                     }
                 }
             }
         }
 
+
         // ==========================================
-        // PORCENTAGEM
+        // CALCULAR PORCENTAGEM
         // ==========================================
 
         let porcentagem = 0;
 
+
         if (totalAulas > 0) {
-            porcentagem = Math.round(
-                (aulasConcluidas / totalAulas) * 100
-            );
+
+            porcentagem =
+                Math.round(
+                    (
+                        aulasConcluidas /
+                        totalAulas
+                    ) * 100
+                );
         }
+
 
         // ==========================================
         // CARD DO CURSO
         // ==========================================
 
-        const card = document.createElement("div");
+        const card =
+            document.createElement("div");
 
-        card.className = "card";
+
+        card.className =
+            "card";
+
 
         card.innerHTML = `
 
@@ -194,16 +308,25 @@ async function carregarCursos(perfil) {
                     : ""
             }
 
-            <h3>${curso.nome}</h3>
+
+            <h3>
+                ${curso.nome}
+            </h3>
+
 
             <p>
                 ${curso.descricao || ""}
             </p>
 
+
             <p>
-                <strong>📊 Seu progresso:</strong>
+                <strong>
+                    📊 Seu progresso:
+                </strong>
+
                 ${porcentagem}%
             </p>
+
 
             <div style="
                 width:100%;
@@ -223,31 +346,45 @@ async function carregarCursos(perfil) {
 
             </div>
 
+
             <p>
-                ${aulasConcluidas} de ${totalAulas}
+                ${aulasConcluidas}
+                de
+                ${totalAulas}
                 aulas concluídas
             </p>
+
 
             ${
                 matricula.data_fim
                     ? `
                         <p>
-                            <strong>Acesso até:</strong>
+                            <strong>
+                                Acesso até:
+                            </strong>
+
                             ${new Date(
                                 matricula.data_fim
-                            ).toLocaleDateString("pt-BR")}
+                            ).toLocaleDateString(
+                                "pt-BR"
+                            )}
                         </p>
                     `
                     : ""
             }
 
+
             <button
-                onclick="window.location.href='curso.html?id=${curso.id}'"
+                onclick="
+                    window.location.href=
+                    'curso.html?id=${curso.id}'
+                "
             >
                 Acessar Curso
             </button>
 
         `;
+
 
         lista.appendChild(card);
     }
@@ -260,30 +397,42 @@ async function carregarCursos(perfil) {
 
 async function carregarSimulados() {
 
-    const lista = document.getElementById("listaSimulados");
+    const lista =
+        document.getElementById(
+            "listaSimulados"
+        );
 
-    const { data: simulados, error } = await supabaseClient
+
+    const {
+        data: simulados,
+        error
+    } = await supabaseClient
         .from("simulados")
-        .select(`
-            id,
-            titulo,
-            descricao,
-            link_pdf
-        `)
+        .select(
+            "id, titulo, descricao, link_pdf"
+        )
         .eq("ativo", true)
-        .order("created_at", {
-            ascending: false
-        });
+        .order(
+            "created_at",
+            {
+                ascending: false
+            }
+        );
+
 
     if (error) {
 
-        console.error("Erro ao carregar simulados:", error);
+        console.error(
+            "Erro ao carregar simulados:",
+            error
+        );
 
         lista.innerHTML =
             "<p>Não foi possível carregar os simulados.</p>";
 
         return;
     }
+
 
     if (!simulados || simulados.length === 0) {
 
@@ -293,32 +442,50 @@ async function carregarSimulados() {
         return;
     }
 
+
     lista.innerHTML = "";
 
-    simulados.forEach(simulado => {
 
-        const card = document.createElement("div");
+    simulados.forEach(
+        simulado => {
 
-        card.className = "card";
+            const card =
+                document.createElement("div");
 
-        card.innerHTML = `
 
-            <h3>📝 ${simulado.titulo}</h3>
+            card.className =
+                "card";
 
-            <p>
-                ${simulado.descricao || ""}
-            </p>
 
-            <button
-                onclick="window.open('${simulado.link_pdf}', '_blank')"
-            >
-                📄 Abrir Simulado
-            </button>
+            card.innerHTML = `
 
-        `;
+                <h3>
+                    📝 ${simulado.titulo}
+                </h3>
 
-        lista.appendChild(card);
-    });
+
+                <p>
+                    ${simulado.descricao || ""}
+                </p>
+
+
+                <button
+                    onclick="
+                        window.open(
+                            '${simulado.link_pdf}',
+                            '_blank'
+                        )
+                    "
+                >
+                    📄 Abrir Simulado
+                </button>
+
+            `;
+
+
+            lista.appendChild(card);
+        }
+    );
 }
 
 
@@ -326,14 +493,25 @@ async function carregarSimulados() {
 // LOGOUT
 // ==========================================
 
-document
-    .getElementById("logout")
-    .addEventListener("click", async () => {
+const botaoLogout =
+    document.getElementById("logout");
 
-        await supabaseClient.auth.signOut();
 
-        window.location.href = "login.html";
-    });
+if (botaoLogout) {
+
+    botaoLogout.addEventListener(
+        "click",
+        async function () {
+
+            await supabaseClient
+                .auth
+                .signOut();
+
+            window.location.href =
+                "login.html";
+        }
+    );
+}
 
 
 // ==========================================
@@ -342,17 +520,31 @@ document
 
 async function iniciarAluno() {
 
-    const user = await verificarUsuario();
+    const user =
+        await verificarUsuario();
 
-    if (!user) return;
 
-    const perfil = await carregarPerfil(user);
+    if (!user) {
+        return;
+    }
 
-    if (!perfil) return;
 
-    await carregarCursos(perfil);
+    const perfil =
+        await carregarPerfil(user);
+
+
+    if (!perfil) {
+        return;
+    }
+
+
+    await carregarCursos(
+        perfil
+    );
+
 
     await carregarSimulados();
 }
+
 
 iniciarAluno();
