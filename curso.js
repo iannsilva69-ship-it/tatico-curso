@@ -158,7 +158,7 @@ async function carregarCurso() {
 
 
     // ==============================
-    // BUSCAR TODAS AS AULAS
+    // CONTADORES DE PROGRESSO
     // ==============================
 
     let totalAulas = 0;
@@ -259,13 +259,12 @@ async function carregarCurso() {
 
 
     // ==============================
-    // FUNÇÃO ATUALIZAR PROGRESSO
+    // ATUALIZAR PROGRESSO
     // ==============================
 
     function atualizarProgresso() {
 
         if (totalAulas === 0) {
-
             return;
         }
 
@@ -338,6 +337,7 @@ async function carregarCurso() {
                 titulo,
                 link_youtube,
                 link_pdf,
+                link_questoes,
                 link_slide,
                 ordem
             `)
@@ -459,6 +459,7 @@ async function carregarCurso() {
                             text-decoration:none;
                             font-weight:bold;
                             margin-right:8px;
+                            margin-bottom:8px;
                         "
                     >
                         ▶️ Assistir videoaula
@@ -469,7 +470,7 @@ async function carregarCurso() {
 
 
             // ==============================
-            // PDF
+            // PDF DA AULA
             // ==============================
 
             if (aula.link_pdf) {
@@ -488,9 +489,40 @@ async function carregarCurso() {
                             text-decoration:none;
                             font-weight:bold;
                             margin-right:8px;
+                            margin-bottom:8px;
                         "
                     >
                         📄 Abrir PDF
+                    </a>
+
+                `;
+            }
+
+
+            // ==============================
+            // PDF DE QUESTÕES
+            // ==============================
+
+            if (aula.link_questoes) {
+
+                conteudo += `
+
+                    <a
+                        href="${aula.link_questoes}"
+                        target="_blank"
+                        style="
+                            display:inline-block;
+                            background:#a67c32;
+                            color:white;
+                            padding:10px 15px;
+                            border-radius:7px;
+                            text-decoration:none;
+                            font-weight:bold;
+                            margin-right:8px;
+                            margin-bottom:8px;
+                        "
+                    >
+                        📝 Questões da aula
                     </a>
 
                 `;
@@ -517,6 +549,7 @@ async function carregarCurso() {
                             text-decoration:none;
                             font-weight:bold;
                             margin-right:8px;
+                            margin-bottom:8px;
                         "
                     >
                         📊 Abrir slides
@@ -584,7 +617,7 @@ async function carregarCurso() {
 
 
                     // ==============================
-                    // SE JÁ ESTÁ CONCLUÍDA
+                    // DESMARCAR CONCLUSÃO
                     // ==============================
 
                     if (concluida) {
@@ -643,7 +676,7 @@ async function carregarCurso() {
 
 
                     // ==============================
-                    // CRIAR REGISTRO
+                    // SALVAR CONCLUSÃO
                     // ==============================
 
                     const {
@@ -721,9 +754,12 @@ async function carregarCurso() {
 // BOTÃO SAIR
 // ==============================
 
-document
-    .getElementById("sair")
-    .addEventListener(
+const botaoSair =
+    document.getElementById("sair");
+
+if (botaoSair) {
+
+    botaoSair.addEventListener(
         "click",
         async function (event) {
 
@@ -736,6 +772,7 @@ document
 
         }
     );
+}
 
 
 // ==============================
@@ -743,4 +780,3 @@ document
 // ==============================
 
 carregarCurso();
-
