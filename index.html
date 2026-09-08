@@ -26,6 +26,7 @@
 
 <body id="inicio">
 
+
     <!-- ==============================
          CABEÇALHO
     ============================== -->
@@ -58,6 +59,7 @@
         </nav>
 
     </header>
+
 
 
     <!-- ==============================
@@ -116,6 +118,7 @@
         </section>
 
 
+
         <!-- ==============================
              CURSOS
         ============================== -->
@@ -130,29 +133,35 @@
             </h2>
 
 
-            <div class="course-card">
+            <p
+                style="
+                    color:#64748b;
+                    margin-bottom:25px;
+                "
+            >
+                Escolha o curso ideal para sua preparação.
+            </p>
 
-                <h3>
-                    Preparação para Concursos
-                </h3>
 
+            <!-- CURSOS SERÃO CARREGADOS AQUI -->
+
+            <div
+                id="listaCursosPublicos"
+                style="
+                    display:grid;
+                    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+                    gap:25px;
+                "
+            >
 
                 <p>
-                    Tenha acesso a videoaulas, PDFs,
-                    slides e simulados.
+                    Carregando cursos...
                 </p>
-
-
-                <button
-                    type="button"
-                    onclick="window.location.href='cadastro.html';"
-                >
-                    Conhecer curso
-                </button>
 
             </div>
 
         </section>
+
 
 
         <!-- ==============================
@@ -198,6 +207,7 @@
     </main>
 
 
+
     <!-- ==============================
          RODAPÉ
     ============================== -->
@@ -211,7 +221,179 @@
     </footer>
 
 
+
+    <!-- ==============================
+         CARREGAR CURSOS DO SUPABASE
+    ============================== -->
+
+    <script>
+
+        async function carregarCursosPublicos() {
+
+            const area =
+                document.getElementById(
+                    "listaCursosPublicos"
+                );
+
+
+            const {
+                data: cursos,
+                error
+            } = await supabaseClient
+                .from("cursos")
+                .select(
+                    "id, nome, descricao"
+                )
+                .order(
+                    "id",
+                    {
+                        ascending: true
+                    }
+                );
+
+
+            if (error) {
+
+                console.error(
+                    "Erro ao carregar cursos:",
+                    error
+                );
+
+                area.innerHTML = `
+                    <p>
+                        Não foi possível carregar os cursos.
+                    </p>
+                `;
+
+                return;
+            }
+
+
+            if (!cursos || cursos.length === 0) {
+
+                area.innerHTML = `
+                    <div class="course-card">
+
+                        <h3>
+                            Em breve
+                        </h3>
+
+                        <p>
+                            Novos cursos serão disponibilizados
+                            em breve.
+                        </p>
+
+                    </div>
+                `;
+
+                return;
+            }
+
+
+            area.innerHTML = "";
+
+
+            cursos.forEach(
+                function (curso) {
+
+                    const card =
+                        document.createElement(
+                            "div"
+                        );
+
+
+                    card.className =
+                        "course-card";
+
+
+                    card.style.cssText = `
+                        display:flex;
+                        flex-direction:column;
+                        justify-content:space-between;
+                        min-height:220px;
+                    `;
+
+
+                    const titulo =
+                        document.createElement(
+                            "h3"
+                        );
+
+
+                    titulo.textContent =
+                        curso.nome;
+
+
+                    const descricao =
+                        document.createElement(
+                            "p"
+                        );
+
+
+                    descricao.textContent =
+                        curso.descricao ||
+                        "Curso preparatório do Tático Curso.";
+
+
+                    const botao =
+                        document.createElement(
+                            "button"
+                        );
+
+
+                    botao.type =
+                        "button";
+
+
+                    botao.textContent =
+                        "Conhecer curso";
+
+
+                    botao.addEventListener(
+                        "click",
+                        function () {
+
+                            window.location.href =
+                                "cadastro.html?curso=" +
+                                encodeURIComponent(
+                                    curso.id
+                                );
+
+                        }
+                    );
+
+
+                    card.appendChild(
+                        titulo
+                    );
+
+
+                    card.appendChild(
+                        descricao
+                    );
+
+
+                    card.appendChild(
+                        botao
+                    );
+
+
+                    area.appendChild(
+                        card
+                    );
+
+                }
+            );
+
+        }
+
+
+        carregarCursosPublicos();
+
+    </script>
+
+
 </body>
 
 </html>
-   
+
