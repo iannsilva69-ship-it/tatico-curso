@@ -2,228 +2,318 @@
 <html lang="pt-BR">
 
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
     <title>Gerenciar Cursos - Tático Curso</title>
 
     <link rel="stylesheet" href="style.css">
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <script src="supabase.js"></script>
+
 </head>
 
 <body>
 
-    <header>
+<header>
 
-        <div class="logo">
-            TÁTICO CURSO
+    <div class="logo">
+        TÁTICO CURSO
+    </div>
+
+    <nav>
+
+        <a href="admin.html">
+            Painel
+        </a>
+
+        <a href="#" id="sair">
+            Sair
+        </a>
+
+    </nav>
+
+</header>
+
+
+<main>
+
+    <section class="hero">
+
+        <div class="hero-text">
+
+            <span class="tag">
+                GERENCIAR CURSOS
+            </span>
+
+            <h1>
+                Cursos
+            </h1>
+
+            <p>
+                Crie e gerencie os cursos do Tático Curso.
+            </p>
+
+
+            <button id="novoCurso">
+                ➕ Criar novo curso
+            </button>
+
+
+            <!-- ============================== -->
+            <!-- NOVO CURSO -->
+            <!-- ============================== -->
+
+            <div id="formularioCurso"
+                 style="display: none; margin-top: 30px;">
+
+                <h2>
+                    Novo curso
+                </h2>
+
+
+                <form id="cursoForm">
+
+
+                    <input
+                        type="text"
+                        id="nomeCurso"
+                        placeholder="Nome do curso"
+                        required
+                    >
+
+
+                    <br><br>
+
+
+                    <textarea
+                        id="descricaoCurso"
+                        placeholder="Descrição do curso"
+                        rows="5"
+                        style="width: 100%; max-width: 600px;"
+                    ></textarea>
+
+
+                    <br><br>
+
+
+                    <textarea
+                        id="porqueFazerCurso"
+                        placeholder="Por que o aluno deve fazer este curso?"
+                        rows="6"
+                        style="width: 100%; max-width: 600px;"
+                    ></textarea>
+
+
+                    <br><br>
+
+
+                    <input
+                        type="number"
+                        id="precoCurso"
+                        placeholder="Preço do curso"
+                        step="0.01"
+                        min="0"
+                    >
+
+
+                    <br><br>
+
+
+                    <input
+                        type="url"
+                        id="imagemCurso"
+                        placeholder="Link da imagem do curso"
+                    >
+
+
+                    <br><br>
+
+
+                    <label>
+
+                        <input
+                            type="checkbox"
+                            id="ativoCurso"
+                            checked
+                        >
+
+                        Curso ativo
+
+                    </label>
+
+
+                    <br><br>
+
+
+                    <button type="submit">
+                        💾 Salvar curso
+                    </button>
+
+
+                    <button
+                        type="button"
+                        id="cancelarCurso"
+                        class="secondary"
+                    >
+                        Cancelar
+                    </button>
+
+
+                </form>
+
+
+                <p id="mensagemCurso"></p>
+
+            </div>
+
+
+            <!-- ============================== -->
+            <!-- EDITAR CURSO -->
+            <!-- ============================== -->
+
+            <div id="areaEdicao"
+                 style="display: none; margin-top: 30px;">
+
+                <h2>
+                    Editar curso
+                </h2>
+
+
+                <form id="edicaoForm">
+
+
+                    <input
+                        type="hidden"
+                        id="edicaoId"
+                    >
+
+
+                    <input
+                        type="text"
+                        id="edicaoNome"
+                        placeholder="Nome do curso"
+                        required
+                    >
+
+
+                    <br><br>
+
+
+                    <textarea
+                        id="edicaoDescricao"
+                        placeholder="Descrição do curso"
+                        rows="5"
+                        style="width: 100%; max-width: 600px;"
+                    ></textarea>
+
+
+                    <br><br>
+
+
+                    <textarea
+                        id="edicaoPorqueFazer"
+                        placeholder="Por que o aluno deve fazer este curso?"
+                        rows="6"
+                        style="width: 100%; max-width: 600px;"
+                    ></textarea>
+
+
+                    <br><br>
+
+
+                    <input
+                        type="number"
+                        id="edicaoPreco"
+                        placeholder="Preço do curso"
+                        step="0.01"
+                        min="0"
+                    >
+
+
+                    <br><br>
+
+
+                    <input
+                        type="url"
+                        id="edicaoImagem"
+                        placeholder="Link da imagem do curso"
+                    >
+
+
+                    <br><br>
+
+
+                    <label>
+
+                        <input
+                            type="checkbox"
+                            id="edicaoAtivo"
+                        >
+
+                        Curso ativo
+
+                    </label>
+
+
+                    <br><br>
+
+
+                    <button type="submit">
+                        💾 Salvar alterações
+                    </button>
+
+
+                    <button
+                        type="button"
+                        id="cancelarEdicao"
+                        class="secondary"
+                    >
+                        Cancelar
+                    </button>
+
+
+                </form>
+
+
+                <p id="mensagemEdicao"></p>
+
+            </div>
+
         </div>
 
-        <nav>
-            <a href="admin.html">Painel</a>
-            <a href="#" id="sair">Sair</a>
-        </nav>
+    </section>
 
-    </header>
 
-    <main>
+    <!-- ============================== -->
+    <!-- CURSOS CADASTRADOS -->
+    <!-- ============================== -->
 
-        <section class="hero">
+    <section class="courses">
 
-            <div class="hero-text">
+        <h2>
+            Cursos cadastrados
+        </h2>
 
-                <span class="tag">
-                    GERENCIAR CURSOS
-                </span>
 
-                <h1>
-                    Cursos
-                </h1>
+        <div id="listaCursos">
 
-                <p>
-                    Crie e gerencie os cursos do Tático Curso.
-                </p>
+            Carregando cursos...
 
-                <button id="novoCurso">
-                    ➕ Criar novo curso
-                </button>
-<div id="formularioCurso" style="display: none; margin-top: 30px;">
+        </div>
 
-    <h2>Novo curso</h2>
+    </section>
 
-    <form id="cursoForm">
 
-        <input
-            type="text"
-            id="nomeCurso"
-            placeholder="Nome do curso"
-            required
-        >
+</main>
 
-        <br><br>
 
-        <textarea
-            id="descricaoCurso"
-            placeholder="Descrição do curso"
-            rows="5"
-            style="width: 100%; max-width: 600px;"
-        ></textarea>
-<textarea
-    id="descricaoCurso"
-    placeholder="Descrição do curso"
-    rows="5"
-    style="width: 100%; max-width: 600px;"
-></textarea>
-
-<br><br>
-
-<textarea
-    id="porqueFazerCurso"
-    placeholder="Por que o aluno deve fazer este curso?"
-    rows="6"
-    style="width: 100%; max-width: 600px;"
-></textarea>
-        <br><br>
-
-        <input
-            type="number"
-            id="precoCurso"
-            placeholder="Preço do curso"
-            step="0.01"
-            min="0"
-        >
-
-        <br><br>
-
-        <input
-            type="url"
-            id="imagemCurso"
-            placeholder="Link da imagem do curso"
-        >
-
-        <br><br>
-
-        <label>
-            <input
-                type="checkbox"
-                id="ativoCurso"
-                checked
-            >
-            Curso ativo
-        </label>
-
-        <br><br>
-
-        <button type="submit">
-            💾 Salvar curso
-        </button>
-
-        <button
-            type="button"
-            id="cancelarCurso"
-            class="secondary"
-        >
-            Cancelar
-        </button>
-
-    </form>
-
-   <p id="mensagemCurso"></p>
-
-<div id="areaEdicao" style="display: none; margin-top: 30px;">
-
-    <h2>Editar curso</h2>
-
-    <form id="edicaoForm">
-
-        <input type="hidden" id="edicaoId">
-
-        <input
-            type="text"
-            id="edicaoNome"
-            placeholder="Nome do curso"
-            required
-        >
-
-        <br><br>
-
-        <textarea
-            id="edicaoDescricao"
-            placeholder="Descrição do curso"
-            rows="5"
-            style="width: 100%; max-width: 600px;"
-        ></textarea>
-
-        <br><br>
-
-        <input
-            type="number"
-            id="edicaoPreco"
-            placeholder="Preço do curso"
-            step="0.01"
-            min="0"
-        >
-
-        <br><br>
-
-        <input
-            type="url"
-            id="edicaoImagem"
-            placeholder="Link da imagem do curso"
-        >
-
-        <br><br>
-
-        <label>
-            <input
-                type="checkbox"
-                id="edicaoAtivo"
-            >
-            Curso ativo
-        </label>
-
-        <br><br>
-
-        <button type="submit">
-            💾 Salvar alterações
-        </button>
-
-        <button
-            type="button"
-            id="cancelarEdicao"
-            class="secondary"
-        >
-            Cancelar
-        </button>
-
-    </form>
-
-    <p id="mensagemEdicao"></p>
-
-</div>
-
-</div>
-            </div>
-
-        </section>
-
-        <section class="courses">
-
-            <h2>
-                Cursos cadastrados
-            </h2>
-
-            <div id="listaCursos">
-                Carregando cursos...
-            </div>
-
-        </section>
-
-    </main>
-
-    <script src="cursos-admin.js"></script>
+<script src="cursos-admin.js"></script>
 
 </body>
 
