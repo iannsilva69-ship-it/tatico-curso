@@ -663,13 +663,16 @@ async function carregarCurso() {
                                         },
 
                                         body:
-                                            JSON.stringify({
-                                                pergunta:
-                                                    pergunta,
+    JSON.stringify({
+        pergunta:
+            pergunta,
 
-                                                pdfUrl:
-                                                    aula.link_pdf
-                                            })
+        pdfUrl:
+            aula.link_pdf.includes("/file/d/")
+                ? "https://drive.google.com/uc?export=download&id=" +
+                  aula.link_pdf.split("/file/d/")[1].split("/")[0]
+                : aula.link_pdf
+    })
                                     }
                                 );
 
