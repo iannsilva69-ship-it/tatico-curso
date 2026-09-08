@@ -65,10 +65,10 @@ async function carregarCurso() {
 
     if (erroCurso || !curso) {
 
-        console.error(
-            "Erro ao carregar curso:",
-            erroCurso
-        );
+       console.error(
+    "ERRO CURSO:",
+    JSON.stringify(erroCurso, null, 2)
+);
 
         nomeCurso.textContent =
             "Curso não encontrado.";
