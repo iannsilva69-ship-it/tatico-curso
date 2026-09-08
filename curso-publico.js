@@ -19,8 +19,8 @@ async function carregarCurso() {
     const precoCurso =
         document.getElementById("precoCurso");
 
-    const conteudoCurso =
-        document.getElementById("conteudoCurso");
+    const porqueFazerCurso =
+        document.getElementById("porqueFazerCurso");
 
     const botaoComprar =
         document.getElementById("botaoComprar");
@@ -38,7 +38,7 @@ async function carregarCurso() {
         descricaoCurso.textContent =
             "";
 
-        conteudoCurso.innerHTML =
+        porqueFazerCurso.innerHTML =
             "";
 
         return;
@@ -77,6 +77,9 @@ async function carregarCurso() {
         descricaoCurso.textContent =
             "Não foi possível carregar as informações deste curso.";
 
+        porqueFazerCurso.innerHTML =
+            "";
+
         return;
     }
 
@@ -104,6 +107,44 @@ async function carregarCurso() {
                   .toFixed(2)
                   .replace(".", ",")
             : "Consulte o valor";
+
+
+    // ==============================
+    // POR QUE FAZER ESTE CURSO
+    // ==============================
+
+    if (curso.porque_fazer) {
+
+        porqueFazerCurso.innerHTML = `
+
+            <div class="course-card">
+
+                <p>
+                    ${curso.porque_fazer.replace(
+                        /\n/g,
+                        "<br>"
+                    )}
+                </p>
+
+            </div>
+
+        `;
+
+    } else {
+
+        porqueFazerCurso.innerHTML = `
+
+            <div class="course-card">
+
+                <p>
+                    Informações sobre este curso
+                    serão disponibilizadas em breve.
+                </p>
+
+            </div>
+
+        `;
+    }
 
 
     // ==============================
@@ -141,233 +182,6 @@ async function carregarCurso() {
 
 
     // ==============================
-    // BUSCAR MÓDULOS
-    // ==============================
-
-    const {
-        data: todosModulos,
-        error: erroModulos
-    } =
-        await supabaseClient
-            .from("modulos")
-            .select("*");
-
-
-    if (erroModulos) {
-
-        console.error(
-            "ERRO MODULOS:",
-            JSON.stringify(
-                erroModulos,
-                null,
-                2
-            )
-        );
-
-        conteudoCurso.innerHTML =
-            "<p>Não foi possível carregar o conteúdo.</p>";
-
-        return;
-    }
-
-
-    // ==============================
-    // FILTRAR MÓDULOS DO CURSO
-    // ==============================
-
-    const modulos =
-        (todosModulos || [])
-            .filter(function (modulo) {
-
-                return String(
-                    modulo.curso_id
-                ) === String(cursoId);
-
-            })
-            .sort(function (a, b) {
-
-                return (
-                    (a.ordem || 0) -
-                    (b.ordem || 0)
-                );
-
-            });
-
-
-    // ==============================
-    // NENHUM MÓDULO
-    // ==============================
-
-    if (modulos.length === 0) {
-
-        conteudoCurso.innerHTML = `
-
-            <div class="course-card">
-
-                <p>
-                    O conteúdo deste curso será
-                    disponibilizado em breve.
-                </p>
-
-            </div>
-
-        `;
-
-    } else {
-
-        conteudoCurso.innerHTML =
-            "";
-
-
-        // ==============================
-        // BUSCAR TODAS AS AULAS
-        // ==============================
-
-        const {
-            data: todasAulas,
-            error: erroAulas
-        } =
-            await supabaseClient
-                .from("aulas")
-                .select("*");
-
-
-        if (erroAulas) {
-
-            console.error(
-                "ERRO AULAS:",
-                JSON.stringify(
-                    erroAulas,
-                    null,
-                    2
-                )
-            );
-
-            conteudoCurso.innerHTML =
-                "<p>Não foi possível carregar as aulas.</p>";
-
-            return;
-        }
-
-
-        // ==============================
-        // PERCORRER MÓDULOS
-        // ==============================
-
-        for (
-            const modulo of modulos
-        ) {
-
-            // ==============================
-            // FILTRAR AULAS DO MÓDULO
-            // ==============================
-
-            const aulas =
-                (todasAulas || [])
-                    .filter(function (aula) {
-
-                        return String(
-                            aula.modulo_id
-                        ) === String(
-                            modulo.id
-                        );
-
-                    })
-                    .sort(function (a, b) {
-
-                        return (
-                            (a.ordem || 0) -
-                            (b.ordem || 0)
-                        );
-
-                    });
-
-
-            // ==============================
-            // CARD DO MÓDULO
-            // ==============================
-
-            const card =
-                document.createElement(
-                    "div"
-                );
-
-            card.className =
-                "course-card";
-
-            card.style.marginBottom =
-                "20px";
-
-
-            card.innerHTML = `
-
-                <h3>
-                    📚 ${
-                        modulo.nome ||
-                        "Módulo"
-                    }
-                </h3>
-
-                <p>
-                    ${
-                        aulas.length
-                    }
-                    aula(s)
-                </p>
-
-            `;
-
-
-            // ==============================
-            // LISTA DE AULAS
-            // ==============================
-
-            if (
-                aulas.length > 0
-            ) {
-
-                const lista =
-                    document.createElement(
-                        "ul"
-                    );
-
-
-                aulas.forEach(
-                    function (aula) {
-
-                        const item =
-                            document.createElement(
-                                "li"
-                            );
-
-
-                        item.textContent =
-                            aula.titulo ||
-                            "Aula";
-
-
-                        lista.appendChild(
-                            item
-                        );
-
-                    }
-                );
-
-
-                card.appendChild(
-                    lista
-                );
-            }
-
-
-            conteudoCurso.appendChild(
-                card
-            );
-        }
-    }
-
-
-    // ==============================
     // BOTÃO COMPRAR
     // ==============================
 
@@ -383,7 +197,6 @@ async function carregarCurso() {
 
         }
     );
-
 }
 
 
@@ -392,4 +205,3 @@ async function carregarCurso() {
 // ==============================
 
 carregarCurso();
-
