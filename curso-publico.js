@@ -4,45 +4,80 @@
 
 async function carregarCurso() {
 
-    const params = new URLSearchParams(window.location.search);
-    const cursoId = params.get("id");
+    const params =
+        new URLSearchParams(window.location.search);
 
-    const nomeCurso = document.getElementById("nomeCurso");
-    const descricaoCurso = document.getElementById("descricaoCurso");
-    const precoCurso = document.getElementById("precoCurso");
-    const conteudoCurso = document.getElementById("conteudoCurso");
-    const botaoComprar = document.getElementById("botaoComprar");
+    const cursoId =
+        params.get("id");
+
+    const nomeCurso =
+        document.getElementById("nomeCurso");
+
+    const descricaoCurso =
+        document.getElementById("descricaoCurso");
+
+    const precoCurso =
+        document.getElementById("precoCurso");
+
+    const conteudoCurso =
+        document.getElementById("conteudoCurso");
+
+    const botaoComprar =
+        document.getElementById("botaoComprar");
+
+
+    // ==============================
+    // VERIFICAR ID DO CURSO
+    // ==============================
 
     if (!cursoId) {
 
-        nomeCurso.textContent = "Curso não encontrado.";
-        descricaoCurso.textContent = "";
-        conteudoCurso.innerHTML = "";
+        nomeCurso.textContent =
+            "Curso não encontrado.";
+
+        descricaoCurso.textContent =
+            "";
+
+        conteudoCurso.innerHTML =
+            "";
 
         return;
     }
+
 
     // ==============================
     // BUSCAR CURSO
     // ==============================
 
-    const { data: curso, error: erroCurso } =
+    const {
+        data: curso,
+        error: erroCurso
+    } =
         await supabaseClient
             .from("cursos")
-            .select("id, nome, descricao, preco, imagem, ativo")
+            .select(
+                "id, nome, descricao, preco, imagem, ativo"
+            )
             .eq("id", cursoId)
             .single();
 
+
     if (erroCurso || !curso) {
 
-        console.error("Erro ao carregar curso:", erroCurso);
+        console.error(
+            "Erro ao carregar curso:",
+            erroCurso
+        );
 
-        nomeCurso.textContent = "Curso não encontrado.";
+        nomeCurso.textContent =
+            "Curso não encontrado.";
+
         descricaoCurso.textContent =
             "Não foi possível carregar as informações deste curso.";
 
         return;
     }
+
 
     // ==============================
     // PREENCHER INFORMAÇÕES
@@ -55,16 +90,22 @@ async function carregarCurso() {
         curso.descricao ||
         "Curso preparatório do Tático Curso.";
 
+
     const preco =
         Number(curso.preco || 0);
 
+
     precoCurso.textContent =
         preco > 0
-            ? "R$ " + preco.toFixed(2).replace(".", ",")
+            ? "R$ " +
+              preco
+                  .toFixed(2)
+                  .replace(".", ",")
             : "Consulte o valor";
 
+
     // ==============================
-    // IMAGEM
+    // IMAGEM DO CURSO
     // ==============================
 
     if (curso.imagem) {
@@ -72,36 +113,66 @@ async function carregarCurso() {
         const imagem =
             document.createElement("img");
 
-        imagem.src = curso.imagem;
-        imagem.alt = curso.nome || "Curso";
+        imagem.src =
+            curso.imagem;
 
-        imagem.style.maxWidth = "100%";
-        imagem.style.width = "400px";
-        imagem.style.borderRadius = "15px";
-        imagem.style.marginTop = "20px";
+        imagem.alt =
+            curso.nome || "Curso";
+
+        imagem.style.maxWidth =
+            "100%";
+
+        imagem.style.width =
+            "400px";
+
+        imagem.style.borderRadius =
+            "15px";
+
+        imagem.style.marginTop =
+            "20px";
+
 
         document
             .querySelector(".hero-text")
             .appendChild(imagem);
     }
 
+
     // ==============================
     // BUSCAR MÓDULOS
     // ==============================
 
-    const { data: modulos, error: erroModulos } =
+    const {
+        data: modulos,
+        error: erroModulos
+    } =
         await supabaseClient
             .from("modulos")
-            .select("id, titulo, ordem")
-            .eq("curso_id", cursoId)
-            .order("ordem", { ascending: true });
+            .select(
+                "id, nome, ordem"
+            )
+            .eq(
+                "id_curso",
+                cursoId
+            )
+            .order(
+                "ordem",
+                {
+                    ascending: true
+                }
+            );
+
 
     if (erroModulos) {
 
-       console.error(
-    "ERRO MODULOS:",
-    JSON.stringify(erroModulos, null, 2)
-);
+        console.error(
+            "ERRO MODULOS:",
+            JSON.stringify(
+                erroModulos,
+                null,
+                2
+            )
+        );
 
         conteudoCurso.innerHTML =
             "<p>Não foi possível carregar o conteúdo.</p>";
@@ -109,28 +180,68 @@ async function carregarCurso() {
         return;
     }
 
-    if (!modulos || modulos.length === 0) {
+
+    // ==============================
+    // NENHUM MÓDULO
+    // ==============================
+
+    if (
+        !modulos ||
+        modulos.length === 0
+    ) {
 
         conteudoCurso.innerHTML = `
+
             <div class="course-card">
+
                 <p>
-                    O conteúdo deste curso será disponibilizado em breve.
+                    O conteúdo deste curso será
+                    disponibilizado em breve.
                 </p>
+
             </div>
+
         `;
 
     } else {
 
-        conteudoCurso.innerHTML = "";
+        conteudoCurso.innerHTML =
+            "";
 
-        for (const modulo of modulos) {
 
-            const { data: aulas, error: erroAulas } =
+        // ==============================
+        // PERCORRER MÓDULOS
+        // ==============================
+
+        for (
+            const modulo of modulos
+        ) {
+
+
+            // ==============================
+            // BUSCAR AULAS DO MÓDULO
+            // ==============================
+
+            const {
+                data: aulas,
+                error: erroAulas
+            } =
                 await supabaseClient
                     .from("aulas")
-                    .select("id, nome, ordem")
-.eq("id_curso", cursoId)
-                    .order("ordem", { ascending: true });
+                    .select(
+                        "id, titulo, ordem"
+                    )
+                    .eq(
+                        "modulo_id",
+                        modulo.id
+                    )
+                    .order(
+                        "ordem",
+                        {
+                            ascending: true
+                        }
+                    );
+
 
             if (erroAulas) {
 
@@ -142,8 +253,15 @@ async function carregarCurso() {
                 continue;
             }
 
+
+            // ==============================
+            // CARD DO MÓDULO
+            // ==============================
+
             const card =
-                document.createElement("div");
+                document.createElement(
+                    "div"
+                );
 
             card.className =
                 "course-card";
@@ -151,46 +269,80 @@ async function carregarCurso() {
             card.style.marginBottom =
                 "20px";
 
+
             card.innerHTML = `
 
                 <h3>
-                    📚 ${modulo.nome || "Módulo"}
+                    📚 ${
+                        modulo.nome ||
+                        "Módulo"
+                    }
                 </h3>
 
                 <p>
+
                     ${
                         aulas
                             ? aulas.length
                             : 0
                     }
+
                     aula(s)
+
                 </p>
 
             `;
 
-            if (aulas && aulas.length > 0) {
+
+            // ==============================
+            // LISTA DE AULAS
+            // ==============================
+
+            if (
+                aulas &&
+                aulas.length > 0
+            ) {
 
                 const lista =
-                    document.createElement("ul");
+                    document.createElement(
+                        "ul"
+                    );
 
-                aulas.forEach(function (aula) {
 
-                    const item =
-                        document.createElement("li");
+                aulas.forEach(
+                    function (aula) {
 
-                    item.textContent =
-                        aula.titulo || "Aula";
+                        const item =
+                            document.createElement(
+                                "li"
+                            );
 
-                    lista.appendChild(item);
 
-                });
+                        item.textContent =
+                            aula.titulo ||
+                            "Aula";
 
-                card.appendChild(lista);
+
+                        lista.appendChild(
+                            item
+                        );
+
+                    }
+                );
+
+
+                card.appendChild(
+                    lista
+                );
             }
 
-            conteudoCurso.appendChild(card);
+
+            conteudoCurso.appendChild(
+                card
+            );
         }
     }
+
 
     // ==============================
     // BOTÃO COMPRAR
@@ -202,10 +354,13 @@ async function carregarCurso() {
 
             window.location.href =
                 "cadastro.html?curso=" +
-                encodeURIComponent(curso.id);
+                encodeURIComponent(
+                    curso.id
+                );
 
         }
     );
+
 }
 
 
