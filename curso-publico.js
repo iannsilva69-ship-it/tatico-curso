@@ -98,10 +98,10 @@ async function carregarCurso() {
 
     if (erroModulos) {
 
-        console.error(
-            "Erro ao carregar módulos:",
-            erroModulos
-        );
+       console.error(
+    "ERRO MODULOS:",
+    JSON.stringify(erroModulos, null, 2)
+);
 
         conteudoCurso.innerHTML =
             "<p>Não foi possível carregar o conteúdo.</p>";
