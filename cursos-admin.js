@@ -14,7 +14,10 @@ async function verificarSocio() {
         return false;
     }
 
-    const { data: perfil, error: erroPerfil } =
+    const {
+        data: perfil,
+        error: erroPerfil
+    } =
         await supabaseClient
             .from("perfis")
             .select("tipo, status")
@@ -33,9 +36,12 @@ async function verificarSocio() {
         (perfil.status || "").toLowerCase() !== "ativo"
     ) {
 
-        alert("Acesso permitido somente para sócios.");
+        alert(
+            "Acesso permitido somente para sócios."
+        );
 
-        window.location.href = "aluno.html";
+        window.location.href =
+            "aluno.html";
 
         return false;
     }
@@ -50,135 +56,207 @@ async function verificarSocio() {
 
 async function carregarCursos() {
 
-    const autorizado = await verificarSocio();
+    const autorizado =
+        await verificarSocio();
 
     if (!autorizado) return;
 
-    const area = document.getElementById("listaCursos");
+    const area =
+        document.getElementById(
+            "listaCursos"
+        );
 
-    const { data: cursos, error } =
+    const {
+        data: cursos,
+        error
+    } =
         await supabaseClient
             .from("cursos")
-            .select("id, nome, descricao, preco, imagem, ativo")
-            .order("id", { ascending: false });
+            .select(
+                "id, nome, descricao, porque_fazer, preco, imagem, ativo"
+            )
+            .order(
+                "id",
+                {
+                    ascending: false
+                }
+            );
 
     if (error) {
 
-        console.error(error);
+        console.error(
+            "Erro ao carregar cursos:",
+            error
+        );
 
-        area.innerHTML = `
-            <p>Erro ao carregar os cursos.</p>
-        `;
+        area.innerHTML =
+            "<p>Erro ao carregar os cursos.</p>";
 
         return;
     }
 
-    if (!cursos || cursos.length === 0) {
+    if (
+        !cursos ||
+        cursos.length === 0
+    ) {
 
-        area.innerHTML = `
-            <p>Nenhum curso cadastrado ainda.</p>
-        `;
+        area.innerHTML =
+            "<p>Nenhum curso cadastrado ainda.</p>";
 
         return;
     }
 
     area.innerHTML = "";
 
-    cursos.forEach(function (curso) {
+    cursos.forEach(
+        function (curso) {
 
-        const card = document.createElement("div");
+            const card =
+                document.createElement(
+                    "div"
+                );
 
-        card.className = "course-card";
+            card.className =
+                "course-card";
 
-        card.innerHTML = `
-            ${curso.imagem ? `
-                <img
-                    src="${curso.imagem}"
-                    alt="${curso.nome || "Curso"}"
-                    style="max-width: 100%; border-radius: 10px; margin-bottom: 15px;"
-                >
-            ` : ""}
+            card.innerHTML = `
 
-            <h3>
-                ${curso.nome || "Curso sem nome"}
-            </h3>
-
-            <p>
-                ${curso.descricao || "Sem descrição cadastrada."}
-            </p>
-
-            <p>
-                <strong>Preço:</strong>
-                R$
                 ${
-                    curso.preco !== null &&
-                    curso.preco !== undefined
-                    ? Number(curso.preco)
-                        .toFixed(2)
-                        .replace(".", ",")
-                    : "0,00"
+                    curso.imagem
+                        ? `
+                            <img
+                                src="${curso.imagem}"
+                                alt="${
+                                    curso.nome ||
+                                    "Curso"
+                                }"
+                                style="
+                                    max-width:100%;
+                                    border-radius:10px;
+                                    margin-bottom:15px;
+                                "
+                            >
+                        `
+                        : ""
                 }
-            </p>
 
-            <p>
-                <strong>Status:</strong>
-                ${curso.ativo ? "Ativo" : "Inativo"}
-            </p>
+                <h3>
+                    ${
+                        curso.nome ||
+                        "Curso sem nome"
+                    }
+                </h3>
 
-            <button
-                type="button"
-                class="btn-editar"
-            >
-                ✏️ Editar
-            </button>
+                <p>
+                    ${
+                        curso.descricao ||
+                        "Sem descrição cadastrada."
+                    }
+                </p>
 
-            <button
-                type="button"
-                class="btn-modulos"
-            >
-                📚 Gerenciar módulos
-            </button>
-        `;
+                <p>
+                    <strong>
+                        Por que fazer este curso:
+                    </strong>
+                    <br>
+                    ${
+                        curso.porque_fazer ||
+                        "Ainda não informado."
+                    }
+                </p>
 
-        area.appendChild(card);
+                <p>
+                    <strong>Preço:</strong>
+                    R$
+
+                    ${
+                        curso.preco !== null &&
+                        curso.preco !== undefined
+                            ? Number(
+                                curso.preco
+                              )
+                                .toFixed(2)
+                                .replace(
+                                    ".",
+                                    ","
+                                )
+                            : "0,00"
+                    }
+                </p>
+
+                <p>
+                    <strong>Status:</strong>
+                    ${
+                        curso.ativo
+                            ? "Ativo"
+                            : "Inativo"
+                    }
+                </p>
+
+                <button
+                    type="button"
+                    class="btn-editar"
+                >
+                    ✏️ Editar
+                </button>
+
+                <button
+                    type="button"
+                    class="btn-modulos"
+                >
+                    📚 Gerenciar módulos
+                </button>
+
+            `;
+
+            area.appendChild(
+                card
+            );
 
 
-        // ==============================
-        // BOTÃO EDITAR
-        // ==============================
+            // ==============================
+            // EDITAR
+            // ==============================
 
-        const botaoEditar =
-            card.querySelector(".btn-editar");
+            const botaoEditar =
+                card.querySelector(
+                    ".btn-editar"
+                );
 
-        botaoEditar.addEventListener(
-            "click",
-            function () {
+            botaoEditar.addEventListener(
+                "click",
+                function () {
 
-                editarCurso(curso.id);
+                    editarCurso(
+                        curso.id
+                    );
 
-            }
-        );
+                }
+            );
 
 
-        // ==============================
-        // BOTÃO GERENCIAR MÓDULOS
-        // ==============================
+            // ==============================
+            // MÓDULOS
+            // ==============================
 
-        const botaoModulos =
-            card.querySelector(".btn-modulos");
+            const botaoModulos =
+                card.querySelector(
+                    ".btn-modulos"
+                );
 
-        botaoModulos.addEventListener(
-            "click",
-            function () {
+            botaoModulos.addEventListener(
+                "click",
+                function () {
 
-                window.location.href =
-                    "modulos-admin.html?id=" + curso.id;
+                    window.location.href =
+                        "modulos-admin.html?id=" +
+                        curso.id;
 
-            }
-        );
+                }
+            );
 
-    });
-
+        }
+    );
 }
 
 
@@ -188,15 +266,24 @@ async function carregarCursos() {
 
 async function editarCurso(id) {
 
-    console.log("Editando curso:", id);
+    console.log(
+        "Editando curso:",
+        id
+    );
 
-    const { data: curso, error } =
+    const {
+        data: curso,
+        error
+    } =
         await supabaseClient
             .from("cursos")
             .select(
-                "id, nome, descricao, preco, imagem, ativo"
+                "id, nome, descricao, porque_fazer, preco, imagem, ativo"
             )
-            .eq("id", id)
+            .eq(
+                "id",
+                id
+            )
             .single();
 
     if (error || !curso) {
@@ -214,30 +301,57 @@ async function editarCurso(id) {
     }
 
 
-    document.getElementById("edicaoId").value =
+    document.getElementById(
+        "edicaoId"
+    ).value =
         curso.id;
 
-    document.getElementById("edicaoNome").value =
+
+    document.getElementById(
+        "edicaoNome"
+    ).value =
         curso.nome || "";
 
-    document.getElementById("edicaoDescricao").value =
+
+    document.getElementById(
+        "edicaoDescricao"
+    ).value =
         curso.descricao || "";
 
-    document.getElementById("edicaoPreco").value =
+
+    document.getElementById(
+        "edicaoPorqueFazer"
+    ).value =
+        curso.porque_fazer || "";
+
+
+    document.getElementById(
+        "edicaoPreco"
+    ).value =
         curso.preco ?? "";
 
-    document.getElementById("edicaoImagem").value =
+
+    document.getElementById(
+        "edicaoImagem"
+    ).value =
         curso.imagem || "";
 
-    document.getElementById("edicaoAtivo").checked =
+
+    document.getElementById(
+        "edicaoAtivo"
+    ).checked =
         curso.ativo === true;
 
 
-    document.getElementById("areaEdicao").style.display =
+    document.getElementById(
+        "areaEdicao"
+    ).style.display =
         "block";
 
 
-    document.getElementById("areaEdicao").scrollIntoView({
+    document.getElementById(
+        "areaEdicao"
+    ).scrollIntoView({
         behavior: "smooth",
         block: "start"
     });
@@ -246,281 +360,346 @@ async function editarCurso(id) {
 
 
 // ==============================
-// SALVAR ALTERAÇÕES DO CURSO
+// SALVAR ALTERAÇÕES
 // ==============================
 
-document.getElementById("edicaoForm").addEventListener(
-    "submit",
-    async function (event) {
+document
+    .getElementById("edicaoForm")
+    .addEventListener(
+        "submit",
+        async function (event) {
 
-        event.preventDefault();
+            event.preventDefault();
 
-        const mensagem =
-            document.getElementById(
-                "mensagemEdicao"
-            );
+            const mensagem =
+                document.getElementById(
+                    "mensagemEdicao"
+                );
 
-        const id =
-            document.getElementById(
-                "edicaoId"
-            ).value;
+            const id =
+                document.getElementById(
+                    "edicaoId"
+                ).value;
 
-        const nome =
-            document.getElementById(
-                "edicaoNome"
-            ).value.trim();
+            const nome =
+                document.getElementById(
+                    "edicaoNome"
+                ).value.trim();
 
-        const descricao =
-            document.getElementById(
-                "edicaoDescricao"
-            ).value.trim();
+            const descricao =
+                document.getElementById(
+                    "edicaoDescricao"
+                ).value.trim();
 
-        const preco =
-            document.getElementById(
-                "edicaoPreco"
-            ).value;
+            const porqueFazer =
+                document.getElementById(
+                    "edicaoPorqueFazer"
+                ).value.trim();
 
-        const imagem =
-            document.getElementById(
-                "edicaoImagem"
-            ).value.trim();
+            const preco =
+                document.getElementById(
+                    "edicaoPreco"
+                ).value;
 
-        const ativo =
-            document.getElementById(
-                "edicaoAtivo"
-            ).checked;
+            const imagem =
+                document.getElementById(
+                    "edicaoImagem"
+                ).value.trim();
 
+            const ativo =
+                document.getElementById(
+                    "edicaoAtivo"
+                ).checked;
 
-        mensagem.textContent =
-            "Salvando alterações...";
-
-
-        const { error } =
-            await supabaseClient
-                .from("cursos")
-                .update({
-                    nome: nome,
-                    descricao: descricao,
-                    preco: preco || null,
-                    imagem: imagem || null,
-                    ativo: ativo
-                })
-                .eq("id", id);
-
-
-        if (error) {
-
-            console.error(
-                "Erro ao atualizar:",
-                error
-            );
 
             mensagem.textContent =
-                "Erro ao atualizar o curso.";
+                "Salvando alterações...";
 
-            return;
+
+            const {
+                error
+            } =
+                await supabaseClient
+                    .from("cursos")
+                    .update({
+
+                        nome: nome,
+
+                        descricao:
+                            descricao,
+
+                        porque_fazer:
+                            porqueFazer,
+
+                        preco:
+                            preco || null,
+
+                        imagem:
+                            imagem || null,
+
+                        ativo:
+                            ativo
+
+                    })
+                    .eq(
+                        "id",
+                        id
+                    );
+
+
+            if (error) {
+
+                console.error(
+                    "Erro ao atualizar:",
+                    error
+                );
+
+                mensagem.textContent =
+                    "Erro ao atualizar o curso.";
+
+                return;
+            }
+
+
+            mensagem.textContent =
+                "Curso atualizado com sucesso!";
+
+
+            setTimeout(
+                function () {
+
+                    document.getElementById(
+                        "areaEdicao"
+                    ).style.display =
+                        "none";
+
+                    carregarCursos();
+
+                },
+                1000
+            );
+
         }
-
-
-        mensagem.textContent =
-            "Curso atualizado com sucesso!";
-
-
-        setTimeout(function () {
-
-            document.getElementById(
-                "areaEdicao"
-            ).style.display = "none";
-
-            carregarCursos();
-
-        }, 1000);
-
-    }
-);
+    );
 
 
 // ==============================
 // NOVO CURSO
 // ==============================
 
-document.getElementById("novoCurso").addEventListener(
-    "click",
-    function () {
+document
+    .getElementById("novoCurso")
+    .addEventListener(
+        "click",
+        function () {
 
-        document.getElementById(
-            "formularioCurso"
-        ).style.display = "block";
+            document.getElementById(
+                "formularioCurso"
+            ).style.display =
+                "block";
 
-        document.getElementById(
-            "nomeCurso"
-        ).focus();
+            document.getElementById(
+                "nomeCurso"
+            ).focus();
 
-    }
-);
+        }
+    );
 
 
 // ==============================
 // CANCELAR NOVO CURSO
 // ==============================
 
-document.getElementById("cancelarCurso").addEventListener(
-    "click",
-    function () {
+document
+    .getElementById("cancelarCurso")
+    .addEventListener(
+        "click",
+        function () {
 
-        document.getElementById(
-            "formularioCurso"
-        ).style.display = "none";
+            document.getElementById(
+                "formularioCurso"
+            ).style.display =
+                "none";
 
-        document.getElementById(
-            "cursoForm"
-        ).reset();
+            document.getElementById(
+                "cursoForm"
+            ).reset();
 
-    }
-);
+        }
+    );
 
 
 // ==============================
 // SALVAR NOVO CURSO
 // ==============================
 
-document.getElementById("cursoForm").addEventListener(
-    "submit",
-    async function (event) {
+document
+    .getElementById("cursoForm")
+    .addEventListener(
+        "submit",
+        async function (event) {
 
-        event.preventDefault();
+            event.preventDefault();
 
-        const mensagem =
-            document.getElementById(
-                "mensagemCurso"
-            );
+            const mensagem =
+                document.getElementById(
+                    "mensagemCurso"
+                );
 
-        const nome =
-            document.getElementById(
-                "nomeCurso"
-            ).value.trim();
+            const nome =
+                document.getElementById(
+                    "nomeCurso"
+                ).value.trim();
 
-        const descricao =
-            document.getElementById(
-                "descricaoCurso"
-            ).value.trim();
+            const descricao =
+                document.getElementById(
+                    "descricaoCurso"
+                ).value.trim();
 
-        const preco =
-            document.getElementById(
-                "precoCurso"
-            ).value;
+            const porqueFazer =
+                document.getElementById(
+                    "porqueFazerCurso"
+                ).value.trim();
 
-        const imagem =
-            document.getElementById(
-                "imagemCurso"
-            ).value.trim();
+            const preco =
+                document.getElementById(
+                    "precoCurso"
+                ).value;
 
-        const ativo =
-            document.getElementById(
-                "ativoCurso"
-            ).checked;
+            const imagem =
+                document.getElementById(
+                    "imagemCurso"
+                ).value.trim();
 
+            const ativo =
+                document.getElementById(
+                    "ativoCurso"
+                ).checked;
 
-        mensagem.textContent =
-            "Salvando curso...";
-
-
-        const { error } =
-            await supabaseClient
-                .from("cursos")
-                .insert({
-                    nome: nome,
-                    descricao: descricao,
-                    preco: preco || null,
-                    imagem: imagem || null,
-                    ativo: ativo
-                });
-
-
-        if (error) {
-
-            console.error(
-                "Erro ao criar curso:",
-                error
-            );
 
             mensagem.textContent =
-                "Erro ao salvar o curso.";
-
-            return;
-        }
+                "Salvando curso...";
 
 
-        mensagem.textContent =
-            "Curso criado com sucesso!";
+            const {
+                error
+            } =
+                await supabaseClient
+                    .from("cursos")
+                    .insert({
+
+                        nome: nome,
+
+                        descricao:
+                            descricao,
+
+                        porque_fazer:
+                            porqueFazer,
+
+                        preco:
+                            preco || null,
+
+                        imagem:
+                            imagem || null,
+
+                        ativo:
+                            ativo
+
+                    });
 
 
-        document.getElementById(
-            "cursoForm"
-        ).reset();
+            if (error) {
 
-        document.getElementById(
-            "ativoCurso"
-        ).checked = true;
+                console.error(
+                    "Erro ao criar curso:",
+                    error
+                );
+
+                mensagem.textContent =
+                    "Erro ao salvar o curso.";
+
+                return;
+            }
 
 
-        setTimeout(function () {
+            mensagem.textContent =
+                "Curso criado com sucesso!";
+
 
             document.getElementById(
-                "formularioCurso"
-            ).style.display = "none";
+                "cursoForm"
+            ).reset();
 
-            mensagem.textContent = "";
 
-            carregarCursos();
+            document.getElementById(
+                "ativoCurso"
+            ).checked =
+                true;
 
-        }, 1000);
 
-    }
-);
+            setTimeout(
+                function () {
+
+                    document.getElementById(
+                        "formularioCurso"
+                    ).style.display =
+                        "none";
+
+                    mensagem.textContent =
+                        "";
+
+                    carregarCursos();
+
+                },
+                1000
+            );
+
+        }
+    );
 
 
 // ==============================
 // CANCELAR EDIÇÃO
 // ==============================
 
-document.getElementById(
-    "cancelarEdicao"
-).addEventListener(
-    "click",
-    function () {
+document
+    .getElementById("cancelarEdicao")
+    .addEventListener(
+        "click",
+        function () {
 
-        document.getElementById(
-            "areaEdicao"
-        ).style.display = "none";
+            document.getElementById(
+                "areaEdicao"
+            ).style.display =
+                "none";
 
-        document.getElementById(
-            "edicaoForm"
-        ).reset();
+            document.getElementById(
+                "edicaoForm"
+            ).reset();
 
-    }
-);
+        }
+    );
 
 
 // ==============================
 // SAIR
 // ==============================
 
-document.getElementById(
-    "sair"
-).addEventListener(
-    "click",
-    async function (event) {
+document
+    .getElementById("sair")
+    .addEventListener(
+        "click",
+        async function (event) {
 
-        event.preventDefault();
+            event.preventDefault();
 
-        await supabaseClient.auth.signOut();
+            await supabaseClient.auth.signOut();
 
-        window.location.href =
-            "login.html";
+            window.location.href =
+                "login.html";
 
-    }
-);
+        }
+    );
 
 
 // ==============================
