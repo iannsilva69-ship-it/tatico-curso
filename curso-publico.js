@@ -154,7 +154,7 @@ async function carregarCurso() {
             card.innerHTML = `
 
                 <h3>
-                    📚 ${modulo.titulo || "Módulo"}
+                    📚 ${modulo.nome || "Módulo"}
                 </h3>
 
                 <p>
