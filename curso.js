@@ -634,3 +634,4 @@ async function carregarCurso() {
                         }
 
                         concluida = false
+             
