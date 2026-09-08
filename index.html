@@ -1,32 +1,75 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>Tático Curso</title>
 
-    <link rel="stylesheet" href="style.css">
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="supabase.js"></script>
+
+    <script src="supabase.js"></script>
+
 </head>
 
-<body>
+
+<body id="inicio">
+
+    <!-- ==============================
+         CABEÇALHO
+    ============================== -->
 
     <header>
+
         <div class="logo">
             TÁTICO CURSO
         </div>
 
+
         <nav>
-            <a href="#">Início</a>
-            <a href="#">Cursos</a>
-            <a href="#">Simulados</a>
-            <a href="#">Login</a>
+
+            <a href="#inicio">
+                Início
+            </a>
+
+            <a href="#cursos">
+                Cursos
+            </a>
+
+            <a href="#simulados">
+                Simulados
+            </a>
+
+            <a href="login.html">
+                Login
+            </a>
+
         </nav>
+
     </header>
 
+
+    <!-- ==============================
+         CONTEÚDO
+    ============================== -->
+
     <main>
+
+
+        <!-- ==============================
+             HERO
+        ============================== -->
 
         <section class="hero">
 
@@ -36,22 +79,33 @@
                     PREPARAÇÃO PARA CONCURSOS
                 </span>
 
+
                 <h1>
                     Prepare-se para sua aprovação.
                 </h1>
+
 
                 <p>
                     Cursos, videoaulas, materiais e simulados
                     para você estudar de onde estiver.
                 </p>
 
+
                 <div class="buttons">
 
-                    <button onclick="window.location.href='#cursos'">
+                    <button
+                        type="button"
+                        onclick="document.getElementById('cursos').scrollIntoView({ behavior: 'smooth' });"
+                    >
                         Ver cursos
                     </button>
 
-                    <button class="secondary">
+
+                    <button
+                        type="button"
+                        class="secondary"
+                        onclick="window.location.href='login.html';"
+                    >
                         Entrar
                     </button>
 
@@ -61,11 +115,20 @@
 
         </section>
 
-        <section id="cursos" class="courses">
+
+        <!-- ==============================
+             CURSOS
+        ============================== -->
+
+        <section
+            id="cursos"
+            class="courses"
+        >
 
             <h2>
                 Nossos cursos
             </h2>
+
 
             <div class="course-card">
 
@@ -73,12 +136,17 @@
                     Preparação para Concursos
                 </h3>
 
+
                 <p>
                     Tenha acesso a videoaulas, PDFs,
                     slides e simulados.
                 </p>
 
-                <button>
+
+                <button
+                    type="button"
+                    onclick="window.location.href='cadastro.html';"
+                >
                     Conhecer curso
                 </button>
 
@@ -86,7 +154,53 @@
 
         </section>
 
+
+        <!-- ==============================
+             SIMULADOS
+        ============================== -->
+
+        <section
+            id="simulados"
+            class="courses"
+        >
+
+            <h2>
+                Simulados
+            </h2>
+
+
+            <div class="course-card">
+
+                <h3>
+                    📝 Simulados para concursos
+                </h3>
+
+
+                <p>
+                    Acesse simulados completos para
+                    testar seus conhecimentos e se preparar
+                    para sua prova.
+                </p>
+
+
+                <button
+                    type="button"
+                    onclick="window.location.href='login.html';"
+                >
+                    Acessar simulados
+                </button>
+
+            </div>
+
+        </section>
+
+
     </main>
+
+
+    <!-- ==============================
+         RODAPÉ
+    ============================== -->
 
     <footer>
 
@@ -96,5 +210,8 @@
 
     </footer>
 
+
 </body>
+
 </html>
+   
