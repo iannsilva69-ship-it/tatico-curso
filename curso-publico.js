@@ -56,7 +56,10 @@ async function carregarCurso() {
         await supabaseClient
             .from("cursos")
             .select("*")
-            .eq("id", cursoId)
+            .eq(
+    "curso_id",
+    cursoId
+)
             .single();
 
 
