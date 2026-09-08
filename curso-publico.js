@@ -27,7 +27,7 @@ async function carregarCurso() {
 
 
     // ==============================
-    // VERIFICAR ID
+    // VERIFICAR ID DO CURSO
     // ==============================
 
     if (!cursoId) {
@@ -56,19 +56,20 @@ async function carregarCurso() {
         await supabaseClient
             .from("cursos")
             .select("*")
-            .eq(
-    "curso_id",
-    cursoId
-)
+            .eq("id", cursoId)
             .single();
 
 
     if (erroCurso || !curso) {
 
-       console.error(
-    "ERRO CURSO:",
-    JSON.stringify(erroCurso, null, 2)
-);
+        console.error(
+            "ERRO CURSO:",
+            JSON.stringify(
+                erroCurso,
+                null,
+                2
+            )
+        );
 
         nomeCurso.textContent =
             "Curso não encontrado.";
@@ -99,12 +100,14 @@ async function carregarCurso() {
     precoCurso.textContent =
         preco > 0
             ? "R$ " +
-              preco.toFixed(2).replace(".", ",")
+              preco
+                  .toFixed(2)
+                  .replace(".", ",")
             : "Consulte o valor";
 
 
     // ==============================
-    // IMAGEM
+    // IMAGEM DO CURSO
     // ==============================
 
     if (curso.imagem) {
@@ -154,7 +157,11 @@ async function carregarCurso() {
 
         console.error(
             "ERRO MODULOS:",
-            erroModulos
+            JSON.stringify(
+                erroModulos,
+                null,
+                2
+            )
         );
 
         conteudoCurso.innerHTML =
@@ -172,14 +179,17 @@ async function carregarCurso() {
         (todosModulos || [])
             .filter(function (modulo) {
 
-                return String(modulo.id_curso) ===
-                    String(cursoId);
+                return String(
+                    modulo.curso_id
+                ) === String(cursoId);
 
             })
             .sort(function (a, b) {
 
-                return (a.ordem || 0) -
-                    (b.ordem || 0);
+                return (
+                    (a.ordem || 0) -
+                    (b.ordem || 0)
+                );
 
             });
 
@@ -210,35 +220,43 @@ async function carregarCurso() {
 
 
         // ==============================
+        // BUSCAR TODAS AS AULAS
+        // ==============================
+
+        const {
+            data: todasAulas,
+            error: erroAulas
+        } =
+            await supabaseClient
+                .from("aulas")
+                .select("*");
+
+
+        if (erroAulas) {
+
+            console.error(
+                "ERRO AULAS:",
+                JSON.stringify(
+                    erroAulas,
+                    null,
+                    2
+                )
+            );
+
+            conteudoCurso.innerHTML =
+                "<p>Não foi possível carregar as aulas.</p>";
+
+            return;
+        }
+
+
+        // ==============================
         // PERCORRER MÓDULOS
         // ==============================
 
-        for (const modulo of modulos) {
-
-
-            // ==============================
-            // BUSCAR TODAS AS AULAS
-            // ==============================
-
-            const {
-                data: todasAulas,
-                error: erroAulas
-            } =
-                await supabaseClient
-                    .from("aulas")
-                    .select("*");
-
-
-            if (erroAulas) {
-
-                console.error(
-                    "Erro ao carregar aulas:",
-                    erroAulas
-                );
-
-                continue;
-            }
-
+        for (
+            const modulo of modulos
+        ) {
 
             // ==============================
             // FILTRAR AULAS DO MÓDULO
@@ -248,14 +266,19 @@ async function carregarCurso() {
                 (todasAulas || [])
                     .filter(function (aula) {
 
-                        return String(aula.modulo_id) ===
-                            String(modulo.id);
+                        return String(
+                            aula.modulo_id
+                        ) === String(
+                            modulo.id
+                        );
 
                     })
                     .sort(function (a, b) {
 
-                        return (a.ordem || 0) -
-                            (b.ordem || 0);
+                        return (
+                            (a.ordem || 0) -
+                            (b.ordem || 0)
+                        );
 
                     });
 
@@ -265,7 +288,9 @@ async function carregarCurso() {
             // ==============================
 
             const card =
-                document.createElement("div");
+                document.createElement(
+                    "div"
+                );
 
             card.className =
                 "course-card";
@@ -297,17 +322,24 @@ async function carregarCurso() {
             // LISTA DE AULAS
             // ==============================
 
-            if (aulas.length > 0) {
+            if (
+                aulas.length > 0
+            ) {
 
                 const lista =
-                    document.createElement("ul");
+                    document.createElement(
+                        "ul"
+                    );
 
 
                 aulas.forEach(
                     function (aula) {
 
                         const item =
-                            document.createElement("li");
+                            document.createElement(
+                                "li"
+                            );
+
 
                         item.textContent =
                             aula.titulo ||
@@ -360,3 +392,4 @@ async function carregarCurso() {
 // ==============================
 
 carregarCurso();
+
