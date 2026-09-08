@@ -128,8 +128,8 @@ async function carregarCurso() {
             const { data: aulas, error: erroAulas } =
                 await supabaseClient
                     .from("aulas")
-                    .select("id, titulo, ordem")
-                    .eq("modulo_id", modulo.id)
+                    .select("id, nome, ordem")
+.eq("id_curso", cursoId)
                     .order("ordem", { ascending: true });
 
             if (erroAulas) {
