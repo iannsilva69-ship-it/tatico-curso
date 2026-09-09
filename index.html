@@ -143,8 +143,6 @@
             </p>
 
 
-            <!-- CURSOS SERÃO CARREGADOS AQUI -->
-
             <div
                 id="listaCursosPublicos"
                 style="
@@ -242,7 +240,11 @@
             } = await supabaseClient
                 .from("cursos")
                 .select(
-                    "id, nome, descricao"
+                    "id, nome, descricao, imagem"
+                )
+                .eq(
+                    "ativo",
+                    true
                 )
                 .order(
                     "id",
@@ -310,7 +312,63 @@
                         display:flex;
                         flex-direction:column;
                         justify-content:space-between;
-                        min-height:220px;
+                        overflow:hidden;
+                        padding:0;
+                    `;
+
+
+                    // ==============================
+                    // IMAGEM DO CURSO
+                    // ==============================
+
+                    if (curso.imagem) {
+
+                        const imagem =
+                            document.createElement(
+                                "img"
+                            );
+
+
+                        imagem.src =
+                            curso.imagem;
+
+
+                        imagem.alt =
+                            curso.nome ||
+                            "Imagem do curso";
+
+
+                        imagem.style.cssText = `
+                            width:100%;
+                            aspect-ratio:16 / 9;
+                            object-fit:cover;
+                            display:block;
+                        `;
+
+
+                        card.appendChild(
+                            imagem
+                        );
+
+                    }
+
+
+                    // ==============================
+                    // ÁREA DE CONTEÚDO
+                    // ==============================
+
+                    const conteudo =
+                        document.createElement(
+                            "div"
+                        );
+
+
+                    conteudo.style.cssText = `
+                        padding:24px;
+                        display:flex;
+                        flex-direction:column;
+                        gap:12px;
+                        flex:1;
                     `;
 
 
@@ -349,32 +407,41 @@
                         "Conhecer curso";
 
 
+                    botao.style.marginTop =
+                        "auto";
+
+
                     botao.addEventListener(
                         "click",
                         function () {
 
                             window.location.href =
-    "curso-publico.html?id=" +
-    encodeURIComponent(
-        curso.id
-    );
+                                "curso-publico.html?id=" +
+                                encodeURIComponent(
+                                    curso.id
+                                );
 
                         }
                     );
 
 
-                    card.appendChild(
+                    conteudo.appendChild(
                         titulo
                     );
 
 
-                    card.appendChild(
+                    conteudo.appendChild(
                         descricao
                     );
 
 
-                    card.appendChild(
+                    conteudo.appendChild(
                         botao
+                    );
+
+
+                    card.appendChild(
+                        conteudo
                     );
 
 
@@ -392,8 +459,6 @@
 
     </script>
 
-
 </body>
 
 </html>
-
