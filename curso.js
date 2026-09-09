@@ -10,10 +10,6 @@ async function carregarCurso() {
         return;
     }
 
-    // ==============================
-    // ID DO CURSO
-    // ==============================
-
     const parametros =
         new URLSearchParams(window.location.search);
 
@@ -46,9 +42,7 @@ async function carregarCurso() {
         .single();
 
     if (erroPerfil || !perfil) {
-        window.location.href =
-            "aluno.html";
-
+        window.location.href = "aluno.html";
         return;
     }
 
@@ -68,17 +62,14 @@ async function carregarCurso() {
         .maybeSingle();
 
     if (erroMatricula) {
-
         console.error(
-            "Erro ao verificar matrícula:",
+            "Erro matrícula:",
             erroMatricula
         );
-
         return;
     }
 
     if (!matricula) {
-
         alert(
             "Você não possui acesso a este curso."
         );
@@ -105,7 +96,7 @@ async function carregarCurso() {
     if (erroCurso || !curso) {
 
         console.error(
-            "Erro ao carregar curso:",
+            "Erro curso:",
             erroCurso
         );
 
@@ -126,7 +117,6 @@ async function carregarCurso() {
         );
 
     if (descricaoCurso) {
-
         descricaoCurso.textContent =
             curso.descricao ||
             "Conteúdo do curso.";
@@ -150,15 +140,17 @@ async function carregarCurso() {
     if (erroModulos) {
 
         console.error(
-            "Erro ao carregar módulos:",
+            "Erro módulos:",
             erroModulos
         );
 
-        const areaErro =
-            document.getElementById("modulos");
+        const area =
+            document.getElementById(
+                "modulos"
+            );
 
-        if (areaErro) {
-            areaErro.innerHTML =
+        if (area) {
+            area.innerHTML =
                 "<p>Não foi possível carregar os módulos.</p>";
         }
 
@@ -190,9 +182,8 @@ async function carregarCurso() {
         .eq("usuario_id", perfil.id);
 
     if (erroProgresso) {
-
         console.error(
-            "Erro ao buscar progresso:",
+            "Erro progresso:",
             erroProgresso
         );
     }
@@ -201,7 +192,7 @@ async function carregarCurso() {
     let aulasConcluidas = 0;
 
     // ==============================
-    // BARRA DE PROGRESSO
+    // ÁREA DO PROGRESSO
     // ==============================
 
     let areaProgresso =
@@ -227,13 +218,11 @@ async function carregarCurso() {
         `;
 
         areaProgresso.innerHTML = `
-
             <div style="
                 display:flex;
                 justify-content:space-between;
                 margin-bottom:10px;
             ">
-
                 <strong>
                     📊 Seu progresso
                 </strong>
@@ -241,7 +230,6 @@ async function carregarCurso() {
                 <span id="porcentagemProgresso">
                     0%
                 </span>
-
             </div>
 
             <div style="
@@ -250,7 +238,6 @@ async function carregarCurso() {
                 border-radius:20px;
                 overflow:hidden;
             ">
-
                 <div
                     id="barraProgresso"
                     style="
@@ -260,7 +247,6 @@ async function carregarCurso() {
                         transition:width .3s;
                     "
                 ></div>
-
             </div>
         `;
 
@@ -296,20 +282,18 @@ async function carregarCurso() {
             );
 
         if (texto) {
-
             texto.textContent =
                 porcentagem + "%";
         }
 
         if (barra) {
-
             barra.style.width =
                 porcentagem + "%";
         }
     }
 
     // ==============================
-    // LIMPAR ÁREA
+    // LIMPAR MÓDULOS
     // ==============================
 
     areaModulos.innerHTML = "";
@@ -323,7 +307,7 @@ async function carregarCurso() {
     }
 
     // ==============================
-    // MÓDULOS
+    // PERCORRER MÓDULOS
     // ==============================
 
     for (const modulo of modulos) {
@@ -378,7 +362,7 @@ async function carregarCurso() {
         if (erroAulas) {
 
             console.error(
-                "Erro ao carregar aulas:",
+                "Erro aulas:",
                 erroAulas
             );
 
@@ -399,7 +383,7 @@ async function carregarCurso() {
         areaAulas.innerHTML = "";
 
         // ==============================
-        // AULAS
+        // PERCORRER AULAS
         // ==============================
 
         aulas.forEach(function (aula) {
@@ -421,7 +405,7 @@ async function carregarCurso() {
             }
 
             // ==============================
-            // CONTAINER DA AULA
+            // AULA
             // ==============================
 
             const aulaDiv =
@@ -434,10 +418,6 @@ async function carregarCurso() {
                 border-radius:10px;
                 background:#f8fafc;
             `;
-
-            // ==============================
-            // TÍTULO
-            // ==============================
 
             const titulo =
                 document.createElement("strong");
@@ -530,7 +510,7 @@ async function carregarCurso() {
             );
 
             // ==============================
-            // BOTÃO CONCLUSÃO
+            // CONCLUSÃO
             // ==============================
 
             const botaoConclusao =
@@ -732,89 +712,4 @@ async function carregarCurso() {
                     width:100%;
                     padding:12px;
                     border:1px solid #d1d5db;
-                    border-radius:8px;
-                    resize:vertical;
-                    font-family:inherit;
-                    margin-bottom:10px;
-                `;
-
-                areaIA.appendChild(
-                    campoPergunta
-                );
-
-                const botaoIA =
-                    document.createElement("button");
-
-                botaoIA.type =
-                    "button";
-
-                botaoIA.textContent =
-                    "🤖 Perguntar à IA";
-
-                botaoIA.style.cssText = `
-                    background:#111827;
-                    color:white;
-                    padding:10px 15px;
-                    border:none;
-                    border-radius:7px;
-                    cursor:pointer;
-                    font-weight:bold;
-                `;
-
-                areaIA.appendChild(
-                    botaoIA
-                );
-
-                const areaResposta =
-                    document.createElement("div");
-
-                areaResposta.style.marginTop =
-                    "15px";
-
-                areaIA.appendChild(
-                    areaResposta
-                );
-
-                aulaDiv.appendChild(
-                    areaIA
-                );
-
-                // ==============================
-                // BOTÃO IA
-                // ==============================
-
-                botaoIA.addEventListener(
-                    "click",
-                    async function () {
-
-                        const pergunta =
-                            campoPergunta.value.trim();
-
-                        if (!pergunta) {
-
-                            alert(
-                                "Digite sua dúvida primeiro."
-                            );
-
-                            return;
-                        }
-
-                        botaoIA.disabled =
-                            true;
-
-                        botaoIA.textContent =
-                            "🤖 Consultando...";
-
-                        areaResposta.innerHTML = `
-                            <p>
-                                Aguarde, estou analisando o material da aula...
-                            </p>
-                        `;
-
-                        try {
-
-                            let pdfUrl =
-                                aula.link_pdf;
-
-                            // ==============================
-                            // CONVERTER LINK DO GOOG
+                   
