@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Gerenciar Sócios - Tático Curso</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header>
+
+    <div>
+        <h1>TÁTICO CURSO</h1>
+        <p>Gerenciar Sócios</p>
+    </div>
+
+    <button id="logout">
+        Sair
+    </button>
+
+</header>
+
+
+<main>
+
+    <section class="boas-vindas">
+
+        <h2>👥 Gerenciar Sócios</h2>
+
+        <p>
+            Cadastre e gerencie os sócios da plataforma.
+        </p>
+
+    </section>
+
+
+    <section>
+
+        <h2>➕ Cadastrar Novo Sócio</h2>
+
+        <div class="course-card">
+
+            <label>
+                Nome
+            </label>
+
+            <input
+                type="text"
+                id="nomeSocio"
+                placeholder="Nome completo"
+            >
+
+
+            <label>
+                E-mail
+            </label>
+
+            <input
+                type="email"
+                id="emailSocio"
+                placeholder="E-mail do sócio"
+            >
+
+
+            <label>
+                Senha
+            </label>
+
+            <input
+                type="password"
+                id="senhaSocio"
+                placeholder="Senha"
+            >
+
+
+            <button
+                type="button"
+                id="cadastrarSocio"
+            >
+                CADASTRAR SÓCIO
+            </button>
+
+            <p id="mensagem"></p>
+
+        </div>
+
+    </section>
+
+
+    <section>
+
+        <h2>👥 Sócios Cadastrados</h2>
+
+        <div id="listaSocios">
+
+            <p>
+                Carregando sócios...
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <section>
+
+        <button
+            type="button"
+            onclick="window.location.href='admin.html'"
+        >
+            ← Voltar para Administração
+        </button>
+
+    </section>
+
+</main>
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script src="supabase.js"></script>
+<script src="socios-admin.js"></script>
+
+</body>
+</html>
