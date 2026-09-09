@@ -298,10 +298,10 @@ async function carregarCursos(perfil) {
                             alt="${curso.nome}"
                             style="
                                 width:100%;
-                                max-height:180px;
+                                aspect-ratio:16 / 9;
                                 object-fit:cover;
-                                border-radius:10px;
-                                margin-bottom:15px;
+                                display:block;
+                                border-radius:10px 10px 0 0;
                             "
                         >
                     `
@@ -309,79 +309,85 @@ async function carregarCursos(perfil) {
             }
 
 
-            <h3>
-                ${curso.nome}
-            </h3>
-
-
-            <p>
-                ${curso.descricao || ""}
-            </p>
-
-
-            <p>
-                <strong>
-                    📊 Seu progresso:
-                </strong>
-
-                ${porcentagem}%
-            </p>
-
-
             <div style="
-                width:100%;
-                height:12px;
-                background:#ddd;
-                border-radius:10px;
-                overflow:hidden;
-                margin:10px 0;
+                padding:20px;
             ">
 
+                <h3>
+                    ${curso.nome}
+                </h3>
+
+
+                <p>
+                    ${curso.descricao || ""}
+                </p>
+
+
+                <p>
+                    <strong>
+                        📊 Seu progresso:
+                    </strong>
+
+                    ${porcentagem}%
+                </p>
+
+
                 <div style="
-                    width:${porcentagem}%;
-                    height:100%;
-                    background:#d4af37;
-                    transition:width 0.3s ease;
-                "></div>
+                    width:100%;
+                    height:12px;
+                    background:#ddd;
+                    border-radius:10px;
+                    overflow:hidden;
+                    margin:10px 0;
+                ">
+
+                    <div style="
+                        width:${porcentagem}%;
+                        height:100%;
+                        background:#d4af37;
+                        transition:width 0.3s ease;
+                    "></div>
+
+                </div>
+
+
+                <p>
+                    ${aulasConcluidas}
+                    de
+                    ${totalAulas}
+                    aulas concluídas
+                </p>
+
+
+                ${
+                    matricula.data_fim
+                        ? `
+                            <p>
+                                <strong>
+                                    Acesso até:
+                                </strong>
+
+                                ${new Date(
+                                    matricula.data_fim
+                                ).toLocaleDateString(
+                                    "pt-BR"
+                                )}
+                            </p>
+                        `
+                        : ""
+                }
+
+
+                <button
+                    onclick="
+                        window.location.href=
+                        'curso.html?id=${curso.id}'
+                    "
+                >
+                    Acessar Curso
+                </button>
 
             </div>
-
-
-            <p>
-                ${aulasConcluidas}
-                de
-                ${totalAulas}
-                aulas concluídas
-            </p>
-
-
-            ${
-                matricula.data_fim
-                    ? `
-                        <p>
-                            <strong>
-                                Acesso até:
-                            </strong>
-
-                            ${new Date(
-                                matricula.data_fim
-                            ).toLocaleDateString(
-                                "pt-BR"
-                            )}
-                        </p>
-                    `
-                    : ""
-            }
-
-
-            <button
-                onclick="
-                    window.location.href=
-                    'curso.html?id=${curso.id}'
-                "
-            >
-                Acessar Curso
-            </button>
 
         `;
 
