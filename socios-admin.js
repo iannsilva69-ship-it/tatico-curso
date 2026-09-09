@@ -285,7 +285,7 @@ async function carregarSocios() {
         await supabaseClient
             .from("perfis")
             .select(
-                "id, nome, email, tipo, status, auth_user_id"
+                "id, nome, email, telefone, tipo, status, auth_user_id"
             )
             .or(
                 "tipo.eq.Sócio,tipo.eq.Socio"
@@ -345,6 +345,11 @@ async function carregarSocios() {
                 "Sem e-mail";
 
 
+            const telefone =
+                socio.telefone ||
+                "Não informado";
+
+
             const status =
                 socio.status ||
                 "Sem status";
@@ -371,11 +376,24 @@ async function carregarSocios() {
                 </p>
 
                 <p>
+                    📱 ${telefone}
+                </p>
+
+                <p>
                     Status:
                     <strong>
                         ${status}
                     </strong>
                 </p>
+
+
+                <button
+                    type="button"
+                    class="botao-editar"
+                >
+                    ✏️ Editar
+                </button>
+
 
                 <button
                     type="button"
@@ -390,6 +408,32 @@ async function carregarSocios() {
 
             `;
 
+
+            // ==============================
+            // BOTÃO EDITAR
+            // ==============================
+
+            const botaoEditar =
+                card.querySelector(
+                    ".botao-editar"
+                );
+
+
+            botaoEditar.addEventListener(
+                "click",
+                function () {
+
+                    abrirEdicaoSocio(
+                        socio
+                    );
+
+                }
+            );
+
+
+            // ==============================
+            // BOTÃO STATUS
+            // ==============================
 
             const botaoStatus =
                 card.querySelector(
@@ -413,6 +457,271 @@ async function carregarSocios() {
             lista.appendChild(card);
         }
     );
+}
+
+
+// ==============================
+// ABRIR EDIÇÃO
+// ==============================
+
+function abrirEdicaoSocio(socio) {
+
+    const areaEdicao =
+        document.getElementById(
+            "areaEdicao"
+        );
+
+
+    areaEdicao.style.display =
+        "block";
+
+
+    document
+        .getElementById("edicaoSocioId")
+        .value =
+        socio.id || "";
+
+
+    document
+        .getElementById("edicaoAuthUserId")
+        .value =
+        socio.auth_user_id || "";
+
+
+    document
+        .getElementById("edicaoNomeSocio")
+        .value =
+        socio.nome || "";
+
+
+    document
+        .getElementById("edicaoEmailSocio")
+        .value =
+        socio.email || "";
+
+
+    document
+        .getElementById("edicaoTelefoneSocio")
+        .value =
+        socio.telefone || "";
+
+
+    document
+        .getElementById("mensagemEdicao")
+        .textContent =
+        "";
+
+
+    areaEdicao.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+    });
+}
+
+
+// ==============================
+// SALVAR EDIÇÃO
+// ==============================
+
+async function salvarEdicaoSocio() {
+
+    const socioId =
+        document
+            .getElementById("edicaoSocioId")
+            .value;
+
+
+    const nome =
+        document
+            .getElementById("edicaoNomeSocio")
+            .value
+            .trim();
+
+
+    const email =
+        document
+            .getElementById("edicaoEmailSocio")
+            .value
+            .trim();
+
+
+    const telefone =
+        document
+            .getElementById("edicaoTelefoneSocio")
+            .value
+            .trim();
+
+
+    const mensagem =
+        document
+            .getElementById("mensagemEdicao");
+
+
+    // ==============================
+    // VALIDAR
+    // ==============================
+
+    if (!nome || !email) {
+
+        mensagem.textContent =
+            "Nome e e-mail são obrigatórios.";
+
+        return;
+    }
+
+
+    const botao =
+        document
+            .getElementById(
+                "salvarEdicaoSocio"
+            );
+
+
+    botao.disabled = true;
+
+    botao.textContent =
+        "SALVANDO...";
+
+
+    mensagem.textContent =
+        "Atualizando sócio...";
+
+
+    try {
+
+        // ==============================
+        // CHAMAR EDGE FUNCTION
+        // ==============================
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient.functions.invoke(
+                "editar-socio",
+                {
+                    body: {
+                        socioId: socioId,
+                        nome: nome,
+                        email: email,
+                        telefone: telefone
+                    }
+                }
+            );
+
+
+        // ==============================
+        // ERRO
+        // ==============================
+
+        if (error) {
+
+            console.error(
+                "ERRO EDITAR SÓCIO:",
+                error
+            );
+
+            mensagem.textContent =
+                "Não foi possível editar o sócio.";
+
+            return;
+        }
+
+
+        if (data && data.erro) {
+
+            mensagem.textContent =
+                data.erro;
+
+            return;
+        }
+
+
+        // ==============================
+        // SUCESSO
+        // ==============================
+
+        mensagem.textContent =
+            "✅ Sócio atualizado com sucesso!";
+
+
+        await carregarSocios();
+
+
+        setTimeout(
+            function () {
+
+                cancelarEdicao();
+
+            },
+            800
+        );
+
+
+    } catch (erro) {
+
+        console.error(
+            "ERRO:",
+            erro
+        );
+
+        mensagem.textContent =
+            "Ocorreu um erro ao editar o sócio.";
+
+    } finally {
+
+        botao.disabled = false;
+
+        botao.textContent =
+            "💾 SALVAR ALTERAÇÕES";
+    }
+}
+
+
+// ==============================
+// CANCELAR EDIÇÃO
+// ==============================
+
+function cancelarEdicao() {
+
+    const areaEdicao =
+        document.getElementById(
+            "areaEdicao"
+        );
+
+
+    areaEdicao.style.display =
+        "none";
+
+
+    document
+        .getElementById("edicaoSocioId")
+        .value = "";
+
+
+    document
+        .getElementById("edicaoAuthUserId")
+        .value = "";
+
+
+    document
+        .getElementById("edicaoNomeSocio")
+        .value = "";
+
+
+    document
+        .getElementById("edicaoEmailSocio")
+        .value = "";
+
+
+    document
+        .getElementById("edicaoTelefoneSocio")
+        .value = "";
+
+
+    document
+        .getElementById("mensagemEdicao")
+        .textContent = "";
 }
 
 
@@ -516,6 +825,30 @@ document
     .addEventListener(
         "click",
         cadastrarSocio
+    );
+
+
+// ==============================
+// BOTÃO SALVAR EDIÇÃO
+// ==============================
+
+document
+    .getElementById("salvarEdicaoSocio")
+    .addEventListener(
+        "click",
+        salvarEdicaoSocio
+    );
+
+
+// ==============================
+// BOTÃO CANCELAR EDIÇÃO
+// ==============================
+
+document
+    .getElementById("cancelarEdicaoSocio")
+    .addEventListener(
+        "click",
+        cancelarEdicao
     );
 
 
