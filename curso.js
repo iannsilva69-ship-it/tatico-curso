@@ -712,4 +712,273 @@ async function carregarCurso() {
                     width:100%;
                     padding:12px;
                     border:1px solid #d1d5db;
-                   
+                    border-radius:8px;
+                    resize:vertical;
+                    font-family:inherit;
+                    margin-bottom:10px;
+                `;
+
+                areaIA.appendChild(
+                    campoPergunta
+                );
+
+                const botaoIA =
+                    document.createElement("button");
+
+                botaoIA.type =
+                    "button";
+
+                botaoIA.textContent =
+                    "🤖 Perguntar à IA";
+
+                botaoIA.style.cssText = `
+                    background:#111827;
+                    color:white;
+                    padding:10px 15px;
+                    border:none;
+                    border-radius:7px;
+                    cursor:pointer;
+                    font-weight:bold;
+                `;
+
+                areaIA.appendChild(
+                    botaoIA
+                );
+
+                const areaResposta =
+                    document.createElement("div");
+
+                areaResposta.style.marginTop =
+                    "15px";
+
+                areaIA.appendChild(
+                    areaResposta
+                );
+
+                aulaDiv.appendChild(
+                    areaIA
+                );
+
+                // ==============================
+                // PERGUNTAR À IA
+                // ==============================
+
+                botaoIA.addEventListener(
+                    "click",
+                    async function () {
+
+                        const pergunta =
+                            campoPergunta.value.trim();
+
+                        if (!pergunta) {
+
+                            alert(
+                                "Digite sua dúvida primeiro."
+                            );
+
+                            return;
+                        }
+
+                        botaoIA.disabled =
+                            true;
+
+                        botaoIA.textContent =
+                            "🤖 Consultando...";
+
+                        areaResposta.innerHTML = `
+                            <p>
+                                Aguarde, estou analisando o material da aula...
+                            </p>
+                        `;
+
+                        try {
+
+                            let pdfUrl =
+                                aula.link_pdf;
+
+                            // ==============================
+                            // GOOGLE DRIVE
+                            // ==============================
+
+                            if (
+                                pdfUrl.includes(
+                                    "drive.google.com/file/d/"
+                                )
+                            ) {
+
+                                const partes =
+                                    pdfUrl.split(
+                                        "/file/d/"
+                                    );
+
+                                if (
+                                    partes.length > 1
+                                ) {
+
+                                    const idArquivo =
+                                        partes[1]
+                                            .split("/")[0]
+                                            .split("?")[0];
+
+                                    pdfUrl =
+                                        "https://drive.google.com/uc?export=download&id=" +
+                                        idArquivo;
+                                }
+                            }
+
+                            // ==============================
+                            // CHAMAR IA
+                            // ==============================
+
+                            const resposta =
+                                await fetch(
+                                    "https://fhglftfemicijeguwcre.supabase.co/functions/v1/ia-duvidas",
+                                    {
+                                        method: "POST",
+
+                                        headers: {
+                                            "Content-Type":
+                                                "application/json",
+
+                                            "apikey":
+                                                SUPABASE_KEY
+                                        },
+
+                                        body:
+                                            JSON.stringify({
+                                                pergunta:
+                                                    pergunta,
+
+                                                pdfUrl:
+                                                    pdfUrl
+                                            })
+                                    }
+                                );
+
+                            const dados =
+                                await resposta.json();
+
+                            if (!resposta.ok) {
+
+                                throw new Error(
+                                    dados.erro ||
+                                    "Erro ao consultar IA."
+                                );
+                            }
+
+                            // ==============================
+                            // RESPOSTA
+                            // ==============================
+
+                            areaResposta.innerHTML =
+                                "";
+
+                            const caixa =
+                                document.createElement("div");
+
+                            caixa.style.cssText = `
+                                padding:20px;
+                                background:#f3f4f6;
+                                border-left:4px solid #a67c32;
+                                border-radius:8px;
+                            `;
+
+                            const tituloResposta =
+                                document.createElement("strong");
+
+                            tituloResposta.textContent =
+                                "🤖 Resposta da IA";
+
+                            const texto =
+                                document.createElement("p");
+
+                            texto.textContent =
+                                dados.resposta || "";
+
+                            texto.style.cssText = `
+                                white-space:pre-wrap;
+                                line-height:1.7;
+                                margin-top:12px;
+                                color:#111827;
+                            `;
+
+                            caixa.appendChild(
+                                tituloResposta
+                            );
+
+                            caixa.appendChild(
+                                texto
+                            );
+
+                            areaResposta.appendChild(
+                                caixa
+                            );
+
+                        } catch (erro) {
+
+                            console.error(
+                                "Erro ao consultar IA:",
+                                erro
+                            );
+
+                            areaResposta.innerHTML = `
+                                <p style="
+                                    color:#b91c1c;
+                                ">
+                                    Não foi possível consultar a IA.
+                                    Tente novamente.
+                                </p>
+                            `;
+
+                        } finally {
+
+                            botaoIA.disabled =
+                                false;
+
+                            botaoIA.textContent =
+                                "🤖 Perguntar à IA";
+                        }
+                    }
+                );
+            }
+
+            areaAulas.appendChild(
+                aulaDiv
+            );
+
+        });
+    }
+
+    atualizarProgresso();
+}
+
+
+// ==============================
+// BOTÃO SAIR
+// ==============================
+
+const botaoSair =
+    document.getElementById("sair");
+
+if (botaoSair) {
+
+    botaoSair.addEventListener(
+        "click",
+        async function (event) {
+
+            event.preventDefault();
+
+            await supabaseClient.auth.signOut();
+
+            window.location.href =
+                "login.html";
+        }
+    );
+}
+
+
+// ==============================
+// INICIAR
+// ==============================
+
+carregarCurso();
