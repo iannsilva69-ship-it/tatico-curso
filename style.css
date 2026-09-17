@@ -584,3 +584,19 @@ body.pagina-curso .aula-card {
 body.pagina-curso .aula-card {
     color: #E5E7EB !important;
 }
+/* COR DEFINITIVA DO NOME DAS AULAS */
+
+#modulos .aula-card h4,
+#modulos .aula-card h4 span,
+#modulos .aula-card h4 strong,
+#modulos .aula-card h4 b {
+    color: #374151 !important;
+    background: transparent !important;
+    text-shadow: none !important;
+}
+
+/* Se o nome estiver diretamente dentro de outro elemento */
+#modulos .aula-card > div,
+#modulos .aula-card > p {
+    color: #374151;
+}
