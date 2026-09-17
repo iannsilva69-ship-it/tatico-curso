@@ -394,3 +394,82 @@ html {
         width: 100%;
     }
 }
+/* =========================================================
+   AJUSTE - PÁGINA PÚBLICA DO CURSO
+   ========================================================= */
+
+body.curso-publico-page .courses > div {
+    width: 100% !important;
+    box-sizing: border-box !important;
+    background: transparent !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+/* Área "Por que fazer este curso?" */
+body.curso-publico-page #porqueFazerCurso {
+    width: 100% !important;
+    max-width: none !important;
+    box-sizing: border-box !important;
+    background: #080A0F !important;
+    border: 1px solid rgba(200, 163, 85, 0.15) !important;
+    border-radius: 14px !important;
+    padding: 25px !important;
+    color: #d5d8de !important;
+}
+
+/* Texto da área "Por que fazer" */
+body.curso-publico-page #porqueFazerCurso p {
+    width: 100% !important;
+    max-width: none !important;
+    box-sizing: border-box !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    color: #d5d8de !important;
+    background: transparent !important;
+    border: 0 !important;
+    font-size: 16px !important;
+    line-height: 1.8 !important;
+}
+
+/* Área de acesso ao curso */
+body.curso-publico-page .course-card {
+    width: 100% !important;
+    box-sizing: border-box !important;
+    padding: 0 !important;
+    background: transparent !important;
+}
+
+/* Cada item */
+body.curso-publico-page .course-card p {
+    width: 100% !important;
+    box-sizing: border-box !important;
+    min-height: 65px;
+    display: flex;
+    align-items: center;
+    margin: 0 !important;
+    padding: 18px 20px !important;
+    background: #080A0F !important;
+    border: 1px solid rgba(200, 163, 85, 0.18) !important;
+    border-radius: 12px !important;
+    color: #d5d8de !important;
+    font-size: 15px !important;
+    font-weight: 600 !important;
+}
+
+/* Mantém os 5 itens organizados */
+body.curso-publico-page .course-card {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 14px !important;
+}
+
+@media (max-width: 700px) {
+    body.curso-publico-page .course-card {
+        grid-template-columns: 1fr !important;
+    }
+
+    body.curso-publico-page #porqueFazerCurso {
+        padding: 20px !important;
+    }
+}
