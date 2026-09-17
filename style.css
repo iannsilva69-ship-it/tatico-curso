@@ -566,3 +566,21 @@ body .pagina-curso .area-ia {
 body .pagina-curso .area-ia p {
     color: #c8cbd2 !important;
 }
+/* CONTRASTE DO NOME DAS AULAS */
+
+body.pagina-curso .aula-card h4,
+body.pagina-curso .aula-card h4 *,
+body.pagina-curso .aula-card strong,
+body.pagina-curso .aula-card span {
+    color: #E5E7EB !important;
+}
+
+/* Fundo escuro do card da aula */
+body.pagina-curso .aula-card {
+    background: #0E121A !important;
+}
+
+/* Texto da aula */
+body.pagina-curso .aula-card {
+    color: #E5E7EB !important;
+}
