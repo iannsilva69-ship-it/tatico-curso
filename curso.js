@@ -6,27 +6,35 @@ async function carregarCurso() {
     } = await supabaseClient.auth.getUser();
 
     if (erroUsuario || !user) {
+
         window.location.href = "login.html";
+
         return;
     }
+
 
     const parametros =
         new URLSearchParams(window.location.search);
 
+
     const cursoId =
         parametros.get("id");
 
+
     if (!cursoId) {
+
         const nomeCurso =
             document.getElementById("nomeCurso");
 
         if (nomeCurso) {
+
             nomeCurso.textContent =
                 "Curso não encontrado.";
         }
 
         return;
     }
+
 
     // ==============================
     // PERFIL
@@ -41,15 +49,22 @@ async function carregarCurso() {
         .eq("auth_user_id", user.id)
         .single();
 
+
     if (erroPerfil || !perfil) {
-        window.location.href = "aluno.html";
+
+        window.location.href =
+            "aluno.html";
+
         return;
     }
 
+
     // ==============================
-    // MATRÍCULA
+    // ACESSO AO CURSO
+    // MATRÍCULA OU TESTE GRÁTIS
     // ==============================
 
+    // Verifica matrícula ativa
     const {
         data: matricula,
         error: erroMatricula
@@ -61,24 +76,68 @@ async function carregarCurso() {
         .eq("status", "ativo")
         .maybeSingle();
 
+
     if (erroMatricula) {
+
         console.error(
             "Erro matrícula:",
             erroMatricula
         );
+
         return;
     }
 
-    if (!matricula) {
+
+    // ==============================
+    // VERIFICAR TESTE GRÁTIS
+    // ==============================
+
+    const agora =
+        new Date().toISOString();
+
+
+    const {
+        data: testeGratis,
+        error: erroTesteGratis
+    } = await supabaseClient
+        .from("testes_gratis")
+        .select(
+            "id, data_inicio, data_fim, ativo"
+        )
+        .eq("usuario_id", perfil.id)
+        .eq("ativo", true)
+        .gt("data_fim", agora)
+        .maybeSingle();
+
+
+    if (erroTesteGratis) {
+
+        console.error(
+            "Erro teste grátis:",
+            erroTesteGratis
+        );
+
+        return;
+    }
+
+
+    // ==============================
+    // VERIFICAR ACESSO
+    // ==============================
+
+    // Tem matrícula OU teste grátis ativo
+    if (!matricula && !testeGratis) {
+
         alert(
-            "Você não possui acesso a este curso."
+            "Seu período de teste grátis terminou. Para continuar estudando, adquira o curso."
         );
 
         window.location.href =
-            "aluno.html";
+            "curso-publico.html?id=" + cursoId;
 
         return;
     }
+
 
     // ==============================
     // CURSO
@@ -93,6 +152,7 @@ async function carregarCurso() {
         .eq("id", cursoId)
         .single();
 
+
     if (erroCurso || !curso) {
 
         console.error(
@@ -103,24 +163,31 @@ async function carregarCurso() {
         return;
     }
 
+
     const nomeCurso =
         document.getElementById("nomeCurso");
 
+
     if (nomeCurso) {
+
         nomeCurso.textContent =
             curso.nome;
     }
+
 
     const descricaoCurso =
         document.getElementById(
             "descricaoCurso"
         );
 
+
     if (descricaoCurso) {
+
         descricaoCurso.textContent =
             curso.descricao ||
             "Conteúdo do curso.";
     }
+
 
     // ==============================
     // MÓDULOS
@@ -137,6 +204,7 @@ async function carregarCurso() {
             ascending: true
         });
 
+
     if (erroModulos) {
 
         console.error(
@@ -144,21 +212,27 @@ async function carregarCurso() {
             erroModulos
         );
 
+
         const area =
             document.getElementById(
                 "modulos"
             );
 
+
         if (area) {
+
             area.innerHTML =
                 "<p>Não foi possível carregar os módulos.</p>";
         }
 
+
         return;
     }
 
+
     const areaModulos =
         document.getElementById("modulos");
+
 
     if (!areaModulos) {
 
@@ -168,6 +242,7 @@ async function carregarCurso() {
 
         return;
     }
+
 
     // ==============================
     // PROGRESSO
@@ -181,15 +256,20 @@ async function carregarCurso() {
         .select("aula_id, concluida")
         .eq("usuario_id", perfil.id);
 
+
     if (erroProgresso) {
+
         console.error(
             "Erro progresso:",
             erroProgresso
         );
     }
 
+
     let totalAulas = 0;
+
     let aulasConcluidas = 0;
+
 
     // ==============================
     // ÁREA DO PROGRESSO
@@ -200,13 +280,16 @@ async function carregarCurso() {
             "progressoCurso"
         );
 
+
     if (!areaProgresso) {
 
         areaProgresso =
             document.createElement("div");
 
+
         areaProgresso.id =
             "progressoCurso";
+
 
         areaProgresso.style.cssText = `
             background:#111827;
@@ -216,6 +299,7 @@ async function carregarCurso() {
             margin-bottom:25px;
             border:1px solid #a67c32;
         `;
+
 
         areaProgresso.innerHTML = `
             <div style="
@@ -250,11 +334,13 @@ async function carregarCurso() {
             </div>
         `;
 
+
         areaModulos.parentNode.insertBefore(
             areaProgresso,
             areaModulos
         );
     }
+
 
     // ==============================
     // ATUALIZAR PROGRESSO
@@ -263,40 +349,50 @@ async function carregarCurso() {
     function atualizarProgresso() {
 
         if (totalAulas === 0) {
+
             return;
         }
+
 
         const porcentagem =
             Math.round(
                 (aulasConcluidas / totalAulas) * 100
             );
 
+
         const texto =
             document.getElementById(
                 "porcentagemProgresso"
             );
+
 
         const barra =
             document.getElementById(
                 "barraProgresso"
             );
 
+
         if (texto) {
+
             texto.textContent =
                 porcentagem + "%";
         }
 
+
         if (barra) {
+
             barra.style.width =
                 porcentagem + "%";
         }
     }
+
 
     // ==============================
     // LIMPAR MÓDULOS
     // ==============================
 
     areaModulos.innerHTML = "";
+
 
     if (!modulos || modulos.length === 0) {
 
@@ -305,6 +401,7 @@ async function carregarCurso() {
 
         return;
     }
+
 
     // ==============================
     // PERCORRER MÓDULOS
@@ -315,32 +412,41 @@ async function carregarCurso() {
         const bloco =
             document.createElement("div");
 
+
         bloco.className =
             "course-card";
+
 
         const tituloModulo =
             document.createElement("h3");
 
+
         tituloModulo.textContent =
             modulo.nome;
+
 
         bloco.appendChild(
             tituloModulo
         );
 
+
         const areaAulas =
             document.createElement("div");
 
+
         areaAulas.textContent =
             "Carregando aulas...";
+
 
         bloco.appendChild(
             areaAulas
         );
 
+
         areaModulos.appendChild(
             bloco
         );
+
 
         // ==============================
         // BUSCAR AULAS
@@ -359,6 +465,7 @@ async function carregarCurso() {
                 ascending: true
             });
 
+
         if (erroAulas) {
 
             console.error(
@@ -366,11 +473,13 @@ async function carregarCurso() {
                 erroAulas
             );
 
+
             areaAulas.textContent =
                 "Erro ao carregar as aulas.";
 
             continue;
         }
+
 
         if (!aulas || aulas.length === 0) {
 
@@ -380,7 +489,9 @@ async function carregarCurso() {
             continue;
         }
 
+
         areaAulas.innerHTML = "";
+
 
         // ==============================
         // PERCORRER AULAS
@@ -390,19 +501,25 @@ async function carregarCurso() {
 
             totalAulas++;
 
+
             const registro =
                 (progresso || []).find(
                     function (item) {
+
                         return item.aula_id === aula.id;
                     }
                 );
 
+
             let concluida =
                 registro?.concluida === true;
 
+
             if (concluida) {
+
                 aulasConcluidas++;
             }
+
 
             // ==============================
             // AULA
@@ -410,6 +527,7 @@ async function carregarCurso() {
 
             const aulaDiv =
                 document.createElement("div");
+
 
             aulaDiv.style.cssText = `
                 margin-top:20px;
@@ -419,16 +537,20 @@ async function carregarCurso() {
                 background:#f8fafc;
             `;
 
+
             const titulo =
                 document.createElement("strong");
+
 
             titulo.textContent =
                 (concluida ? "✅ " : "📖 ") +
                 aula.titulo;
 
+
             aulaDiv.appendChild(
                 titulo
             );
+
 
             // ==============================
             // LINKS
@@ -437,8 +559,10 @@ async function carregarCurso() {
             const links =
                 document.createElement("div");
 
+
             links.style.marginTop =
                 "15px";
+
 
             function criarLink(
                 texto,
@@ -447,23 +571,30 @@ async function carregarCurso() {
             ) {
 
                 if (!url) {
+
                     return;
                 }
+
 
                 const link =
                     document.createElement("a");
 
+
                 link.href =
                     url;
+
 
                 link.target =
                     "_blank";
 
+
                 link.rel =
                     "noopener noreferrer";
 
+
                 link.textContent =
                     texto;
+
 
                 link.style.cssText =
                     "display:inline-block;" +
@@ -476,10 +607,12 @@ async function carregarCurso() {
                     "margin-right:8px;" +
                     "margin-bottom:8px;";
 
+
                 links.appendChild(
                     link
                 );
             }
+
 
             criarLink(
                 "▶️ Assistir videoaula",
@@ -487,11 +620,13 @@ async function carregarCurso() {
                 "#111827"
             );
 
+
             criarLink(
                 "📄 Abrir PDF",
                 aula.link_pdf,
                 "#6b7280"
             );
+
 
             criarLink(
                 "📝 Questões da aula",
@@ -499,15 +634,18 @@ async function carregarCurso() {
                 "#a67c32"
             );
 
+
             criarLink(
                 "📊 Abrir slides",
                 aula.link_slide,
                 "#6b7280"
             );
 
+
             aulaDiv.appendChild(
                 links
             );
+
 
             // ==============================
             // CONCLUSÃO
@@ -516,13 +654,16 @@ async function carregarCurso() {
             const botaoConclusao =
                 document.createElement("button");
 
+
             botaoConclusao.type =
                 "button";
+
 
             botaoConclusao.textContent =
                 concluida
                     ? "✅ Aula concluída"
                     : "☑️ Marcar como concluída";
+
 
             botaoConclusao.style.cssText =
                 "background:" +
@@ -539,9 +680,11 @@ async function carregarCurso() {
                 "font-weight:bold;" +
                 "margin-top:8px;";
 
+
             aulaDiv.appendChild(
                 botaoConclusao
             );
+
 
             botaoConclusao.addEventListener(
                 "click",
@@ -549,6 +692,7 @@ async function carregarCurso() {
 
                     botaoConclusao.disabled =
                         true;
+
 
                     if (concluida) {
 
@@ -568,30 +712,39 @@ async function carregarCurso() {
                                 aula.id
                             );
 
+
                         if (error) {
 
                             console.error(error);
+
 
                             alert(
                                 "Não foi possível alterar o progresso."
                             );
 
+
                             botaoConclusao.disabled =
                                 false;
+
 
                             return;
                         }
 
+
                         concluida =
                             false;
 
+
                         aulasConcluidas--;
+
 
                         botaoConclusao.textContent =
                             "☑️ Marcar como concluída";
 
+
                         botaoConclusao.style.background =
                             "#111827";
+
 
                     } else {
 
@@ -616,42 +769,54 @@ async function carregarCurso() {
                                 }
                             );
 
+
                         if (error) {
 
                             console.error(error);
+
 
                             alert(
                                 "Não foi possível salvar o progresso."
                             );
 
+
                             botaoConclusao.disabled =
                                 false;
+
 
                             return;
                         }
 
+
                         concluida =
                             true;
 
+
                         aulasConcluidas++;
+
 
                         botaoConclusao.textContent =
                             "✅ Aula concluída";
+
 
                         botaoConclusao.style.background =
                             "#a67c32";
                     }
 
+
                     titulo.textContent =
                         (concluida ? "✅ " : "📖 ") +
                         aula.titulo;
 
+
                     atualizarProgresso();
+
 
                     botaoConclusao.disabled =
                         false;
                 }
             );
+
 
             // ==============================
             // IA DA AULA
@@ -662,6 +827,7 @@ async function carregarCurso() {
                 const areaIA =
                     document.createElement("div");
 
+
                 areaIA.style.cssText = `
                     margin-top:25px;
                     padding:20px;
@@ -670,43 +836,56 @@ async function carregarCurso() {
                     border-radius:10px;
                 `;
 
+
                 const tituloIA =
                     document.createElement("strong");
+
 
                 tituloIA.textContent =
                     "🤖 Tire sua dúvida sobre esta aula";
 
+
                 tituloIA.style.display =
                     "block";
 
+
                 tituloIA.style.marginBottom =
                     "10px";
+
 
                 areaIA.appendChild(
                     tituloIA
                 );
 
+
                 const descricaoIA =
                     document.createElement("p");
+
 
                 descricaoIA.textContent =
                     "Pergunte sobre o conteúdo do PDF desta aula.";
 
+
                 descricaoIA.style.cssText =
                     "margin-bottom:12px;color:#374151;";
+
 
                 areaIA.appendChild(
                     descricaoIA
                 );
 
+
                 const campoPergunta =
                     document.createElement("textarea");
+
 
                 campoPergunta.placeholder =
                     "Digite sua dúvida sobre o conteúdo desta aula...";
 
+
                 campoPergunta.rows =
                     4;
+
 
                 campoPergunta.style.cssText = `
                     width:100%;
@@ -718,18 +897,23 @@ async function carregarCurso() {
                     margin-bottom:10px;
                 `;
 
+
                 areaIA.appendChild(
                     campoPergunta
                 );
 
+
                 const botaoIA =
                     document.createElement("button");
+
 
                 botaoIA.type =
                     "button";
 
+
                 botaoIA.textContent =
                     "🤖 Perguntar à IA";
+
 
                 botaoIA.style.cssText = `
                     background:#111827;
@@ -741,23 +925,29 @@ async function carregarCurso() {
                     font-weight:bold;
                 `;
 
+
                 areaIA.appendChild(
                     botaoIA
                 );
 
+
                 const areaResposta =
                     document.createElement("div");
 
+
                 areaResposta.style.marginTop =
                     "15px";
+
 
                 areaIA.appendChild(
                     areaResposta
                 );
 
+
                 aulaDiv.appendChild(
                     areaIA
                 );
+
 
                 // ==============================
                 // PERGUNTAR À IA
@@ -770,6 +960,7 @@ async function carregarCurso() {
                         const pergunta =
                             campoPergunta.value.trim();
 
+
                         if (!pergunta) {
 
                             alert(
@@ -779,11 +970,14 @@ async function carregarCurso() {
                             return;
                         }
 
+
                         botaoIA.disabled =
                             true;
 
+
                         botaoIA.textContent =
                             "🤖 Consultando...";
+
 
                         areaResposta.innerHTML = `
                             <p>
@@ -791,10 +985,12 @@ async function carregarCurso() {
                             </p>
                         `;
 
+
                         try {
 
                             let pdfUrl =
                                 aula.link_pdf;
+
 
                             // ==============================
                             // GOOGLE DRIVE
@@ -811,6 +1007,7 @@ async function carregarCurso() {
                                         "/file/d/"
                                     );
 
+
                                 if (
                                     partes.length > 1
                                 ) {
@@ -820,11 +1017,13 @@ async function carregarCurso() {
                                             .split("/")[0]
                                             .split("?")[0];
 
+
                                     pdfUrl =
                                         "https://drive.google.com/uc?export=download&id=" +
                                         idArquivo;
                                 }
                             }
+
 
                             // ==============================
                             // CHAMAR IA
@@ -855,8 +1054,10 @@ async function carregarCurso() {
                                     }
                                 );
 
+
                             const dados =
                                 await resposta.json();
+
 
                             if (!resposta.ok) {
 
@@ -866,6 +1067,7 @@ async function carregarCurso() {
                                 );
                             }
 
+
                             // ==============================
                             // RESPOSTA
                             // ==============================
@@ -873,8 +1075,10 @@ async function carregarCurso() {
                             areaResposta.innerHTML =
                                 "";
 
+
                             const caixa =
                                 document.createElement("div");
+
 
                             caixa.style.cssText = `
                                 padding:20px;
@@ -883,17 +1087,22 @@ async function carregarCurso() {
                                 border-radius:8px;
                             `;
 
+
                             const tituloResposta =
                                 document.createElement("strong");
+
 
                             tituloResposta.textContent =
                                 "🤖 Resposta da IA";
 
+
                             const texto =
                                 document.createElement("p");
 
+
                             texto.textContent =
                                 dados.resposta || "";
+
 
                             texto.style.cssText = `
                                 white-space:pre-wrap;
@@ -902,17 +1111,21 @@ async function carregarCurso() {
                                 color:#111827;
                             `;
 
+
                             caixa.appendChild(
                                 tituloResposta
                             );
+
 
                             caixa.appendChild(
                                 texto
                             );
 
+
                             areaResposta.appendChild(
                                 caixa
                             );
+
 
                         } catch (erro) {
 
@@ -920,6 +1133,7 @@ async function carregarCurso() {
                                 "Erro ao consultar IA:",
                                 erro
                             );
+
 
                             areaResposta.innerHTML = `
                                 <p style="
@@ -930,10 +1144,12 @@ async function carregarCurso() {
                                 </p>
                             `;
 
+
                         } finally {
 
                             botaoIA.disabled =
                                 false;
+
 
                             botaoIA.textContent =
                                 "🤖 Perguntar à IA";
@@ -942,12 +1158,14 @@ async function carregarCurso() {
                 );
             }
 
+
             areaAulas.appendChild(
                 aulaDiv
             );
 
         });
     }
+
 
     atualizarProgresso();
 }
@@ -960,6 +1178,7 @@ async function carregarCurso() {
 const botaoSair =
     document.getElementById("sair");
 
+
 if (botaoSair) {
 
     botaoSair.addEventListener(
@@ -968,7 +1187,9 @@ if (botaoSair) {
 
             event.preventDefault();
 
+
             await supabaseClient.auth.signOut();
+
 
             window.location.href =
                 "login.html";
