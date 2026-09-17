@@ -2,9 +2,7 @@
 <html lang="pt-BR">
 
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Módulos - Tático Curso</title>
@@ -12,140 +10,375 @@
     <link rel="stylesheet" href="style.css">
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
     <script src="supabase.js"></script>
+
+    <style>
+        body.modulos-admin-page {
+            margin: 0;
+            min-height: 100vh;
+            background:
+                radial-gradient(circle at top right, rgba(200, 163, 85, 0.10), transparent 30%),
+                radial-gradient(circle at bottom left, rgba(200, 163, 85, 0.06), transparent 30%),
+                #080A0F;
+            color: #fff;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .modulos-admin-page * {
+            box-sizing: border-box;
+        }
+
+        .modulos-admin-page header {
+            min-height: 76px;
+            padding: 0 6%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(8, 10, 15, 0.96);
+            border-bottom: 1px solid rgba(200, 163, 85, 0.25);
+            position: sticky;
+            top: 0;
+            z-index: 20;
+        }
+
+        .modulos-admin-page .logo {
+            font-size: 22px;
+            font-weight: 900;
+            letter-spacing: 1.5px;
+            color: #E5C378;
+        }
+
+        .modulos-admin-page nav {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }
+
+        .modulos-admin-page nav a {
+            color: #c8ccd4;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 700;
+            transition: 0.2s;
+        }
+
+        .modulos-admin-page nav a:hover {
+            color: #E5C378;
+        }
+
+        .modulos-admin-page main {
+            width: 100%;
+        }
+
+        .modulos-admin-page .hero {
+            padding: 70px 6% 55px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .modulos-admin-page .hero-text {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .modulos-admin-page .tag {
+            display: inline-block;
+            margin-bottom: 18px;
+            padding: 7px 13px;
+            border: 1px solid rgba(200, 163, 85, 0.45);
+            border-radius: 999px;
+            color: #E5C378;
+            background: rgba(200, 163, 85, 0.08);
+            font-size: 11px;
+            font-weight: 900;
+            letter-spacing: 1.5px;
+        }
+
+        .modulos-admin-page h1 {
+            margin: 0 0 14px;
+            color: #fff;
+            font-size: clamp(32px, 5vw, 52px);
+            line-height: 1.05;
+            font-weight: 900;
+        }
+
+        .modulos-admin-page .hero p {
+            margin: 0 0 30px;
+            color: #aeb4bf;
+            font-size: 16px;
+            line-height: 1.7;
+        }
+
+        .modulos-admin-page button {
+            border: 0;
+            border-radius: 10px;
+            padding: 13px 20px;
+            background: #C8A355;
+            color: #080A0F;
+            font-weight: 900;
+            font-size: 14px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .modulos-admin-page button:hover {
+            background: #E5C378;
+            transform: translateY(-1px);
+        }
+
+        .modulos-admin-page button.secondary {
+            background: #202631;
+            color: #d7dbe2;
+            border: 1px solid #343b47;
+            margin-left: 8px;
+        }
+
+        .modulos-admin-page button.secondary:hover {
+            background: #2a313d;
+            color: #fff;
+        }
+
+        .modulos-admin-page #formularioModulo {
+            margin-top: 30px !important;
+            padding: 28px;
+            background: #0E121A;
+            border: 1px solid rgba(200, 163, 85, 0.25);
+            border-radius: 16px;
+            box-shadow: 0 15px 45px rgba(0, 0, 0, 0.25);
+        }
+
+        .modulos-admin-page #formularioModulo h2 {
+            margin: 0 0 22px;
+            color: #E5C378;
+            font-size: 22px;
+        }
+
+        .modulos-admin-page #moduloForm {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .modulos-admin-page #moduloForm br {
+            display: none;
+        }
+
+        .modulos-admin-page input {
+            width: 100%;
+            padding: 14px 15px;
+            border-radius: 9px;
+            border: 1px solid #303744;
+            background: #080A0F;
+            color: #fff;
+            outline: none;
+            font-size: 15px;
+        }
+
+        .modulos-admin-page input:focus {
+            border-color: #C8A355;
+            box-shadow: 0 0 0 3px rgba(200, 163, 85, 0.10);
+        }
+
+        .modulos-admin-page input::placeholder {
+            color: #777f8d;
+        }
+
+        .modulos-admin-page #mensagemModulo {
+            margin: 18px 0 0;
+            color: #C8A355;
+            font-weight: 700;
+        }
+
+        .modulos-admin-page .courses {
+            width: 88%;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 55px 0 80px;
+        }
+
+        .modulos-admin-page .courses > h2 {
+            margin: 0 0 25px;
+            color: #fff;
+            font-size: 28px;
+            font-weight: 900;
+        }
+
+        .modulos-admin-page #listaModulos {
+            display: grid;
+            gap: 16px;
+        }
+
+        .modulos-admin-page #listaModulos > * {
+            background: #0E121A;
+            border: 1px solid #252C36;
+            border-radius: 14px;
+            padding: 22px;
+            transition: 0.2s;
+        }
+
+        .modulos-admin-page #listaModulos > *:hover {
+            border-color: rgba(200, 163, 85, 0.45);
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 700px) {
+
+            .modulos-admin-page header {
+                padding: 16px 5%;
+                flex-direction: column;
+                gap: 14px;
+            }
+
+            .modulos-admin-page nav {
+                gap: 16px;
+            }
+
+            .modulos-admin-page .hero {
+                padding: 50px 5% 40px;
+            }
+
+            .modulos-admin-page .courses {
+                width: 90%;
+                padding-top: 40px;
+            }
+
+            .modulos-admin-page #formularioModulo {
+                padding: 20px;
+            }
+
+            .modulos-admin-page button.secondary {
+                margin-left: 0;
+                margin-top: 8px;
+            }
+        }
+    </style>
 
 </head>
 
-<body>
+<body class="modulos-admin-page">
 
-<header>
+    <header>
 
-    <div class="logo">
-        TÁTICO CURSO
-    </div>
+        <div class="logo">
+            TÁTICO CURSO
+        </div>
 
-    <nav>
+        <nav>
 
-        <a href="cursos-admin.html">
-            Cursos
-        </a>
+            <a href="cursos-admin.html">
+                Cursos
+            </a>
 
-        <a href="admin.html">
-            Painel
-        </a>
+            <a href="admin.html">
+                Painel
+            </a>
 
-        <a href="#" id="sair">
-            Sair
-        </a>
+            <a href="#" id="sair">
+                Sair
+            </a>
 
-    </nav>
+        </nav>
 
-</header>
-
-
-<main>
-
-    <section class="hero">
-
-        <div class="hero-text">
-
-            <span class="tag">
-                GERENCIAR MÓDULOS
-            </span>
-
-            <h1 id="nomeCurso">
-                Carregando curso...
-            </h1>
-
-            <p>
-                Crie e organize os módulos deste curso.
-            </p>
+    </header>
 
 
-            <button id="novoModulo">
-                ➕ Criar novo módulo
-            </button>
+    <main>
+
+        <section class="hero">
+
+            <div class="hero-text">
+
+                <span class="tag">
+                    GERENCIAR MÓDULOS
+                </span>
+
+                <h1 id="nomeCurso">
+                    Carregando curso...
+                </h1>
+
+                <p>
+                    Crie e organize os módulos deste curso.
+                </p>
+
+                <button id="novoModulo">
+                    ➕ Criar novo módulo
+                </button>
 
 
-            <div
-                id="formularioModulo"
-                style="display:none; margin-top:30px;"
-            >
+                <div
+                    id="formularioModulo"
+                    style="display:none;"
+                >
 
-                <h2>
-                    Novo módulo
-                </h2>
-
-
-                <form id="moduloForm">
-
-                    <input
-                        type="text"
-                        id="nomeModulo"
-                        placeholder="Nome do módulo"
-                        required
-                    >
-
-                    <br><br>
+                    <h2>
+                        Novo módulo
+                    </h2>
 
 
-                    <input
-                        type="number"
-                        id="ordemModulo"
-                        placeholder="Ordem do módulo"
-                        min="1"
-                        value="1"
-                        required
-                    >
+                    <form id="moduloForm">
 
-                    <br><br>
+                        <input
+                            type="text"
+                            id="nomeModulo"
+                            placeholder="Nome do módulo"
+                            required
+                        >
+
+                        <br><br>
+
+                        <input
+                            type="number"
+                            id="ordemModulo"
+                            placeholder="Ordem do módulo"
+                            min="1"
+                            value="1"
+                            required
+                        >
+
+                        <br><br>
+
+                        <button type="submit">
+                            💾 Salvar módulo
+                        </button>
+
+                        <button
+                            type="button"
+                            id="cancelarModulo"
+                            class="secondary"
+                        >
+                            Cancelar
+                        </button>
+
+                    </form>
 
 
-                    <button type="submit">
-                        💾 Salvar módulo
-                    </button>
+                    <p id="mensagemModulo"></p>
 
-
-                    <button
-                        type="button"
-                        id="cancelarModulo"
-                        class="secondary"
-                    >
-                        Cancelar
-                    </button>
-
-                </form>
-
-
-                <p id="mensagemModulo"></p>
+                </div>
 
             </div>
 
-        </div>
-
-    </section>
+        </section>
 
 
-    <section class="courses">
+        <section class="courses">
 
-        <h2>
-            Módulos do curso
-        </h2>
-
-
-        <div id="listaModulos">
-
-            Carregando módulos...
-
-        </div>
-
-    </section>
-
-</main>
+            <h2>
+                Módulos do curso
+            </h2>
 
 
-<script src="modulos-admin.js"></script>
+            <div id="listaModulos">
+
+                Carregando módulos...
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <script src="modulos-admin.js"></script>
 
 </body>
 
