@@ -19,8 +19,8 @@
            TÁTICOS - ÁREA DE ESTUDOS
            ========================================================= */
 
-        <body class="pagina-curso">
-                margin: 0 !important;
+        body.pagina-curso {
+            margin: 0 !important;
             padding: 0 !important;
             background: #080A0F !important;
             color: #ffffff !important;
@@ -45,7 +45,6 @@
 
         .pagina-curso > header {
             min-height: 76px;
-
             padding: 0 6%;
             box-sizing: border-box;
 
@@ -63,10 +62,8 @@
 
         .pagina-curso .logo {
             color: #E5C378;
-
             font-size: 21px;
             font-weight: 900;
-
             letter-spacing: 2px;
         }
 
@@ -78,12 +75,9 @@
 
         .pagina-curso nav a {
             color: #b8bec9;
-
             text-decoration: none;
-
             font-size: 13px;
             font-weight: 700;
-
             transition: 0.2s;
         }
 
@@ -305,7 +299,7 @@
 
         .aula-card {
 
-            background: #080A0F !important;
+            background: #0E121A !important;
 
             border: 1px solid rgba(200, 163, 85, 0.13) !important;
 
@@ -316,17 +310,24 @@
             margin-top: 14px !important;
 
             box-sizing: border-box;
+
+            color: #E5E7EB !important;
         }
 
         .aula-card h4 {
 
             margin: 0 0 15px;
 
-            color: #ffffff !important;
+            color: #E5E7EB !important;
 
             font-size: 16px;
 
             font-weight: 750;
+        }
+
+        .aula-card p {
+
+            color: #c8cbd2 !important;
         }
 
 
@@ -398,6 +399,13 @@
             border-radius: 11px !important;
 
             box-sizing: border-box;
+
+            color: #ffffff !important;
+        }
+
+        .area-ia p {
+
+            color: #c8cbd2 !important;
         }
 
         .area-ia textarea {
@@ -484,18 +492,6 @@
         #modulos button:hover {
 
             transform: translateY(-1px);
-        }
-
-
-        /* =========================================================
-           PROGRESSO
-           ========================================================= */
-
-        #modulos [style*="progress"],
-        #modulos [style*="Progresso"],
-        #modulos [style*="progresso"] {
-
-            box-sizing: border-box;
         }
 
 
@@ -591,6 +587,7 @@
 
                 padding: 15px !important;
             }
+
         }
 
     </style>
@@ -598,7 +595,7 @@
 </head>
 
 
-<body>
+<body class="pagina-curso">
 
     <div class="pagina-curso">
 
@@ -669,18 +666,6 @@
 
             </div>
 
-
-            <!--
-                O curso.js continua responsável por:
-                - módulos
-                - aulas
-                - progresso
-                - vídeos
-                - PDFs
-                - questões
-                - slides
-                - IA
-            -->
 
             <div id="modulos">
 
