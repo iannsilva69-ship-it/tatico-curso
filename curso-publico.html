@@ -9,11 +9,267 @@
 
     <link rel="stylesheet" href="style.css">
 
+    <style>
+        body.curso-publico-page {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background:
+                radial-gradient(circle at 15% 10%, rgba(200, 163, 85, 0.10), transparent 30%),
+                radial-gradient(circle at 85% 20%, rgba(200, 163, 85, 0.06), transparent 28%),
+                #080A0F;
+            color: #ffffff;
+        }
+
+        .curso-publico-page header {
+            height: 76px;
+            padding: 0 6%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(8, 10, 15, 0.96);
+            border-bottom: 1px solid rgba(200, 163, 85, 0.22);
+            box-sizing: border-box;
+        }
+
+        .curso-publico-page .logo {
+            font-size: 22px;
+            font-weight: 900;
+            letter-spacing: 2px;
+            color: #E5C378;
+        }
+
+        .curso-publico-page nav {
+            display: flex;
+            gap: 28px;
+        }
+
+        .curso-publico-page nav a {
+            color: #c8cbd2;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+
+        .curso-publico-page nav a:hover {
+            color: #E5C378;
+        }
+
+        .curso-publico-page main {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 55px 24px 80px;
+            box-sizing: border-box;
+        }
+
+        .curso-publico-page .hero {
+            min-height: 430px;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(200, 163, 85, 0.25);
+            border-radius: 20px;
+            background:
+                linear-gradient(90deg, rgba(14, 18, 26, 0.98), rgba(14, 18, 26, 0.78)),
+                #0E121A;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+        }
+
+        .curso-publico-page .hero::after {
+            content: "";
+            position: absolute;
+            width: 380px;
+            height: 380px;
+            right: -120px;
+            top: -100px;
+            border-radius: 50%;
+            border: 1px solid rgba(200, 163, 85, 0.15);
+            box-shadow:
+                0 0 0 45px rgba(200, 163, 85, 0.025),
+                0 0 0 90px rgba(200, 163, 85, 0.02);
+            pointer-events: none;
+        }
+
+        .curso-publico-page .hero-text {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            max-width: 760px;
+            padding: 55px;
+        }
+
+        .curso-publico-page .tag {
+            display: inline-block;
+            margin-bottom: 18px;
+            padding: 7px 12px;
+            border: 1px solid rgba(200, 163, 85, 0.35);
+            border-radius: 999px;
+            color: #E5C378;
+            background: rgba(200, 163, 85, 0.07);
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+        }
+
+        .curso-publico-page #nomeCurso {
+            margin: 0 0 18px;
+            font-size: clamp(32px, 5vw, 54px);
+            line-height: 1.05;
+            font-weight: 900;
+            letter-spacing: -1px;
+        }
+
+        .curso-publico-page #descricaoCurso {
+            margin: 0 0 25px;
+            color: #b9bec8;
+            font-size: 17px;
+            line-height: 1.7;
+            max-width: 700px;
+        }
+
+        .curso-publico-page #precoCurso {
+            margin: 0 0 25px;
+            color: #E5C378;
+            font-size: 32px;
+            font-weight: 900;
+        }
+
+        .curso-publico-page #botaoComprar {
+            border: 0;
+            border-radius: 10px;
+            padding: 15px 28px;
+            background: linear-gradient(135deg, #C8A355, #E5C378);
+            color: #080A0F;
+            font-size: 14px;
+            font-weight: 900;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(200, 163, 85, 0.18);
+            transition: 0.2s;
+        }
+
+        .curso-publico-page #botaoComprar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 14px 35px rgba(200, 163, 85, 0.28);
+        }
+
+        .curso-publico-page .courses {
+            margin-top: 35px;
+            padding: 32px;
+            border-radius: 18px;
+            background: #0E121A;
+            border: 1px solid rgba(200, 163, 85, 0.18);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.18);
+        }
+
+        .curso-publico-page .courses h2 {
+            margin: 0 0 25px;
+            font-size: 23px;
+            font-weight: 800;
+            color: #ffffff;
+        }
+
+        .curso-publico-page #porqueFazerCurso {
+            color: #b9bec8;
+            font-size: 16px;
+            line-height: 1.8;
+        }
+
+        .curso-publico-page .course-card {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 14px;
+        }
+
+        .curso-publico-page .course-card p {
+            margin: 0;
+            padding: 18px;
+            border-radius: 12px;
+            background: #080A0F;
+            border: 1px solid rgba(200, 163, 85, 0.12);
+            color: #d5d8de;
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .curso-publico-page footer {
+            padding: 30px 20px;
+            text-align: center;
+            border-top: 1px solid rgba(200, 163, 85, 0.15);
+            background: #080A0F;
+            color: #777d88;
+            font-size: 13px;
+        }
+
+        @media (max-width: 700px) {
+
+            .curso-publico-page header {
+                height: auto;
+                min-height: 70px;
+                padding: 16px 20px;
+                gap: 15px;
+            }
+
+            .curso-publico-page .logo {
+                font-size: 18px;
+            }
+
+            .curso-publico-page nav {
+                gap: 12px;
+            }
+
+            .curso-publico-page nav a {
+                font-size: 12px;
+            }
+
+            .curso-publico-page main {
+                padding: 25px 15px 50px;
+            }
+
+            .curso-publico-page .hero {
+                min-height: auto;
+                border-radius: 15px;
+            }
+
+            .curso-publico-page .hero-text {
+                padding: 32px 24px;
+            }
+
+            .curso-publico-page #nomeCurso {
+                font-size: 34px;
+            }
+
+            .curso-publico-page #descricaoCurso {
+                font-size: 15px;
+            }
+
+            .curso-publico-page #precoCurso {
+                font-size: 27px;
+            }
+
+            .curso-publico-page .courses {
+                padding: 24px 18px;
+                border-radius: 15px;
+            }
+
+            .curso-publico-page .courses h2 {
+                font-size: 20px;
+            }
+
+            .curso-publico-page .course-card {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabase.js"></script>
 </head>
 
-<body>
+<body class="curso-publico-page">
 
 <header>
 
@@ -28,7 +284,6 @@
     </nav>
 
 </header>
-
 
 <main>
 
@@ -63,7 +318,6 @@
 
     </section>
 
-
     <section class="courses">
 
         <h2>
@@ -79,7 +333,6 @@
         </div>
 
     </section>
-
 
     <section class="courses">
 
@@ -105,7 +358,6 @@
 
 </main>
 
-
 <footer>
 
     <p>
@@ -113,7 +365,6 @@
     </p>
 
 </footer>
-
 
 <script src="curso-publico.js"></script>
 
