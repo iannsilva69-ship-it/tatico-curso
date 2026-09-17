@@ -4,21 +4,527 @@
 <head>
 
     <meta charset="UTF-8">
-
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Gerenciar Cursos - Tático Curso</title>
 
     <link rel="stylesheet" href="style.css">
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
     <script src="supabase.js"></script>
+
+    <style>
+
+        /* =========================================================
+           TÁTICOS - GERENCIAR CURSOS
+           ========================================================= */
+
+        body.cursos-admin-page {
+
+            margin: 0 !important;
+            padding: 0 !important;
+
+            min-height: 100vh;
+
+            background:
+                radial-gradient(
+                    circle at 10% 0%,
+                    rgba(200, 163, 85, 0.10),
+                    transparent 30%
+                ),
+                #080A0F !important;
+
+            color: #ffffff !important;
+        }
+
+
+        /* =========================================================
+           HEADER
+           ========================================================= */
+
+        body.cursos-admin-page > header {
+
+            min-height: 76px;
+
+            padding: 0 6%;
+
+            box-sizing: border-box;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            background: rgba(8, 10, 15, 0.97);
+
+            border-bottom: 1px solid rgba(200, 163, 85, 0.22);
+        }
+
+        body.cursos-admin-page .logo {
+
+            color: #E5C378;
+
+            font-size: 21px;
+
+            font-weight: 900;
+
+            letter-spacing: 2px;
+        }
+
+        body.cursos-admin-page nav {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 25px;
+        }
+
+        body.cursos-admin-page nav a {
+
+            color: #b8bec9;
+
+            text-decoration: none;
+
+            font-size: 13px;
+
+            font-weight: 700;
+
+            transition: 0.2s;
+        }
+
+        body.cursos-admin-page nav a:hover {
+
+            color: #E5C378;
+        }
+
+
+        /* =========================================================
+           CONTEÚDO
+           ========================================================= */
+
+        body.cursos-admin-page main {
+
+            width: 100%;
+
+            max-width: 1200px;
+
+            margin: 0 auto;
+
+            padding: 45px 24px 80px;
+
+            box-sizing: border-box;
+        }
+
+
+        /* =========================================================
+           HERO / CABEÇALHO
+           ========================================================= */
+
+        body.cursos-admin-page .hero {
+
+            padding: 38px;
+
+            border-radius: 18px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #0E121A,
+                    #111722
+                );
+
+            border: 1px solid rgba(200, 163, 85, 0.20);
+
+            box-shadow:
+                0 15px 40px rgba(0, 0, 0, 0.22);
+        }
+
+        body.cursos-admin-page .hero-text {
+
+            width: 100%;
+        }
+
+        body.cursos-admin-page .tag {
+
+            display: inline-block;
+
+            padding: 7px 13px;
+
+            margin-bottom: 15px;
+
+            border-radius: 999px;
+
+            border: 1px solid rgba(200, 163, 85, 0.40);
+
+            background: rgba(200, 163, 85, 0.06);
+
+            color: #E5C378;
+
+            font-size: 11px;
+
+            font-weight: 800;
+
+            letter-spacing: 1.2px;
+        }
+
+        body.cursos-admin-page .hero h1 {
+
+            margin: 0;
+
+            color: #ffffff;
+
+            font-size: 38px;
+
+            font-weight: 900;
+        }
+
+        body.cursos-admin-page .hero-text > p {
+
+            margin: 12px 0 25px;
+
+            color: #aeb5c1;
+
+            font-size: 15px;
+
+            line-height: 1.6;
+        }
+
+
+        /* =========================================================
+           BOTÃO NOVO CURSO
+           ========================================================= */
+
+        body.cursos-admin-page #novoCurso {
+
+            padding: 13px 20px;
+
+            border: none;
+
+            border-radius: 8px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #C8A355,
+                    #E5C378
+                );
+
+            color: #080A0F;
+
+            font-size: 14px;
+
+            font-weight: 850;
+
+            cursor: pointer;
+
+            transition: 0.2s;
+        }
+
+        body.cursos-admin-page #novoCurso:hover {
+
+            transform: translateY(-2px);
+        }
+
+
+        /* =========================================================
+           FORMULÁRIOS
+           ========================================================= */
+
+        body.cursos-admin-page #formularioCurso,
+        body.cursos-admin-page #areaEdicao {
+
+            padding: 28px;
+
+            border-radius: 14px;
+
+            background: #080A0F;
+
+            border: 1px solid rgba(200, 163, 85, 0.18);
+
+            box-sizing: border-box;
+        }
+
+        body.cursos-admin-page #formularioCurso h2,
+        body.cursos-admin-page #areaEdicao h2 {
+
+            margin: 0 0 22px;
+
+            color: #E5C378;
+
+            font-size: 22px;
+
+            font-weight: 850;
+        }
+
+
+        /* =========================================================
+           INPUTS
+           ========================================================= */
+
+        body.cursos-admin-page input[type="text"],
+        body.cursos-admin-page input[type="number"],
+        body.cursos-admin-page input[type="url"],
+        body.cursos-admin-page textarea {
+
+            width: 100% !important;
+
+            max-width: 700px !important;
+
+            box-sizing: border-box;
+
+            padding: 13px 14px;
+
+            border: 1px solid rgba(200, 163, 85, 0.20);
+
+            border-radius: 8px;
+
+            background: #0E121A;
+
+            color: #ffffff;
+
+            font-family: inherit;
+
+            font-size: 14px;
+        }
+
+        body.cursos-admin-page textarea {
+
+            resize: vertical;
+
+            min-height: 110px;
+        }
+
+        body.cursos-admin-page input::placeholder,
+        body.cursos-admin-page textarea::placeholder {
+
+            color: #737b88;
+        }
+
+        body.cursos-admin-page input:focus,
+        body.cursos-admin-page textarea:focus {
+
+            outline: none;
+
+            border-color: #C8A355;
+
+            box-shadow:
+                0 0 0 2px rgba(200, 163, 85, 0.08);
+        }
+
+
+        /* =========================================================
+           CHECKBOX
+           ========================================================= */
+
+        body.cursos-admin-page label {
+
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 8px;
+
+            color: #c8cbd2;
+
+            font-size: 14px;
+
+            cursor: pointer;
+        }
+
+
+        /* =========================================================
+           BOTÕES DOS FORMULÁRIOS
+           ========================================================= */
+
+        body.cursos-admin-page form button {
+
+            padding: 11px 17px;
+
+            border: none;
+
+            border-radius: 7px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #C8A355,
+                    #E5C378
+                );
+
+            color: #080A0F;
+
+            font-size: 13px;
+
+            font-weight: 850;
+
+            cursor: pointer;
+
+            transition: 0.2s;
+        }
+
+        body.cursos-admin-page form button:hover {
+
+            transform: translateY(-1px);
+        }
+
+        body.cursos-admin-page form button.secondary {
+
+            margin-left: 8px;
+
+            background: #1a1f29;
+
+            color: #d8dce3;
+
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+
+        /* =========================================================
+           MENSAGENS
+           ========================================================= */
+
+        body.cursos-admin-page #mensagemCurso,
+        body.cursos-admin-page #mensagemEdicao {
+
+            margin-top: 15px;
+
+            color: #E5C378;
+
+            font-size: 14px;
+        }
+
+
+        /* =========================================================
+           CURSOS CADASTRADOS
+           ========================================================= */
+
+        body.cursos-admin-page .courses {
+
+            margin-top: 30px;
+
+            padding: 32px;
+
+            border-radius: 18px;
+
+            background: #0E121A;
+
+            border: 1px solid rgba(200, 163, 85, 0.18);
+
+            box-shadow:
+                0 15px 40px rgba(0, 0, 0, 0.20);
+        }
+
+        body.cursos-admin-page .courses > h2 {
+
+            margin: 0 0 25px;
+
+            color: #ffffff;
+
+            font-size: 23px;
+
+            font-weight: 850;
+        }
+
+        body.cursos-admin-page #listaCursos {
+
+            width: 100%;
+        }
+
+
+        /* =========================================================
+           COMPATIBILIDADE COM OS CARDS GERADOS PELO JS
+           ========================================================= */
+
+        body.cursos-admin-page #listaCursos > * {
+
+            box-sizing: border-box;
+        }
+
+        body.cursos-admin-page #listaCursos img {
+
+            max-width: 100%;
+        }
+
+
+        /* =========================================================
+           MOBILE
+           ========================================================= */
+
+        @media (max-width: 700px) {
+
+            body.cursos-admin-page > header {
+
+                min-height: 70px;
+
+                padding: 14px 18px;
+            }
+
+            body.cursos-admin-page .logo {
+
+                font-size: 17px;
+            }
+
+            body.cursos-admin-page nav {
+
+                gap: 13px;
+            }
+
+            body.cursos-admin-page nav a {
+
+                font-size: 11px;
+            }
+
+            body.cursos-admin-page main {
+
+                padding: 25px 15px 50px;
+            }
+
+            body.cursos-admin-page .hero {
+
+                padding: 25px 20px;
+
+                border-radius: 14px;
+            }
+
+            body.cursos-admin-page .hero h1 {
+
+                font-size: 30px;
+            }
+
+            body.cursos-admin-page #formularioCurso,
+            body.cursos-admin-page #areaEdicao {
+
+                padding: 20px;
+            }
+
+            body.cursos-admin-page .courses {
+
+                padding: 22px 18px;
+
+                border-radius: 14px;
+            }
+
+            body.cursos-admin-page form button {
+
+                width: 100%;
+
+                margin-top: 8px;
+            }
+
+            body.cursos-admin-page form button.secondary {
+
+                margin-left: 0;
+            }
+
+        }
+
+    </style>
 
 </head>
 
-<body>
+
+<body class="cursos-admin-page">
+
 
 <header>
 
@@ -43,6 +549,7 @@
 
 <main>
 
+
     <section class="hero">
 
         <div class="hero-text">
@@ -65,12 +572,14 @@
             </button>
 
 
-            <!-- ============================== -->
-            <!-- NOVO CURSO -->
-            <!-- ============================== -->
+            <!-- =================================================
+                 NOVO CURSO
+                 ================================================= -->
 
-            <div id="formularioCurso"
-                 style="display: none; margin-top: 30px;">
+            <div
+                id="formularioCurso"
+                style="display: none; margin-top: 30px;"
+            >
 
                 <h2>
                     Novo curso
@@ -95,7 +604,6 @@
                         id="descricaoCurso"
                         placeholder="Descrição do curso"
                         rows="5"
-                        style="width: 100%; max-width: 600px;"
                     ></textarea>
 
 
@@ -106,7 +614,6 @@
                         id="porqueFazerCurso"
                         placeholder="Por que o aluno deve fazer este curso?"
                         rows="6"
-                        style="width: 100%; max-width: 600px;"
                     ></textarea>
 
 
@@ -173,12 +680,14 @@
             </div>
 
 
-            <!-- ============================== -->
-            <!-- EDITAR CURSO -->
-            <!-- ============================== -->
+            <!-- =================================================
+                 EDITAR CURSO
+                 ================================================= -->
 
-            <div id="areaEdicao"
-                 style="display: none; margin-top: 30px;">
+            <div
+                id="areaEdicao"
+                style="display: none; margin-top: 30px;"
+            >
 
                 <h2>
                     Editar curso
@@ -209,7 +718,6 @@
                         id="edicaoDescricao"
                         placeholder="Descrição do curso"
                         rows="5"
-                        style="width: 100%; max-width: 600px;"
                     ></textarea>
 
 
@@ -220,7 +728,6 @@
                         id="edicaoPorqueFazer"
                         placeholder="Por que o aluno deve fazer este curso?"
                         rows="6"
-                        style="width: 100%; max-width: 600px;"
                     ></textarea>
 
 
@@ -290,9 +797,9 @@
     </section>
 
 
-    <!-- ============================== -->
-    <!-- CURSOS CADASTRADOS -->
-    <!-- ============================== -->
+    <!-- =========================================================
+         CURSOS CADASTRADOS
+         ========================================================= -->
 
     <section class="courses">
 
