@@ -268,7 +268,128 @@ footer p {
     .buttons {
         flex-direction: column;
     }
+/* =========================================================
+   TÁTICO CURSO — AJUSTE FINAL DA HOME
+   Estas regras têm prioridade somente na página inicial.
+========================================================= */
 
+body.home-page {
+    margin: 0 !important;
+    padding: 0 !important;
+
+    background: #080a0f !important;
+
+    color: #ffffff !important;
+
+    min-height: 100vh;
+}
+
+
+body.home-page main {
+    width: 100% !important;
+
+    max-width: none !important;
+
+    margin: 0 !important;
+
+    padding: 0 !important;
+
+    background: transparent !important;
+}
+
+
+body.home-page .home-hero {
+    background:
+        radial-gradient(
+            circle at 75% 35%,
+            rgba(200, 163, 85, 0.10),
+            transparent 35%
+        ),
+        #080a0f !important;
+}
+
+
+body.home-page .home-section {
+    background: transparent !important;
+}
+
+
+body.home-page footer {
+    background: #080a0f !important;
+}
+
+
+body.home-page header {
+    margin: 0 !important;
+}
+
+
+/* Remove interferências da marca-d'água antiga
+   somente da home, pois o novo layout já possui
+   sua própria composição visual. */
+
+body.home-page::before {
+    z-index: 999 !important;
+    opacity: 0.08 !important;
+}
+
+
+/* Garante que o conteúdo fique acima da marca-d'água */
+
+body.home-page .home-header,
+body.home-page main,
+body.home-page .home-footer {
+    position: relative;
+
+    z-index: 2;
+}
+
+
+/* =========================================================
+   AJUSTE DOS CARDS
+========================================================= */
+
+body.home-page .home-course-card {
+    background: #0e121a !important;
+
+    color: #ffffff !important;
+}
+
+
+body.home-page .home-course-card h3 {
+    color: #ffffff !important;
+}
+
+
+body.home-page .home-course-card p {
+    color: #94a3b8 !important;
+}
+
+
+/* =========================================================
+   SCROLL
+========================================================= */
+
+html {
+    scroll-behavior: smooth;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 620px) {
+
+    body.home-page .home-section {
+        width: 90% !important;
+    }
+
+    body.home-page .home-hero-grid {
+        width: 90% !important;
+    }
+
+}
     button {
         width: 100%;
     }
