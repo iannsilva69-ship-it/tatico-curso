@@ -10,7 +10,9 @@ async function verificarUsuario() {
     } = await supabaseClient.auth.getUser();
 
     if (error || !user) {
+
         window.location.href = "login.html";
+
         return null;
     }
 
@@ -48,6 +50,39 @@ async function carregarPerfil(user) {
 
 
 // ==========================================
+// VERIFICAR TESTE GRÁTIS
+// ==========================================
+
+async function verificarTesteGratis(perfil) {
+
+    const agora = new Date().toISOString();
+
+    const {
+        data,
+        error
+    } = await supabaseClient
+        .from("testes_gratis")
+        .select("*")
+        .eq("usuario_id", perfil.id)
+        .eq("ativo", true)
+        .gt("data_fim", agora)
+        .maybeSingle();
+
+    if (error) {
+
+        console.error(
+            "Erro ao verificar teste grátis:",
+            error
+        );
+
+        return null;
+    }
+
+    return data;
+}
+
+
+// ==========================================
 // CARREGAR CURSOS
 // ==========================================
 
@@ -55,6 +90,13 @@ async function carregarCursos(perfil) {
 
     const lista =
         document.getElementById("listaCursos");
+
+    // ==========================================
+    // VERIFICAR TESTE GRÁTIS
+    // ==========================================
+
+    const testeGratis =
+        await verificarTesteGratis(perfil);
 
 
     // ==========================================
@@ -85,10 +127,34 @@ async function carregarCursos(perfil) {
     }
 
 
-    if (!matriculas || matriculas.length === 0) {
+    // ==========================================
+    // MAPEAR CURSOS MATRICULADOS
+    // ==========================================
 
-        lista.innerHTML =
-            "<p>Você ainda não possui cursos ativos.</p>";
+    const cursosMatriculados =
+        matriculas || [];
+
+
+    const idsCursosMatriculados =
+        cursosMatriculados
+            .map(matricula => matricula.curso_id)
+            .filter(id => id);
+
+
+    // ==========================================
+    // SE NÃO TEM MATRÍCULA E NÃO TEM TESTE
+    // ==========================================
+
+    if (
+        cursosMatriculados.length === 0 &&
+        !testeGratis
+    ) {
+
+        lista.innerHTML = `
+            <p>
+                Você ainda não possui cursos ativos.
+            </p>
+        `;
 
         return;
     }
@@ -98,43 +164,142 @@ async function carregarCursos(perfil) {
 
 
     // ==========================================
-    // CADA MATRÍCULA
+    // BUSCAR CURSOS
     // ==========================================
 
-    for (const matricula of matriculas) {
-
-        const cursoId =
-            matricula.curso_id;
+    let cursos = [];
 
 
-        if (!cursoId) {
-            continue;
-        }
+    if (testeGratis) {
 
-
-        // ==========================================
-        // BUSCAR CURSO
-        // ==========================================
+        // Durante o teste grátis,
+        // mostra todos os cursos ativos.
 
         const {
-            data: curso,
-            error: erroCurso
+            data: cursosAtivos,
+            error: erroCursos
         } = await supabaseClient
             .from("cursos")
             .select("*")
-            .eq("id", cursoId)
-            .single();
+            .eq("ativo", true)
+            .order("id", {
+                ascending: true
+            });
 
 
-        if (erroCurso || !curso) {
+        if (erroCursos) {
 
             console.error(
-                "Erro ao carregar curso:",
-                erroCurso
+                "Erro ao carregar cursos:",
+                erroCursos
             );
 
-            continue;
+            lista.innerHTML =
+                "<p>Não foi possível carregar seus cursos.</p>";
+
+            return;
         }
+
+
+        cursos =
+            cursosAtivos || [];
+
+    } else {
+
+        // Sem teste grátis:
+        // mostra somente cursos matriculados.
+
+        for (
+            const matricula
+            of cursosMatriculados
+        ) {
+
+            const cursoId =
+                matricula.curso_id;
+
+
+            if (!cursoId) {
+                continue;
+            }
+
+
+            const {
+                data: curso,
+                error: erroCurso
+            } = await supabaseClient
+                .from("cursos")
+                .select("*")
+                .eq("id", cursoId)
+                .single();
+
+
+            if (erroCurso || !curso) {
+
+                console.error(
+                    "Erro ao carregar curso:",
+                    erroCurso
+                );
+
+                continue;
+            }
+
+
+            cursos.push(curso);
+        }
+    }
+
+
+    // ==========================================
+    // NENHUM CURSO ENCONTRADO
+    // ==========================================
+
+    if (cursos.length === 0) {
+
+        lista.innerHTML = `
+            <p>
+                Nenhum curso disponível no momento.
+            </p>
+        `;
+
+        return;
+    }
+
+
+    // ==========================================
+    // EVITAR CURSOS DUPLICADOS
+    // ==========================================
+
+    const cursosUnicos = [];
+
+    const idsJaAdicionados = new Set();
+
+
+    for (const curso of cursos) {
+
+        if (!idsJaAdicionados.has(curso.id)) {
+
+            idsJaAdicionados.add(curso.id);
+
+            cursosUnicos.push(curso);
+        }
+    }
+
+
+    // ==========================================
+    // CADA CURSO
+    // ==========================================
+
+    for (const curso of cursosUnicos) {
+
+        // ==========================================
+        // VERIFICAR MATRÍCULA DESTE CURSO
+        // ==========================================
+
+        const matricula =
+            cursosMatriculados.find(
+                item =>
+                    item.curso_id === curso.id
+            );
 
 
         // ==========================================
@@ -277,6 +442,47 @@ async function carregarCursos(perfil) {
 
 
         // ==========================================
+        // INFORMAÇÃO DO ACESSO
+        // ==========================================
+
+        let informacaoAcesso = "";
+
+
+        if (matricula && matricula.data_fim) {
+
+            informacaoAcesso = `
+                <p>
+                    <strong>
+                        Acesso até:
+                    </strong>
+
+                    ${new Date(
+                        matricula.data_fim
+                    ).toLocaleDateString(
+                        "pt-BR"
+                    )}
+                </p>
+            `;
+
+        } else if (testeGratis) {
+
+            informacaoAcesso = `
+                <p>
+                    <strong>
+                        🎁 Teste grátis até:
+                    </strong>
+
+                    ${new Date(
+                        testeGratis.data_fim
+                    ).toLocaleDateString(
+                        "pt-BR"
+                    )}
+                </p>
+            `;
+        }
+
+
+        // ==========================================
         // CARD DO CURSO
         // ==========================================
 
@@ -312,6 +518,26 @@ async function carregarCursos(perfil) {
             <div style="
                 padding:20px;
             ">
+
+                ${
+                    testeGratis && !matricula
+                        ? `
+                            <div style="
+                                display:inline-block;
+                                margin-bottom:10px;
+                                padding:6px 10px;
+                                border-radius:20px;
+                                background:#d4af37;
+                                color:#080a0f;
+                                font-size:12px;
+                                font-weight:700;
+                            ">
+                                🎁 TESTE GRÁTIS
+                            </div>
+                        `
+                        : ""
+                }
+
 
                 <h3>
                     ${curso.nome}
@@ -359,23 +585,7 @@ async function carregarCursos(perfil) {
                 </p>
 
 
-                ${
-                    matricula.data_fim
-                        ? `
-                            <p>
-                                <strong>
-                                    Acesso até:
-                                </strong>
-
-                                ${new Date(
-                                    matricula.data_fim
-                                ).toLocaleDateString(
-                                    "pt-BR"
-                                )}
-                            </p>
-                        `
-                        : ""
-                }
+                ${informacaoAcesso}
 
 
                 <button
