@@ -5,36 +5,76 @@
 
     <meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
-    <title>Tático Curso | Preparação para Concursos</title>
+    <title>TÁTICOS CONCURSOS | Preparação para Concursos</title>
 
-    <link rel="stylesheet" href="style.css">
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json">
+
+    <meta name="theme-color" content="#080A0F">
+
+    <!-- FAVICON -->
+    <link rel="icon"
+          type="image/png"
+          sizes="48x48"
+          href="icons/favicon-48.png">
+
+    <link rel="icon"
+          type="image/png"
+          sizes="32x32"
+          href="icons/favicon-32.png">
+
+    <!-- IPHONE -->
+    <link rel="apple-touch-icon"
+          href="icons/apple-touch-icon.png">
+
+    <link rel="stylesheet"
+          href="style.css">
+
+
+    <!-- SUPABASE -->
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <script src="supabase.js"></script>
 
+
     <style>
 
         /* =========================================================
-           TÁTICO CURSO — NOVO LAYOUT DA PÁGINA INICIAL
+           BASE
         ========================================================= */
 
-        .home-page {
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body.home-page {
+            margin: 0 !important;
+            padding: 0 !important;
+
+            min-height: 100vh;
+
             background:
                 radial-gradient(
                     circle at 80% 20%,
                     rgba(200, 163, 85, 0.08),
                     transparent 30%
                 ),
-                #080a0f;
+                #080A0F !important;
 
-            min-height: 100vh;
-            color: #ffffff;
+            color: #ffffff !important;
+
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
         }
 
 
@@ -46,9 +86,10 @@
 
             position: sticky;
             top: 0;
+
             z-index: 1000;
 
-            height: 74px;
+            min-height: 74px;
 
             display: flex;
             align-items: center;
@@ -56,10 +97,11 @@
 
             padding: 0 5%;
 
-            background: rgba(8, 10, 15, 0.92);
+            background:
+                rgba(8, 10, 15, 0.94);
 
             border-bottom:
-                1px solid rgba(200, 163, 85, 0.16);
+                1px solid rgba(200, 163, 85, 0.18);
 
             backdrop-filter: blur(14px);
         }
@@ -69,38 +111,43 @@
 
             display: flex;
             align-items: center;
+
             gap: 12px;
 
             text-decoration: none;
+
             color: #ffffff;
         }
 
 
         .home-logo-icon {
 
-            width: 42px;
-            height: 42px;
-
-            border-radius: 50%;
+            width: 44px;
+            height: 44px;
 
             display: flex;
             align-items: center;
             justify-content: center;
 
+            overflow: hidden;
+
+            border-radius: 50%;
+
             border:
                 1px solid rgba(200, 163, 85, 0.7);
 
-            background:
-                radial-gradient(
-                    circle,
-                    #20252e,
-                    #080a0f
-                );
+            background: #080A0F;
+        }
 
-            color: #d4af37;
 
-            font-size: 20px;
-            font-weight: 900;
+        .home-logo-icon img {
+
+            width: 100%;
+            height: 100%;
+
+            object-fit: cover;
+
+            display: block;
         }
 
 
@@ -115,6 +162,7 @@
             display: block;
 
             font-size: 17px;
+
             letter-spacing: 4px;
 
             color: #ffffff;
@@ -128,6 +176,7 @@
             margin-top: 5px;
 
             font-size: 7px;
+
             letter-spacing: 4px;
 
             color: #d4af37;
@@ -137,7 +186,9 @@
         .home-nav {
 
             display: flex;
+
             align-items: center;
+
             gap: 24px;
         }
 
@@ -149,6 +200,7 @@
             text-decoration: none;
 
             font-size: 11px;
+
             font-weight: 700;
 
             text-transform: uppercase;
@@ -165,8 +217,7 @@
 
         .home-nav-login {
 
-            padding:
-                10px 16px;
+            padding: 10px 16px;
 
             border:
                 1px solid rgba(200, 163, 85, 0.45);
@@ -200,27 +251,10 @@
         }
 
 
-        .home-hero::before {
-
-            content: "";
-
-            position: absolute;
-
-            inset: 0;
-
-            background-image:
-                linear-gradient(
-                    rgba(8, 10, 15, 0.75),
-                    rgba(8, 10, 15, 0.95)
-                );
-
-            pointer-events: none;
-        }
-
-
         .home-hero-grid {
 
             position: relative;
+
             z-index: 2;
 
             width: min(1180px, 90%);
@@ -235,6 +269,8 @@
             gap: 70px;
 
             align-items: center;
+
+            padding: 55px 0;
         }
 
 
@@ -248,8 +284,7 @@
 
             display: inline-flex;
 
-            padding:
-                7px 13px;
+            padding: 7px 13px;
 
             border:
                 1px solid rgba(200, 163, 85, 0.35);
@@ -326,8 +361,7 @@
 
         .home-benefit {
 
-            padding:
-                9px 12px;
+            padding: 9px 12px;
 
             border:
                 1px solid rgba(255,255,255,0.08);
@@ -376,8 +410,7 @@
 
             min-height: 46px;
 
-            padding:
-                0 22px;
+            padding: 0 22px;
 
             border: none;
 
@@ -427,8 +460,7 @@
 
             min-height: 46px;
 
-            padding:
-                0 22px;
+            padding: 0 22px;
 
             border:
                 1px solid rgba(255,255,255,0.15);
@@ -462,7 +494,7 @@
 
 
         /* =========================================================
-           HERO LOGO / CARD
+           LOGO PRINCIPAL
         ========================================================= */
 
         .home-hero-card {
@@ -488,8 +520,7 @@
                 );
 
             box-shadow:
-                0 25px 60px
-                rgba(0,0,0,0.5),
+                0 25px 60px rgba(0,0,0,0.5),
 
                 inset 0 0 40px
                 rgba(200,163,85,0.04);
@@ -499,40 +530,29 @@
         .home-hero-brand {
 
             text-align: center;
+
+            width: 100%;
         }
 
 
-        .home-brand-symbol {
+        .home-brand-logo {
 
-            width: 135px;
-            height: 135px;
+            width: 190px;
+            height: 190px;
 
             margin: 0 auto 25px;
 
-            border-radius: 50%;
+            display: block;
 
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            object-fit: contain;
 
-            border:
-                2px solid #c8a355;
+            border-radius: 20px;
 
-            background:
-                radial-gradient(
-                    circle,
-                    #202832 0%,
-                    #080a0f 70%
+            filter:
+                drop-shadow(
+                    0 0 25px
+                    rgba(200, 163, 85, 0.18)
                 );
-
-            box-shadow:
-                0 0 35px
-                rgba(200, 163, 85, 0.16);
-
-            color: #e5c378;
-
-            font-size: 52px;
-            font-weight: 900;
         }
 
 
@@ -602,8 +622,7 @@
 
             margin: auto;
 
-            padding:
-                75px 0;
+            padding: 75px 0;
         }
 
 
@@ -693,8 +712,7 @@
 
             border-radius: 14px;
 
-            background:
-                #0e121a;
+            background: #0e121a;
 
             transition:
                 transform 0.2s,
@@ -774,8 +792,7 @@
 
             margin-bottom: 12px;
 
-            padding:
-                5px 8px;
+            padding: 5px 8px;
 
             border:
                 1px solid rgba(200, 163, 85, 0.25);
@@ -959,8 +976,7 @@
 
         .home-footer {
 
-            padding:
-                30px 5%;
+            padding: 30px 5%;
 
             border-top:
                 1px solid rgba(200,163,85,0.12);
@@ -974,18 +990,16 @@
 
 
         /* =========================================================
-           MOBILE
+           TABLET
         ========================================================= */
 
         @media (max-width: 900px) {
 
             .home-nav {
-
                 gap: 10px;
             }
 
             .home-nav a {
-
                 font-size: 9px;
             }
 
@@ -995,28 +1009,27 @@
 
                 gap: 35px;
 
-                padding:
-                    55px 0;
+                padding: 55px 0;
             }
 
             .home-hero {
-
                 min-height: auto;
             }
 
             .home-hero-card {
-
                 min-height: 300px;
             }
 
             .home-courses-grid {
-
                 grid-template-columns:
                     repeat(2, 1fr);
             }
-
         }
 
+
+        /* =========================================================
+           CELULAR
+        ========================================================= */
 
         @media (max-width: 620px) {
 
@@ -1026,14 +1039,29 @@
 
                 min-height: 70px;
 
-                padding:
-                    12px 5%;
+                padding: 12px 5%;
             }
 
 
             .home-nav {
-
                 display: none;
+            }
+
+
+            .home-logo-icon {
+
+                width: 40px;
+                height: 40px;
+            }
+
+
+            .home-logo-text strong {
+                font-size: 15px;
+            }
+
+
+            .home-logo-text span {
+                font-size: 6px;
             }
 
 
@@ -1046,7 +1074,6 @@
 
 
             .home-hero-description {
-
                 font-size: 12px;
             }
 
@@ -1064,6 +1091,29 @@
             }
 
 
+            .home-hero-card {
+
+                padding: 25px;
+
+                min-height: 290px;
+            }
+
+
+            .home-brand-logo {
+
+                width: 150px;
+                height: 150px;
+            }
+
+
+            .home-brand-name {
+
+                font-size: 23px;
+
+                letter-spacing: 6px;
+            }
+
+
             .home-courses-grid {
 
                 grid-template-columns: 1fr;
@@ -1072,8 +1122,7 @@
 
             .home-section {
 
-                padding:
-                    50px 0;
+                padding: 50px 0;
             }
 
 
@@ -1088,14 +1137,6 @@
                 grid-template-columns: 1fr;
 
                 padding: 25px;
-            }
-
-
-            .home-brand-name {
-
-                font-size: 23px;
-
-                letter-spacing: 6px;
             }
 
         }
@@ -1114,14 +1155,18 @@
 
     <header class="home-header">
 
-        <a
-            href="#inicio"
-            class="home-logo"
-        >
+        <a href="#inicio"
+           class="home-logo">
 
             <div class="home-logo-icon">
-                T
+
+                <img
+                    src="icons/logo-192.png"
+                    alt="TÁTICOS"
+                >
+
             </div>
+
 
             <div class="home-logo-text">
 
@@ -1152,17 +1197,14 @@
                 Simulados
             </a>
 
-            <a
-                href="login.html"
-                class="home-nav-login"
-            >
+            <a href="login.html"
+               class="home-nav-login">
                 Login
             </a>
 
         </nav>
 
     </header>
-
 
 
     <!-- =========================================================
@@ -1177,7 +1219,6 @@
 
 
                 <div class="home-hero-content">
-
 
                     <div class="home-tag">
                         Preparação para concursos
@@ -1202,7 +1243,7 @@
                         Cursos preparatórios, videoaulas,
                         materiais em PDF, simulados e uma
                         plataforma criada para quem leva
-                        a aprovação a sério.
+                        a preparação a sério.
 
                     </p>
 
@@ -1241,7 +1282,9 @@
                                 });
                             "
                         >
+
                             Conhecer os cursos →
+
                         </button>
 
 
@@ -1252,7 +1295,9 @@
                                 window.location.href='login.html';
                             "
                         >
+
                             Entrar na área do aluno
+
                         </button>
 
                     </div>
@@ -1261,19 +1306,17 @@
                 </div>
 
 
-
-                <!-- =================================================
-                     CARD DA MARCA
-                ================================================== -->
+                <!-- LOGO -->
 
                 <div class="home-hero-card">
 
                     <div class="home-hero-brand">
 
-
-                        <div class="home-brand-symbol">
-                            T
-                        </div>
+                        <img
+                            class="home-brand-logo"
+                            src="icons/logo-512.png"
+                            alt="Logo TÁTICOS Concursos"
+                        >
 
 
                         <div class="home-brand-name">
@@ -1294,7 +1337,6 @@
                             Seu destino é a aprovação.
                         </div>
 
-
                     </div>
 
                 </div>
@@ -1305,7 +1347,6 @@
         </section>
 
 
-
         <!-- =========================================================
              CURSOS
         ========================================================== -->
@@ -1314,7 +1355,6 @@
             id="cursos"
             class="home-section"
         >
-
 
             <div class="home-section-header">
 
@@ -1348,9 +1388,7 @@
 
             </div>
 
-
         </section>
-
 
 
         <!-- =========================================================
@@ -1361,7 +1399,6 @@
             id="simulados"
             class="home-section"
         >
-
 
             <div class="home-section-header">
 
@@ -1382,7 +1419,6 @@
 
             <div class="home-simulado-box">
 
-
                 <div>
 
                     <h3>
@@ -1390,10 +1426,12 @@
                     </h3>
 
                     <p>
+
                         Acesse simulados completos e coloque
                         seus conhecimentos à prova. Treine,
                         identifique suas dificuldades e
                         acompanhe sua evolução.
+
                     </p>
 
                 </div>
@@ -1406,18 +1444,17 @@
                         window.location.href='login.html';
                     "
                 >
+
                     Acessar simulados →
+
                 </button>
 
-
             </div>
-
 
         </section>
 
 
     </main>
-
 
 
     <!-- =========================================================
@@ -1426,15 +1463,14 @@
 
     <footer class="home-footer">
 
-        © 2026 Tático Curso —
+        © 2026 TÁTICOS CONCURSOS —
         Todos os direitos reservados.
 
     </footer>
 
 
-
     <!-- =========================================================
-         SUPABASE — CARREGAR CURSOS
+         CARREGAR CURSOS
     ========================================================== -->
 
     <script>
@@ -1558,9 +1594,7 @@
                         "home-course-card";
 
 
-                    /* =================================================
-                       IMAGEM
-                    ================================================== */
+                    /* IMAGEM */
 
                     if (curso.imagem) {
 
@@ -1603,8 +1637,19 @@
                             "home-course-no-image";
 
 
-                        semImagem.textContent =
-                            "T";
+                        semImagem.innerHTML = `
+
+                            <img
+                                src="icons/logo-192.png"
+                                alt="TÁTICOS"
+                                style="
+                                    width:90px;
+                                    height:90px;
+                                    object-fit:contain;
+                                "
+                            >
+
+                        `;
 
 
                         card.appendChild(
@@ -1614,9 +1659,7 @@
                     }
 
 
-                    /* =================================================
-                       CONTEÚDO
-                    ================================================== */
+                    /* CONTEÚDO */
 
                     const conteudo =
                         document.createElement(
@@ -1686,9 +1729,7 @@
                     );
 
 
-                    /* =================================================
-                       PREÇO
-                    ================================================== */
+                    /* PREÇO */
 
                     if (
                         curso.preco !== null &&
@@ -1759,9 +1800,7 @@
                     }
 
 
-                    /* =================================================
-                       BOTÃO
-                    ================================================== */
+                    /* BOTÃO */
 
                     const botao =
                         document.createElement(
@@ -1815,11 +1854,10 @@
         }
 
 
-        /* =========================================================
-           INICIAR
-        ========================================================== */
+        /* INICIAR */
 
         carregarCursosPublicos();
+
 
     </script>
 
