@@ -532,3 +532,37 @@ body.curso-publico-page #porqueFazerCurso p {
 body.curso-publico-page #porqueFazerCurso * {
     max-width: none !important;
 }
+/* CORREÇÃO DAS CORES DOS NOMES DAS AULAS */
+
+body .pagina-curso .modulo-card {
+    color: #ffffff !important;
+}
+
+body .pagina-curso .modulo-card h3 {
+    color: #E5C378 !important;
+}
+
+body .pagina-curso .aula-card {
+    background: #080A0F !important;
+    color: #ffffff !important;
+}
+
+body .pagina-curso .aula-card h4 {
+    color: #ffffff !important;
+}
+
+body .pagina-curso .aula-card p {
+    color: #c8cbd2 !important;
+}
+
+body .pagina-curso .aula-card a {
+    color: #ffffff !important;
+}
+
+body .pagina-curso .area-ia {
+    color: #ffffff !important;
+}
+
+body .pagina-curso .area-ia p {
+    color: #c8cbd2 !important;
+}
