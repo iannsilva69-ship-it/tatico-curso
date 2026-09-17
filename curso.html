@@ -4,7 +4,6 @@
 <head>
 
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Meu Curso - Tático Curso</title>
@@ -12,63 +11,136 @@
     <link rel="stylesheet" href="style.css">
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
     <script src="supabase.js"></script>
 
     <style>
 
-        /* ==============================
-           PÁGINA DO CURSO
-        ============================== */
+        /* =========================================================
+           TÁTICOS - ÁREA DE ESTUDOS
+           ========================================================= */
 
-        .pagina-curso {
+        body {
+            margin: 0 !important;
+            padding: 0 !important;
+            background: #080A0F !important;
+            color: #ffffff !important;
             min-height: 100vh;
         }
 
+        .pagina-curso {
+            min-height: 100vh;
+            background:
+                radial-gradient(
+                    circle at 10% 0%,
+                    rgba(200, 163, 85, 0.08),
+                    transparent 30%
+                ),
+                #080A0F;
+        }
 
-        /* ==============================
+
+        /* =========================================================
+           HEADER
+           ========================================================= */
+
+        .pagina-curso > header {
+            min-height: 76px;
+
+            padding: 0 6%;
+            box-sizing: border-box;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            background: rgba(8, 10, 15, 0.97);
+
+            border-bottom: 1px solid rgba(200, 163, 85, 0.22);
+
+            position: relative;
+            z-index: 10;
+        }
+
+        .pagina-curso .logo {
+            color: #E5C378;
+
+            font-size: 21px;
+            font-weight: 900;
+
+            letter-spacing: 2px;
+        }
+
+        .pagina-curso nav {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }
+
+        .pagina-curso nav a {
+            color: #b8bec9;
+
+            text-decoration: none;
+
+            font-size: 13px;
+            font-weight: 700;
+
+            transition: 0.2s;
+        }
+
+        .pagina-curso nav a:hover {
+            color: #E5C378;
+        }
+
+
+        /* =========================================================
            CABEÇALHO DO CURSO
-        ============================== */
+           ========================================================= */
 
         .curso-cabecalho {
 
             background:
+                radial-gradient(
+                    circle at 90% 20%,
+                    rgba(200, 163, 85, 0.08),
+                    transparent 25%
+                ),
                 linear-gradient(
                     135deg,
-                    #111827 0%,
-                    #1f2937 50%,
-                    #111827 100%
-                );
+                    #0E121A,
+                    #111722
+                ) !important;
 
             color: white;
 
-            padding: 65px 6%;
+            padding: 60px 6% !important;
 
-            border-bottom: 2px solid #a67c32;
+            border-bottom: 1px solid rgba(200, 163, 85, 0.35) !important;
 
             position: relative;
 
             overflow: hidden;
         }
 
-
-        .curso-cabecalho::after {
+        .curso-cabecalho::before {
 
             content: "";
 
             position: absolute;
 
-            width: 350px;
-            height: 350px;
+            width: 420px;
+            height: 420px;
 
-            right: -100px;
-            top: -150px;
+            right: -150px;
+            top: -210px;
 
-            border: 2px solid rgba(166, 124, 50, 0.25);
+            border: 1px solid rgba(200, 163, 85, 0.18);
 
             border-radius: 50%;
-        }
 
+            box-shadow:
+                0 0 0 45px rgba(200, 163, 85, 0.025),
+                0 0 0 90px rgba(200, 163, 85, 0.018);
+        }
 
         .curso-cabecalho-conteudo {
 
@@ -81,58 +153,61 @@
             z-index: 2;
         }
 
-
         .curso-tag {
 
             display: inline-block;
 
-            color: #d6b36a;
+            color: #E5C378 !important;
 
-            border: 1px solid #a67c32;
+            background: rgba(200, 163, 85, 0.06);
 
-            padding: 8px 16px;
+            border: 1px solid rgba(200, 163, 85, 0.45) !important;
 
-            border-radius: 20px;
+            padding: 7px 14px;
 
-            font-size: 12px;
+            border-radius: 999px;
 
-            font-weight: bold;
+            font-size: 11px;
 
-            letter-spacing: 1px;
+            font-weight: 800;
+
+            letter-spacing: 1.2px;
 
             margin-bottom: 18px;
         }
-
 
         .curso-cabecalho h1 {
 
             margin: 0;
 
-            font-size: 46px;
+            font-size: clamp(34px, 5vw, 52px);
 
-            color: #f4f4f4;
+            line-height: 1.05;
 
-            letter-spacing: 0.5px;
+            color: #ffffff !important;
+
+            font-weight: 900;
+
+            letter-spacing: -1px;
         }
-
 
         .curso-cabecalho p {
 
-            max-width: 750px;
+            max-width: 760px;
 
-            margin-top: 18px;
+            margin: 18px 0 0;
 
-            color: #cbd5e1;
+            color: #aeb5c1 !important;
 
-            font-size: 18px;
+            font-size: 16px;
 
             line-height: 1.7;
         }
 
 
-        /* ==============================
+        /* =========================================================
            CONTEÚDO
-        ============================== */
+           ========================================================= */
 
         .conteudo-curso {
 
@@ -140,9 +215,10 @@
 
             margin: auto;
 
-            padding: 60px 6%;
-        }
+            padding: 50px 24px 80px !important;
 
+            box-sizing: border-box;
+        }
 
         .titulo-conteudo {
 
@@ -152,19 +228,19 @@
 
             gap: 15px;
 
-            margin-bottom: 35px;
+            margin-bottom: 28px;
         }
-
 
         .titulo-conteudo h2 {
 
             margin: 0;
 
-            font-size: 30px;
+            font-size: 28px;
 
-            color: #17202a;
+            color: #ffffff !important;
+
+            font-weight: 850;
         }
-
 
         .linha-dourada {
 
@@ -172,15 +248,17 @@
 
             width: 55px;
 
-            background: #a67c32;
+            background: #C8A355 !important;
 
             border-radius: 5px;
+
+            flex-shrink: 0;
         }
 
 
-        /* ==============================
+        /* =========================================================
            MÓDULOS
-        ============================== */
+           ========================================================= */
 
         #modulos {
 
@@ -188,132 +266,155 @@
 
             flex-direction: column;
 
-            gap: 25px;
-        }
+            gap: 22px;
 
+            width: 100%;
+        }
 
         .modulo-card {
 
-            background: rgba(255, 255, 255, 0.94);
+            background: #0E121A !important;
 
-            border-radius: 14px;
+            border: 1px solid rgba(200, 163, 85, 0.18) !important;
 
-            border-left: 5px solid #a67c32;
+            border-left: 4px solid #C8A355 !important;
 
-            padding: 25px;
+            border-radius: 14px !important;
+
+            padding: 24px !important;
 
             box-shadow:
-                0 8px 25px rgba(0, 0, 0, 0.07);
+                0 15px 35px rgba(0, 0, 0, 0.22) !important;
         }
-
 
         .modulo-card h3 {
 
-            margin-top: 0;
+            margin: 0 0 18px;
 
-            color: #1f2937;
+            color: #E5C378 !important;
 
-            font-size: 22px;
+            font-size: 21px;
+
+            font-weight: 800;
         }
 
 
-        /* ==============================
+        /* =========================================================
            AULAS
-        ============================== */
+           ========================================================= */
 
         .aula-card {
 
-            background: #f8fafc;
+            background: #080A0F !important;
 
-            border: 1px solid #e5e7eb;
+            border: 1px solid rgba(200, 163, 85, 0.13) !important;
 
-            border-radius: 10px;
+            border-radius: 11px !important;
 
-            padding: 20px;
+            padding: 20px !important;
 
-            margin-top: 15px;
+            margin-top: 14px !important;
+
+            box-sizing: border-box;
         }
-
 
         .aula-card h4 {
 
-            margin-top: 0;
+            margin: 0 0 15px;
 
-            color: #374151;
+            color: #ffffff !important;
 
-            font-size: 17px;
+            font-size: 16px;
+
+            font-weight: 750;
         }
 
+
+        /* =========================================================
+           LINKS / BOTÕES DAS AULAS
+           ========================================================= */
 
         .aula-card a {
 
             display: inline-block;
 
-            margin-right: 10px;
+            margin-right: 8px;
 
             margin-top: 8px;
 
-            padding: 10px 15px;
+            padding: 10px 14px;
 
             border-radius: 7px;
 
             text-decoration: none;
 
-            font-size: 14px;
+            font-size: 13px;
 
-            font-weight: bold;
+            font-weight: 750;
+
+            transition: 0.2s;
         }
-
-
-        .link-video {
-
-            background: #111827;
-
-            color: white;
-        }
-
-
-        .link-material {
-
-            background: #e5e7eb;
-
-            color: #374151;
-        }
-
 
         .aula-card a:hover {
 
-            opacity: 0.85;
+            transform: translateY(-1px);
+
+            opacity: 0.92;
+        }
+
+        .link-video {
+
+            background: #111827 !important;
+
+            border: 1px solid rgba(200, 163, 85, 0.25);
+
+            color: #ffffff !important;
+        }
+
+        .link-material {
+
+            background: #1a1f29 !important;
+
+            border: 1px solid rgba(255, 255, 255, 0.08);
+
+            color: #d8dce3 !important;
         }
 
 
-        /* ==============================
-           IA
-        ============================== */
+        /* =========================================================
+           ÁREA DA IA
+           ========================================================= */
 
         .area-ia {
 
-            margin-top: 25px;
+            margin-top: 20px !important;
 
-            padding: 20px;
+            padding: 20px !important;
 
-            background: white;
+            background: #0E121A !important;
 
-            border: 1px solid #e5e7eb;
+            border: 1px solid rgba(200, 163, 85, 0.20) !important;
 
-            border-radius: 10px;
+            border-radius: 11px !important;
+
+            box-sizing: border-box;
         }
-
 
         .area-ia textarea {
 
-            width: 100%;
+            width: 100% !important;
 
-            padding: 12px;
+            box-sizing: border-box;
 
-            border: 1px solid #d1d5db;
+            padding: 13px !important;
 
-            border-radius: 8px;
+            background: #080A0F !important;
+
+            color: #ffffff !important;
+
+            border: 1px solid rgba(200, 163, 85, 0.20) !important;
+
+            border-radius: 8px !important;
 
             resize: vertical;
 
@@ -322,76 +423,174 @@
             margin-bottom: 10px;
         }
 
+        .area-ia textarea::placeholder {
+
+            color: #737b88;
+        }
+
+        .area-ia textarea:focus {
+
+            outline: none;
+
+            border-color: #C8A355 !important;
+        }
 
         .area-ia button {
 
-            background: #111827;
+            background: linear-gradient(
+                135deg,
+                #C8A355,
+                #E5C378
+            ) !important;
 
-            color: white;
+            color: #080A0F !important;
 
-            padding: 10px 15px;
+            padding: 10px 17px !important;
 
-            border: none;
+            border: none !important;
 
-            border-radius: 7px;
+            border-radius: 7px !important;
 
             cursor: pointer;
 
-            font-weight: bold;
-        }
+            font-weight: 850;
 
+            transition: 0.2s;
+        }
 
         .area-ia button:hover {
 
-            opacity: 0.9;
+            transform: translateY(-1px);
+
+            opacity: 0.95;
         }
 
 
-        /* ==============================
+        /* =========================================================
+           ELEMENTOS GERADOS PELO CURSO.JS
+           ========================================================= */
+
+        #modulos button {
+
+            border-radius: 7px;
+
+            font-weight: 750;
+
+            cursor: pointer;
+
+            transition: 0.2s;
+        }
+
+        #modulos button:hover {
+
+            transform: translateY(-1px);
+        }
+
+
+        /* =========================================================
+           PROGRESSO
+           ========================================================= */
+
+        #modulos [style*="progress"],
+        #modulos [style*="Progresso"],
+        #modulos [style*="progresso"] {
+
+            box-sizing: border-box;
+        }
+
+
+        /* =========================================================
            MOBILE
-        ============================== */
+           ========================================================= */
 
         @media (max-width: 700px) {
 
-            .curso-cabecalho {
+            .pagina-curso > header {
 
-                padding: 45px 6%;
+                min-height: 70px;
+
+                padding: 14px 18px;
             }
 
+            .pagina-curso .logo {
+
+                font-size: 17px;
+            }
+
+            .pagina-curso nav {
+
+                gap: 13px;
+            }
+
+            .pagina-curso nav a {
+
+                font-size: 11px;
+            }
+
+            .curso-cabecalho {
+
+                padding: 42px 20px !important;
+            }
 
             .curso-cabecalho h1 {
 
                 font-size: 34px;
             }
 
-
             .curso-cabecalho p {
 
-                font-size: 16px;
+                font-size: 15px;
             }
-
 
             .conteudo-curso {
 
-                padding: 45px 6%;
+                padding: 35px 15px 60px !important;
             }
 
+            .titulo-conteudo {
+
+                gap: 10px;
+
+                margin-bottom: 22px;
+            }
 
             .titulo-conteudo h2 {
 
-                font-size: 25px;
+                font-size: 22px;
             }
 
+            .linha-dourada {
+
+                width: 35px;
+            }
+
+            .modulo-card {
+
+                padding: 18px !important;
+            }
+
+            .aula-card {
+
+                padding: 16px !important;
+            }
 
             .aula-card a {
 
                 display: block;
+
+                width: 100%;
+
+                box-sizing: border-box;
 
                 text-align: center;
 
                 margin-right: 0;
             }
 
+            .area-ia {
+
+                padding: 15px !important;
+            }
         }
 
     </style>
@@ -404,9 +603,9 @@
     <div class="pagina-curso">
 
 
-        <!-- ==============================
-             CABEÇALHO
-        ============================== -->
+        <!-- =====================================================
+             HEADER
+             ===================================================== -->
 
         <header>
 
@@ -414,13 +613,11 @@
                 TÁTICO CURSO
             </div>
 
-
             <nav>
 
                 <a href="aluno.html">
                     Minha área
                 </a>
-
 
                 <a href="#" id="sair">
                     Sair
@@ -431,9 +628,9 @@
         </header>
 
 
-        <!-- ==============================
+        <!-- =====================================================
              INFORMAÇÕES DO CURSO
-        ============================== -->
+             ===================================================== -->
 
         <section class="curso-cabecalho">
 
@@ -443,11 +640,9 @@
                     MEU CURSO
                 </span>
 
-
                 <h1 id="nomeCurso">
                     Carregando curso...
                 </h1>
-
 
                 <p id="descricaoCurso">
                     Carregando informações...
@@ -458,17 +653,15 @@
         </section>
 
 
-        <!-- ==============================
+        <!-- =====================================================
              CONTEÚDO
-        ============================== -->
+             ===================================================== -->
 
         <main class="conteudo-curso">
-
 
             <div class="titulo-conteudo">
 
                 <div class="linha-dourada"></div>
-
 
                 <h2>
                     Conteúdo do curso
@@ -478,12 +671,15 @@
 
 
             <!--
-                IMPORTANTE:
-                A IA antiga foi removida daqui.
-
-                O curso.js cria automaticamente
-                uma IA dentro de cada aula
-                que possuir PDF.
+                O curso.js continua responsável por:
+                - módulos
+                - aulas
+                - progresso
+                - vídeos
+                - PDFs
+                - questões
+                - slides
+                - IA
             -->
 
             <div id="modulos">
@@ -492,9 +688,7 @@
 
             </div>
 
-
         </main>
-
 
     </div>
 
