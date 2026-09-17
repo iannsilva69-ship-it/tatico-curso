@@ -473,3 +473,26 @@ body.curso-publico-page .course-card {
         padding: 20px !important;
     }
 }
+/* AJUSTE FINAL - TEXTO POR QUE FAZER O CURSO */
+
+body.curso-publico-page #porqueFazerCurso {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    padding: 28px !important;
+}
+
+body.curso-publico-page #porqueFazerCurso p {
+    width: 100% !important;
+    max-width: 100% !important;
+    display: block !important;
+    box-sizing: border-box !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    text-align: left !important;
+    line-height: 1.8 !important;
+    font-size: 16px !important;
+    white-space: normal !important;
+    overflow-wrap: break-word !important;
+    word-break: normal !important;
+}
