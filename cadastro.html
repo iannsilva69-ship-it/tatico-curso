@@ -2,87 +2,646 @@
 <html lang="pt-BR">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Cadastro - Tático Curso</title>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Cadastro | Táticos Concursos</title>
 
     <link rel="stylesheet" href="style.css">
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <script src="supabase.js"></script>
+
+
+    <style>
+
+        /* =====================================================
+           CADASTRO — TÁTICOS CONCURSOS
+        ===================================================== */
+
+        body.cadastro-page {
+
+            margin: 0 !important;
+
+            min-height: 100vh;
+
+            background:
+                radial-gradient(
+                    circle at 50% 20%,
+                    rgba(200,163,85,0.10),
+                    transparent 35%
+                ),
+                #080a0f !important;
+
+            color: #ffffff !important;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            padding: 30px 20px;
+
+        }
+
+
+        body.cadastro-page::before {
+
+            opacity: 0.05 !important;
+
+            z-index: 0 !important;
+
+        }
+
+
+        .cadastro-wrapper {
+
+            position: relative;
+
+            z-index: 2;
+
+            width: 100%;
+
+            max-width: 440px;
+
+        }
+
+
+        /* =====================================================
+           MARCA
+        ===================================================== */
+
+        .cadastro-brand {
+
+            text-align: center;
+
+            margin-bottom: 25px;
+
+        }
+
+
+        .cadastro-brand-symbol {
+
+            width: 78px;
+
+            height: 78px;
+
+            margin: 0 auto 14px;
+
+            border-radius: 50%;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            border:
+                2px solid #c8a355;
+
+            background:
+                radial-gradient(
+                    circle,
+                    #202832,
+                    #080a0f
+                );
+
+            color: #e5c378;
+
+            font-size: 30px;
+
+            font-weight: 900;
+
+            box-shadow:
+                0 0 30px
+                rgba(200,163,85,0.16);
+
+        }
+
+
+        .cadastro-brand-name {
+
+            font-size: 25px;
+
+            font-weight: 900;
+
+            letter-spacing: 6px;
+
+            color: #ffffff;
+
+        }
+
+
+        .cadastro-brand-sub {
+
+            margin-top: 6px;
+
+            font-size: 8px;
+
+            letter-spacing: 4px;
+
+            text-transform: uppercase;
+
+            color: #d4af37;
+
+        }
+
+
+        /* =====================================================
+           CARD
+        ===================================================== */
+
+        .cadastro-card {
+
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(18,22,30,0.98),
+                    rgba(10,13,19,0.98)
+                );
+
+            border:
+                1px solid rgba(200,163,85,0.30);
+
+            border-radius: 18px;
+
+            padding: 34px;
+
+            box-shadow:
+                0 25px 70px
+                rgba(0,0,0,0.55),
+
+                inset 0 0 35px
+                rgba(200,163,85,0.025);
+
+        }
+
+
+        .cadastro-card h1 {
+
+            margin: 0;
+
+            color: #ffffff;
+
+            font-size: 29px;
+
+            font-weight: 900;
+
+            text-transform: uppercase;
+
+            letter-spacing: -0.5px;
+
+        }
+
+
+        .cadastro-card-description {
+
+            margin:
+                9px 0 25px;
+
+            color: #94a3b8;
+
+            font-size: 12px;
+
+            line-height: 1.6;
+
+        }
+
+
+        /* =====================================================
+           CAMPOS
+        ===================================================== */
+
+        .cadastro-field {
+
+            margin-bottom: 16px;
+
+        }
+
+
+        .cadastro-field label {
+
+            display: block;
+
+            margin-bottom: 7px;
+
+            color: #cbd5e1;
+
+            font-size: 10px;
+
+            font-weight: 800;
+
+            text-transform: uppercase;
+
+            letter-spacing: 1px;
+
+        }
+
+
+        .cadastro-field input {
+
+            width: 100%;
+
+            height: 46px;
+
+            padding:
+                0 14px;
+
+            box-sizing: border-box;
+
+            border:
+                1px solid rgba(255,255,255,0.12);
+
+            border-radius: 8px;
+
+            outline: none;
+
+            background: #080a0f;
+
+            color: #ffffff;
+
+            font-size: 13px;
+
+            transition: 0.2s;
+
+        }
+
+
+        .cadastro-field input::placeholder {
+
+            color: #64748b;
+
+        }
+
+
+        .cadastro-field input:focus {
+
+            border-color:
+                rgba(200,163,85,0.70);
+
+            box-shadow:
+                0 0 0 3px
+                rgba(200,163,85,0.08);
+
+        }
+
+
+        /* =====================================================
+           BOTÃO
+        ===================================================== */
+
+        .cadastro-button {
+
+            width: 100%;
+
+            height: 47px;
+
+            margin-top: 7px;
+
+            border: none;
+
+            border-radius: 8px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #e5c378,
+                    #b88b2f
+                );
+
+            color: #080a0f;
+
+            font-size: 11px;
+
+            font-weight: 900;
+
+            text-transform: uppercase;
+
+            letter-spacing: 0.5px;
+
+            cursor: pointer;
+
+            transition: 0.2s;
+
+            box-shadow:
+                0 0 20px
+                rgba(200,163,85,0.16);
+
+        }
+
+
+        .cadastro-button:hover {
+
+            transform: translateY(-2px);
+
+            box-shadow:
+                0 0 30px
+                rgba(200,163,85,0.30);
+
+        }
+
+
+        .cadastro-button:active {
+
+            transform: translateY(0);
+
+        }
+
+
+        /* =====================================================
+           MENSAGEM
+        ===================================================== */
+
+        #mensagem {
+
+            min-height: 20px;
+
+            margin:
+                15px 0 5px;
+
+            color: #e5c378;
+
+            font-size: 11px;
+
+            text-align: center;
+
+        }
+
+
+        /* =====================================================
+           LOGIN
+        ===================================================== */
+
+        .cadastro-login {
+
+            margin-top: 22px;
+
+            padding-top: 20px;
+
+            border-top:
+                1px solid rgba(255,255,255,0.07);
+
+            text-align: center;
+
+            color: #94a3b8;
+
+            font-size: 11px;
+
+        }
+
+
+        .cadastro-login a {
+
+            color: #e5c378;
+
+            font-weight: 800;
+
+            text-decoration: none;
+
+        }
+
+
+        .cadastro-login a:hover {
+
+            text-decoration: underline;
+
+        }
+
+
+        /* =====================================================
+           VOLTAR
+        ===================================================== */
+
+        .cadastro-back {
+
+            display: block;
+
+            margin-top: 18px;
+
+            text-align: center;
+
+            color: #64748b;
+
+            font-size: 10px;
+
+            text-decoration: none;
+
+            text-transform: uppercase;
+
+            letter-spacing: 0.5px;
+
+        }
+
+
+        .cadastro-back:hover {
+
+            color: #e5c378;
+
+        }
+
+
+        /* =====================================================
+           MOBILE
+        ===================================================== */
+
+        @media (max-width: 520px) {
+
+            body.cadastro-page {
+
+                padding: 20px 15px;
+
+            }
+
+
+            .cadastro-card {
+
+                padding: 26px 21px;
+
+            }
+
+
+            .cadastro-card h1 {
+
+                font-size: 24px;
+
+            }
+
+
+            .cadastro-brand-name {
+
+                font-size: 21px;
+
+                letter-spacing: 5px;
+
+            }
+
+        }
+
+    </style>
+
 </head>
 
-<body>
 
-    <main>
+<body class="cadastro-page">
 
-        <section class="hero">
 
-            <div class="hero-text">
+    <div class="cadastro-wrapper">
 
-                <h1>Criar sua conta</h1>
 
-                <p>
-                    Cadastre-se para acessar o Tático Curso.
-                </p>
+        <!-- =================================================
+             MARCA
+        ================================================== -->
 
-                <form id="cadastroForm">
+        <div class="cadastro-brand">
+
+            <div class="cadastro-brand-symbol">
+                T
+            </div>
+
+            <div class="cadastro-brand-name">
+                TÁTICOS
+            </div>
+
+            <div class="cadastro-brand-sub">
+                Concursos
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             CADASTRO
+        ================================================== -->
+
+        <section class="cadastro-card">
+
+
+            <h1>
+                Criar conta
+            </h1>
+
+
+            <p class="cadastro-card-description">
+                Crie sua conta e comece sua preparação no Táticos Concursos.
+            </p>
+
+
+            <form id="cadastroForm">
+
+
+                <div class="cadastro-field">
+
+                    <label for="nome">
+                        Nome completo
+                    </label>
 
                     <input
                         type="text"
                         id="nome"
-                        placeholder="Nome completo"
+                        placeholder="Seu nome completo"
+                        autocomplete="name"
                         required
                     >
 
-                    <br><br>
+                </div>
+
+
+                <div class="cadastro-field">
+
+                    <label for="email">
+                        E-mail
+                    </label>
 
                     <input
                         type="email"
                         id="email"
                         placeholder="Seu e-mail"
+                        autocomplete="email"
                         required
                     >
 
-                    <br><br>
+                </div>
+
+
+                <div class="cadastro-field">
+
+                    <label for="telefone">
+                        Telefone
+                    </label>
 
                     <input
                         type="tel"
                         id="telefone"
-                        placeholder="Telefone"
+                        placeholder="Seu telefone"
+                        autocomplete="tel"
                     >
 
-                    <br><br>
+                </div>
+
+
+                <div class="cadastro-field">
+
+                    <label for="senha">
+                        Senha
+                    </label>
 
                     <input
                         type="password"
                         id="senha"
                         placeholder="Crie uma senha"
                         minlength="6"
+                        autocomplete="new-password"
                         required
                     >
 
-                    <br><br>
+                </div>
 
-                    <button type="submit">
-                        Criar conta
-                    </button>
 
-                </form>
+                <button
+                    type="submit"
+                    class="cadastro-button"
+                >
+                    Criar minha conta →
+                </button>
 
-                <p id="mensagem"></p>
 
-                <p>
-                    Já possui uma conta?
-                    <a href="login.html">Entrar</a>
-                </p>
+            </form>
+
+
+            <p id="mensagem"></p>
+
+
+            <div class="cadastro-login">
+
+                Já possui uma conta?
+
+                <a href="login.html">
+                    Entrar
+                </a>
 
             </div>
 
+
+            <a
+                href="index.html"
+                class="cadastro-back"
+            >
+                ← Voltar para o início
+            </a>
+
+
         </section>
 
-    </main>
+
+    </div>
+
 
     <script src="cadastro.js"></script>
 
