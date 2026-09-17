@@ -600,3 +600,23 @@ body.pagina-curso .aula-card {
 #modulos .aula-card > p {
     color: #374151;
 }
+/* =========================================================
+   CORREÇÃO DO NOME DAS AULAS
+   ========================================================= */
+
+body.pagina-curso #modulos strong {
+    color: #1f2937 !important;
+    background: transparent !important;
+    text-shadow: none !important;
+    font-weight: 800 !important;
+}
+
+/* Nome da aula concluída ou não concluída */
+body.pagina-curso #modulos .course-card strong {
+    color: #1f2937 !important;
+}
+
+/* Mantém o card da aula organizado */
+body.pagina-curso #modulos .course-card > div {
+    color: #1f2937;
+}
