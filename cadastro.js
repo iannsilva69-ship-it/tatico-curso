@@ -13,9 +13,20 @@ form.addEventListener("submit", async function (event) {
     mensagem.textContent = "Criando sua conta...";
 
     // Cria o usuário no sistema de autenticação
+    // e envia os dados do aluno como metadados.
     const { data, error } = await supabaseClient.auth.signUp({
+
         email: email,
-        password: senha
+
+        password: senha,
+
+        options: {
+            data: {
+                nome: nome,
+                telefone: telefone
+            }
+        }
+
     });
 
     if (error) {
@@ -28,37 +39,28 @@ form.addEventListener("submit", async function (event) {
         return;
     }
 
-    // Se o Supabase retornar o usuário, cria o perfil
+    /*
+     * Com a confirmação de e-mail ativada,
+     * normalmente não haverá uma sessão imediatamente.
+     *
+     * O perfil será criado pelo banco de dados
+     * usando os dados enviados acima.
+     */
+
     if (data.user) {
 
-        const { error: erroPerfil } =
-            await supabaseClient
-                .from("perfis")
-                .insert({
-                    nome: nome,
-                    telefone: telefone,
-                    email: email,
-                    tipo: "aluno",
-                    status: "ativo",
-                    auth_user_id: data.user.id
-                });
+        mensagem.innerHTML = `
+            <strong>Cadastro realizado com sucesso!</strong><br><br>
+            Enviamos um link de confirmação para o seu e-mail.<br>
+            Confirme seu cadastro para ativar sua conta.
+        `;
 
-        if (erroPerfil) {
+    } else {
 
-            console.error(erroPerfil);
+        mensagem.textContent =
+            "Não foi possível concluir o cadastro.";
 
-            mensagem.textContent =
-                "A conta foi criada, mas houve um problema ao criar seu perfil.";
-
-            return;
-        }
+        return;
     }
-
-    mensagem.textContent =
-        "Cadastro realizado com sucesso!";
-
-    setTimeout(function () {
-        window.location.href = "login.html";
-    }, 1500);
 
 });
