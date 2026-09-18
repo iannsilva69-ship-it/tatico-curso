@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Alunos - Tático Curso</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase.js"></script>
+
+    <style>
+
+        body.alunos-admin-page {
+            margin: 0;
+            min-height: 100vh;
+            background:
+                radial-gradient(
+                    circle at top right,
+                    rgba(200, 163, 85, 0.10),
+                    transparent 30%
+                ),
+                #080A0F;
+            color: #fff;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .alunos-admin-page * {
+            box-sizing: border-box;
+        }
+
+        /* HEADER */
+
+        .alunos-admin-page header {
+            min-height: 76px;
+            padding: 0 6%;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            background: rgba(8, 10, 15, 0.97);
+
+            border-bottom:
+                1px solid rgba(200, 163, 85, 0.25);
+        }
+
+        .alunos-admin-page .logo {
+            color: #E5C378;
+            font-size: 22px;
+            font-weight: 900;
+            letter-spacing: 1.5px;
+        }
+
+        .alunos-admin-page header p {
+            margin: 4px 0 0;
+            color: #8f96a3;
+            font-size: 12px;
+        }
+
+        .alunos-admin-page nav {
+            display: flex;
+            align-items: center;
+            gap: 22px;
+        }
+
+        .alunos-admin-page nav a {
+            color: #c8ccd4;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .alunos-admin-page nav a:hover {
+            color: #E5C378;
+        }
+
+        /* CONTEÚDO */
+
+        .alunos-admin-page main {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 55px 0 80px;
+        }
+
+        .alunos-admin-page .hero {
+            margin-bottom: 30px;
+        }
+
+        .alunos-admin-page .tag {
+            display: inline-block;
+
+            padding: 7px 13px;
+            margin-bottom: 16px;
+
+            border:
+                1px solid rgba(200, 163, 85, 0.45);
+
+            border-radius: 999px;
+
+            background:
+                rgba(200, 163, 85, 0.08);
+
+            color: #E5C378;
+
+            font-size: 11px;
+            font-weight: 900;
+            letter-spacing: 1.5px;
+        }
+
+        .alunos-admin-page h1 {
+            margin: 0 0 12px;
+
+            color: #fff;
+
+            font-size: clamp(30px, 5vw, 48px);
+
+            font-weight: 900;
+        }
+
+        .alunos-admin-page .hero p {
+            margin: 0;
+
+            color: #aeb4bf;
+
+            font-size: 15px;
+
+            line-height: 1.7;
+        }
+
+        /* PAINEL */
+
+        .alunos-admin-page .painel {
+            padding: 24px;
+
+            background: #0E121A;
+
+            border:
+                1px solid rgba(200, 163, 85, 0.22);
+
+            border-radius: 16px;
+
+            box-shadow:
+                0 15px 45px rgba(0, 0, 0, 0.25);
+        }
+
+        /* FILTROS */
+
+        .alunos-admin-page .filtros {
+            display: grid;
+
+            grid-template-columns:
+                minmax(250px, 1fr)
+                180px
+                180px;
+
+            gap: 14px;
+
+            margin-bottom: 25px;
+        }
+
+        .alunos-admin-page input,
+        .alunos-admin-page select {
+
+            width: 100%;
+
+            padding: 13px 14px;
+
+            border:
+                1px solid #303744;
+
+            border-radius: 9px;
+
+            background: #080A0F;
+
+            color: #fff;
+
+            outline: none;
+
+            font-size: 14px;
+        }
+
+        .alunos-admin-page input:focus,
+        .alunos-admin-page select:focus {
+
+            border-color: #C8A355;
+
+            box-shadow:
+                0 0 0 3px rgba(200, 163, 85, 0.10);
+        }
+
+        .alunos-admin-page input::placeholder {
+            color: #777f8d;
+        }
+
+        /* CONTADOR */
+
+        .alunos-admin-page .resumo {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            gap: 15px;
+
+            margin-bottom: 18px;
+
+            color: #9ba3af;
+
+            font-size: 13px;
+        }
+
+        .alunos-admin-page .contador {
+
+            color: #E5C378;
+
+            font-weight: 900;
+        }
+
+        /* LISTA */
+
+        .alunos-admin-page #listaAlunos {
+
+            display: grid;
+
+            gap: 14px;
+        }
+
+        /* CARD ALUNO */
+
+        .alunos-admin-page .aluno-card {
+
+            padding: 20px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    #111620,
+                    #0B0F16
+                );
+
+            border:
+                1px solid #252C36;
+
+            border-radius: 13px;
+
+            transition: 0.2s;
+        }
+
+        .alunos-admin-page .aluno-card:hover {
+
+            border-color:
+                rgba(200, 163, 85, 0.45);
+
+            transform: translateY(-2px);
+        }
+
+        .alunos-admin-page .aluno-topo {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            gap: 15px;
+
+            margin-bottom: 14px;
+        }
+
+        .alunos-admin-page .aluno-nome {
+
+            margin: 0;
+
+            color: #fff;
+
+            font-size: 18px;
+
+            font-weight: 900;
+        }
+
+        .alunos-admin-page .status {
+
+            display: inline-flex;
+
+            align-items: center;
+
+            padding: 6px 10px;
+
+            border-radius: 999px;
+
+            font-size: 10px;
+
+            font-weight: 900;
+
+            text-transform: uppercase;
+
+            letter-spacing: 0.7px;
+        }
+
+        .alunos-admin-page .status.ativo {
+
+            color: #36C275;
+
+            background:
+                rgba(54, 194, 117, 0.10);
+
+            border:
+                1px solid rgba(54, 194, 117, 0.25);
+        }
+
+        .alunos-admin-page .status.inativo {
+
+            color: #ff7777;
+
+            background:
+                rgba(255, 80, 80, 0.08);
+
+            border:
+                1px solid rgba(255, 80, 80, 0.20);
+        }
+
+        .alunos-admin-page .status.outro {
+
+            color: #E5C378;
+
+            background:
+                rgba(200, 163, 85, 0.08);
+
+            border:
+                1px solid rgba(200, 163, 85, 0.20);
+        }
+
+        .alunos-admin-page .dados {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, minmax(0, 1fr));
+
+            gap: 12px;
+        }
+
+        .alunos-admin-page .dado {
+
+            padding: 12px;
+
+            background: rgba(255,255,255,0.02);
+
+            border:
+                1px solid rgba(255,255,255,0.05);
+
+            border-radius: 9px;
+        }
+
+        .alunos-admin-page .dado-label {
+
+            display: block;
+
+            margin-bottom: 5px;
+
+            color: #737c8b;
+
+            font-size: 10px;
+
+            font-weight: 800;
+
+            text-transform: uppercase;
+
+            letter-spacing: 0.7px;
+        }
+
+        .alunos-admin-page .dado-valor {
+
+            color: #dfe3e8;
+
+            font-size: 13px;
+
+            word-break: break-word;
+        }
+
+        .alunos-admin-page .cursos {
+
+            margin-top: 14px;
+
+            padding-top: 14px;
+
+            border-top:
+                1px solid rgba(255,255,255,0.06);
+        }
+
+        .alunos-admin-page .curso-item {
+
+            display: inline-flex;
+
+            margin: 5px 5px 0 0;
+
+            padding: 6px 9px;
+
+            border-radius: 7px;
+
+            background:
+                rgba(200, 163, 85, 0.08);
+
+            border:
+                1px solid rgba(200, 163, 85, 0.18);
+
+            color: #E5C378;
+
+            font-size: 11px;
+
+            font-weight: 800;
+        }
+
+        /* MENSAGENS */
+
+        .alunos-admin-page .mensagem {
+
+            padding: 35px 20px;
+
+            text-align: center;
+
+            color: #8f96a3;
+
+            font-size: 14px;
+        }
+
+        .alunos-admin-page .erro {
+
+            color: #ff7777;
+        }
+
+        /* MOBILE */
+
+        @media (max-width: 800px) {
+
+            .alunos-admin-page .filtros {
+
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .alunos-admin-page .filtros input {
+
+                grid-column: 1 / -1;
+            }
+
+            .alunos-admin-page .dados {
+
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 600px) {
+
+            .alunos-admin-page header {
+
+                padding: 14px 18px;
+            }
+
+            .alunos-admin-page .logo {
+
+                font-size: 18px;
+            }
+
+            .alunos-admin-page main {
+
+                width: 92%;
+
+                padding-top: 35px;
+            }
+
+            .alunos-admin-page .painel {
+
+                padding: 18px;
+            }
+
+            .alunos-admin-page .filtros {
+
+                grid-template-columns: 1fr;
+            }
+
+            .alunos-admin-page .filtros input {
+
+                grid-column: auto;
+            }
+
+            .alunos-admin-page .dados {
+
+                grid-template-columns: 1fr;
+            }
+
+            .alunos-admin-page .aluno-topo {
+
+                align-items: flex-start;
+
+                flex-direction: column;
+            }
+
+            .alunos-admin-page nav {
+
+                gap: 12px;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body class="alunos-admin-page">
+
+
+<header>
+
+    <div>
+
+        <div class="logo">
+            TÁTICO CURSO
+        </div>
+
+        <p>
+            Área do Sócio
+        </p>
+
+    </div>
+
+
+    <nav>
+
+        <a href="admin.html">
+            Painel
+        </a>
+
+        <a href="#" id="sair">
+            Sair
+        </a>
+
+    </nav>
+
+</header>
+
+
+<main>
+
+
+    <section class="hero">
+
+        <span class="tag">
+            GERENCIAR ALUNOS
+        </span>
+
+        <h1>
+            Alunos
+        </h1>
+
+        <p>
+            Consulte os alunos cadastrados e acompanhe suas informações de acesso.
+        </p>
+
+    </section>
+
+
+    <section class="painel">
+
+
+        <div class="filtros">
+
+            <input
+                type="search"
+                id="buscaAluno"
+                placeholder="🔎 Buscar por nome ou e-mail..."
+            >
+
+
+            <select id="filtroStatus">
+
+                <option value="">
+                    Todos os status
+                </option>
+
+                <option value="ativo">
+                    Ativos
+                </option>
+
+                <option value="inativo">
+                    Inativos
+                </option>
+
+            </select>
+
+
+            <select id="filtroTipo">
+
+                <option value="">
+                    Todos os tipos
+                </option>
+
+                <option value="aluno">
+                    Alunos
+                </option>
+
+                <option value="socio">
+                    Sócios
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <div class="resumo">
+
+            <span>
+                Usuários cadastrados
+            </span>
+
+            <span
+                id="contadorAlunos"
+                class="contador"
+            >
+                0
+            </span>
+
+        </div>
+
+
+        <div id="listaAlunos">
+
+            <div class="mensagem">
+                Carregando alunos...
+            </div>
+
+        </div>
+
+
+    </section>
+
+
+</main>
+
+
+<script src="alunos-admin.js"></script>
+
+</body>
+
+</html>
