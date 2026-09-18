@@ -14,12 +14,23 @@ document.addEventListener("DOMContentLoaded", async function () {
     const formMatricula = document.getElementById("formMatricula");
 
     const matriculaId = document.getElementById("matriculaId");
-    const matriculaUsuarioId = document.getElementById("matriculaUsuarioId");
-    const matriculaCurso = document.getElementById("matriculaCurso");
-    const matriculaStatus = document.getElementById("matriculaStatus");
-    const matriculaInicio = document.getElementById("matriculaInicio");
-    const matriculaVencimento = document.getElementById("matriculaVencimento");
-    const matriculaValentia = document.getElementById("matriculaValentia");
+    const matriculaUsuarioId =
+        document.getElementById("matriculaUsuarioId");
+
+    const matriculaCurso =
+        document.getElementById("matriculaCurso");
+
+    const matriculaStatus =
+        document.getElementById("matriculaStatus");
+
+    const matriculaInicio =
+        document.getElementById("matriculaInicio");
+
+    const matriculaVencimento =
+        document.getElementById("matriculaVencimento");
+
+    const matriculaValentia =
+        document.getElementById("matriculaValentia");
 
     const alunoMatriculaNome =
         document.getElementById("alunoMatriculaNome");
@@ -137,12 +148,13 @@ document.addEventListener("DOMContentLoaded", async function () {
                 error
             );
 
+            cursos = [];
+
             return;
         }
 
 
         cursos = data || [];
-
     }
 
 
@@ -210,6 +222,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     /* =========================================================
        CARREGAR MATRÍCULAS
+       AGORA USA RPC
     ========================================================= */
 
     async function carregarMatriculas() {
@@ -217,17 +230,9 @@ document.addEventListener("DOMContentLoaded", async function () {
         const {
             data,
             error
-        } = await supabaseClient
-            .from("matriculas")
-            .select(`
-                id,
-                usuario_id,
-                id_curso,
-                status,
-                data_inicio,
-                data_vencimento,
-                valentia
-            `);
+        } = await supabaseClient.rpc(
+            "listar_matriculas_admin"
+        );
 
 
         if (error) {
@@ -244,7 +249,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 
         matriculas = data || [];
-
     }
 
 
@@ -261,7 +265,6 @@ document.addEventListener("DOMContentLoaded", async function () {
             ) === Number(usuarioId);
 
         });
-
     }
 
 
@@ -319,29 +322,25 @@ document.addEventListener("DOMContentLoaded", async function () {
                 const nome =
                     String(
                         aluno.nome || ""
-                    )
-                    .toLowerCase();
+                    ).toLowerCase();
 
 
                 const email =
                     String(
                         aluno.email || ""
-                    )
-                    .toLowerCase();
+                    ).toLowerCase();
 
 
                 const status =
                     String(
                         aluno.status || ""
-                    )
-                    .toLowerCase();
+                    ).toLowerCase();
 
 
                 const tipo =
                     String(
                         aluno.tipo || ""
-                    )
-                    .toLowerCase();
+                    ).toLowerCase();
 
 
                 const correspondeBusca =
@@ -429,7 +428,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 
                 classeStatus =
                     "inativo";
-
             }
 
 
@@ -486,7 +484,6 @@ document.addEventListener("DOMContentLoaded", async function () {
                         Nenhuma matrícula encontrada.
                     </span>
                 `;
-
             }
 
 
@@ -513,7 +510,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 
                 <div class="dados">
-
 
                     <div class="dado">
 
@@ -561,7 +557,6 @@ document.addEventListener("DOMContentLoaded", async function () {
                         </span>
 
                     </div>
-
 
                 </div>
 
@@ -725,7 +720,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 
             matriculaValentia.value =
                 "99";
-
         }
 
 
@@ -837,6 +831,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     /* =========================================================
        SALVAR MATRÍCULA
+       AGORA USA RPC
     ========================================================= */
 
     formMatricula.addEventListener(
@@ -912,77 +907,64 @@ document.addEventListener("DOMContentLoaded", async function () {
             }
 
 
-            const dados = {
-
-                usuario_id:
-                    usuarioId,
-
-                id_curso:
-                    cursoId,
-
-                status:
-                    status,
-
-                data_inicio:
-                    dataInicio,
-
-                data_vencimento:
-                    dataVencimento,
-
-                valentia:
-                    valentia
-
-            };
+            const idExistente =
+                matriculaId.value;
 
 
-         const idExistente =
-    matriculaId.value;
+            const {
+                data,
+                error
+            } = await supabaseClient.rpc(
+                "salvar_matricula",
+                {
+                    p_matricula_id:
+                        idExistente
+                            ? Number(idExistente)
+                            : null,
 
-let resultado;
+                    p_usuario_id:
+                        usuarioId,
 
-resultado =
-    await supabaseClient.rpc(
-        "salvar_matricula",
-        {
-            p_matricula_id:
-                idExistente
-                    ? Number(idExistente)
-                    : null,
+                    p_id_curso:
+                        cursoId,
 
-            p_usuario_id:
-                usuarioId,
+                    p_status:
+                        status,
 
-            p_id_curso:
-                cursoId,
+                    p_data_inicio:
+                        dataInicio,
 
-            p_status:
-                status,
+                    p_data_vencimento:
+                        dataVencimento,
 
-            p_data_inicio:
-                dataInicio,
+                    p_valencia:
+                        valentia
+                }
+            );
 
-            p_data_vencimento:
-                dataVencimento,
 
-            p_valencia:
-                valentia
-        }
-    );
+            if (error) {
 
                 console.error(
                     "Erro ao salvar matrícula:",
-                    resultado.error
+                    error
                 );
 
 
                 mensagemMatricula.textContent =
                     `Erro ao salvar: ${
-                        resultado.error.message ||
+                        error.message ||
                         "erro desconhecido"
                     }`;
 
                 return;
             }
+
+
+            console.log(
+                "Matrícula salva:",
+                data
+            );
 
 
             mensagemMatricula.textContent =
@@ -1049,7 +1031,6 @@ resultado =
         if (!valor) {
 
             return "";
-
         }
 
 
@@ -1064,7 +1045,6 @@ resultado =
         ) {
 
             return texto;
-
         }
 
 
@@ -1079,7 +1059,6 @@ resultado =
         ) {
 
             return "";
-
         }
 
 
@@ -1190,7 +1169,6 @@ resultado =
     if (!autorizado) {
 
         return;
-
     }
 
 
