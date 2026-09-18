@@ -7,11 +7,34 @@ document.addEventListener("DOMContentLoaded", async function () {
     const contador = document.getElementById("contadorAlunos");
     const sair = document.getElementById("sair");
 
+    const modal = document.getElementById("modalMatricula");
+    const fecharModal = document.getElementById("fecharModal");
+    const cancelarMatricula = document.getElementById("cancelarMatricula");
+
+    const formMatricula = document.getElementById("formMatricula");
+
+    const matriculaId = document.getElementById("matriculaId");
+    const matriculaUsuarioId = document.getElementById("matriculaUsuarioId");
+    const matriculaCurso = document.getElementById("matriculaCurso");
+    const matriculaStatus = document.getElementById("matriculaStatus");
+    const matriculaInicio = document.getElementById("matriculaInicio");
+    const matriculaVencimento = document.getElementById("matriculaVencimento");
+    const matriculaValentia = document.getElementById("matriculaValentia");
+
+    const alunoMatriculaNome =
+        document.getElementById("alunoMatriculaNome");
+
+    const mensagemMatricula =
+        document.getElementById("mensagemMatricula");
+
+
     let alunos = [];
+    let cursos = [];
+    let matriculas = [];
 
 
     /* =========================================================
-       VERIFICAR USUÁRIO
+       VERIFICAR SÓCIO
     ========================================================= */
 
     async function verificarSocio() {
@@ -43,9 +66,14 @@ document.addEventListener("DOMContentLoaded", async function () {
 
         if (error) {
 
-            console.error(error);
+            console.error(
+                "Erro ao verificar sócio:",
+                error
+            );
 
-            alert("Erro ao verificar seu acesso.");
+            alert(
+                "Erro ao verificar seu acesso."
+            );
 
             window.location.href = "admin.html";
 
@@ -53,15 +81,27 @@ document.addEventListener("DOMContentLoaded", async function () {
         }
 
 
+        const tipo =
+            String(perfil?.tipo || "")
+                .trim()
+                .toLowerCase();
+
+
+        const status =
+            String(perfil?.status || "")
+                .trim()
+                .toLowerCase();
+
+
         if (
             !perfil ||
-            !["socio", "sócio"].includes(
-                String(perfil.tipo || "").toLowerCase()
-            ) ||
-            String(perfil.status || "").toLowerCase() !== "ativo"
+            !["socio", "sócio"].includes(tipo) ||
+            status !== "ativo"
         ) {
 
-            alert("Acesso permitido somente para sócios ativos.");
+            alert(
+                "Acesso permitido somente para sócios ativos."
+            );
 
             window.location.href = "aluno.html";
 
@@ -70,6 +110,39 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 
         return true;
+    }
+
+
+    /* =========================================================
+       CARREGAR CURSOS
+    ========================================================= */
+
+    async function carregarCursos() {
+
+        const {
+            data,
+            error
+        } = await supabaseClient
+            .from("cursos")
+            .select("id, nome, ativo")
+            .order("nome", {
+                ascending: true
+            });
+
+
+        if (error) {
+
+            console.error(
+                "Erro ao carregar cursos:",
+                error
+            );
+
+            return;
+        }
+
+
+        cursos = data || [];
+
     }
 
 
@@ -106,13 +179,19 @@ document.addEventListener("DOMContentLoaded", async function () {
 
         if (error) {
 
-            console.error("Erro ao carregar alunos:", error);
+            console.error(
+                "Erro ao carregar alunos:",
+                error
+            );
+
 
             lista.innerHTML = `
                 <div class="mensagem erro">
                     Não foi possível carregar os alunos.
                     <br><br>
-                    ${error.message || ""}
+                    ${escapeHTML(
+                        error.message || ""
+                    )}
                 </div>
             `;
 
@@ -125,7 +204,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 
         await carregarMatriculas();
 
-
         renderizarAlunos();
     }
 
@@ -136,113 +214,51 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     async function carregarMatriculas() {
 
-        alunos.forEach(function (aluno) {
-
-            aluno.matriculas = [];
-
-        });
-
-
         const {
-            data: matriculas,
+            data,
             error
         } = await supabaseClient
             .from("matriculas")
             .select(`
+                id,
                 usuario_id,
-                curso_id,
-                status
+                id_curso,
+                status,
+                data_inicio,
+                data_vencimento,
+                valentia
             `);
 
 
         if (error) {
 
-            console.warn(
-                "Não foi possível carregar matrículas:",
+            console.error(
+                "Erro ao carregar matrículas:",
                 error
             );
 
-            return;
-        }
-
-
-        if (!matriculas || matriculas.length === 0) {
+            matriculas = [];
 
             return;
         }
 
 
-        const idsCursos = [
-            ...new Set(
-                matriculas
-                    .map(function (item) {
-                        return item.curso_id;
-                    })
-                    .filter(Boolean)
-            )
-        ];
+        matriculas = data || [];
+
+    }
 
 
-        let cursos = [];
+    /* =========================================================
+       ENCONTRAR MATRÍCULAS DO ALUNO
+    ========================================================= */
 
+    function matriculasDoAluno(usuarioId) {
 
-        if (idsCursos.length > 0) {
+        return matriculas.filter(function (matricula) {
 
-            const {
-                data,
-                error: erroCursos
-            } = await supabaseClient
-                .from("cursos")
-                .select("id, nome")
-                .in("id", idsCursos);
-
-
-            if (!erroCursos) {
-
-                cursos = data || [];
-
-            }
-
-        }
-
-
-        matriculas.forEach(function (matricula) {
-
-            const aluno = alunos.find(function (item) {
-
-                return Number(item.id) === Number(
-                    matricula.usuario_id
-                );
-
-            });
-
-
-            if (!aluno) {
-
-                return;
-            }
-
-
-            const curso = cursos.find(function (item) {
-
-                return Number(item.id) === Number(
-                    matricula.curso_id
-                );
-
-            });
-
-
-            aluno.matriculas.push({
-
-                curso_id: matricula.curso_id,
-
-                status: matricula.status,
-
-                curso_nome:
-                    curso?.nome ||
-                    "Curso não encontrado"
-
-            });
+            return Number(
+                matricula.usuario_id
+            ) === Number(usuarioId);
 
         });
 
@@ -250,76 +266,111 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 
     /* =========================================================
-       RENDERIZAR
+       NOME DO CURSO
+    ========================================================= */
+
+    function nomeCurso(cursoId) {
+
+        const curso = cursos.find(function (item) {
+
+            return Number(item.id) === Number(cursoId);
+
+        });
+
+
+        return curso?.nome ||
+            "Curso não encontrado";
+    }
+
+
+    /* =========================================================
+       RENDERIZAR ALUNOS
     ========================================================= */
 
     function renderizarAlunos() {
 
-        const termo = String(
-            busca.value || ""
-        ).trim().toLowerCase();
+        const termo =
+            String(
+                busca.value || ""
+            )
+            .trim()
+            .toLowerCase();
 
 
         const statusSelecionado =
             String(
                 filtroStatus.value || ""
-            ).toLowerCase();
+            )
+            .trim()
+            .toLowerCase();
 
 
         const tipoSelecionado =
             String(
                 filtroTipo.value || ""
-            ).toLowerCase();
+            )
+            .trim()
+            .toLowerCase();
 
 
-        const filtrados = alunos.filter(function (aluno) {
+        const filtrados =
+            alunos.filter(function (aluno) {
 
-            const nome = String(
-                aluno.nome || ""
-            ).toLowerCase();
-
-
-            const email = String(
-                aluno.email || ""
-            ).toLowerCase();
+                const nome =
+                    String(
+                        aluno.nome || ""
+                    )
+                    .toLowerCase();
 
 
-            const status = String(
-                aluno.status || ""
-            ).toLowerCase();
+                const email =
+                    String(
+                        aluno.email || ""
+                    )
+                    .toLowerCase();
 
 
-            const tipo = String(
-                aluno.tipo || ""
-            ).toLowerCase();
+                const status =
+                    String(
+                        aluno.status || ""
+                    )
+                    .toLowerCase();
 
 
-            const correspondeBusca =
-                !termo ||
-                nome.includes(termo) ||
-                email.includes(termo);
+                const tipo =
+                    String(
+                        aluno.tipo || ""
+                    )
+                    .toLowerCase();
 
 
-            const correspondeStatus =
-                !statusSelecionado ||
-                status === statusSelecionado;
+                const correspondeBusca =
+                    !termo ||
+                    nome.includes(termo) ||
+                    email.includes(termo);
 
 
-            const correspondeTipo =
-                !tipoSelecionado ||
-                tipo === tipoSelecionado;
+                const correspondeStatus =
+                    !statusSelecionado ||
+                    status === statusSelecionado;
 
 
-            return (
-                correspondeBusca &&
-                correspondeStatus &&
-                correspondeTipo
-            );
-
-        });
+                const correspondeTipo =
+                    !tipoSelecionado ||
+                    tipo === tipoSelecionado;
 
 
-        contador.textContent = filtrados.length;
+                return (
+                    correspondeBusca &&
+                    correspondeStatus &&
+                    correspondeTipo
+                );
+
+            });
+
+
+        contador.textContent =
+            filtrados.length;
 
 
         if (filtrados.length === 0) {
@@ -342,59 +393,86 @@ document.addEventListener("DOMContentLoaded", async function () {
             const card =
                 document.createElement("article");
 
-            card.className = "aluno-card";
+
+            card.className =
+                "aluno-card";
 
 
             const statusTexto =
-                aluno.status || "Não informado";
+                aluno.status ||
+                "Não informado";
 
 
-            let classeStatus = "outro";
+            const statusNormalizado =
+                String(
+                    aluno.status || ""
+                )
+                .toLowerCase();
+
+
+            let classeStatus =
+                "outro";
 
 
             if (
-                String(aluno.status)
-                    .toLowerCase() === "ativo"
+                statusNormalizado ===
+                "ativo"
             ) {
 
-                classeStatus = "ativo";
+                classeStatus =
+                    "ativo";
 
             } else if (
-                String(aluno.status)
-                    .toLowerCase() === "inativo"
+                statusNormalizado ===
+                "inativo"
             ) {
 
-                classeStatus = "inativo";
+                classeStatus =
+                    "inativo";
 
             }
 
 
-            const matriculas =
-                aluno.matriculas || [];
+            const matriculasAluno =
+                matriculasDoAluno(
+                    aluno.id
+                );
 
 
             let cursosHTML = "";
 
 
-            if (matriculas.length > 0) {
+            if (
+                matriculasAluno.length >
+                0
+            ) {
 
-                cursosHTML = matriculas
-                    .map(function (matricula) {
+                cursosHTML =
+                    matriculasAluno
+                        .map(function (matricula) {
 
-                        return `
-                            <span class="curso-item">
-                                ${escapeHTML(
-                                    matricula.curso_nome
-                                )}
-                                ·
-                                ${escapeHTML(
-                                    matricula.status || "Sem status"
-                                )}
-                            </span>
-                        `;
+                            const statusMatricula =
+                                matricula.status ||
+                                "Sem status";
 
-                    })
-                    .join("");
+
+                            return `
+                                <span class="curso-item">
+                                    📚
+                                    ${escapeHTML(
+                                        nomeCurso(
+                                            matricula.id_curso
+                                        )
+                                    )}
+                                    ·
+                                    ${escapeHTML(
+                                        statusMatricula
+                                    )}
+                                </span>
+                            `;
+
+                        })
+                        .join("");
 
             } else {
 
@@ -418,14 +496,17 @@ document.addEventListener("DOMContentLoaded", async function () {
 
                     <h2 class="aluno-nome">
                         ${escapeHTML(
-                            aluno.nome || "Sem nome"
+                            aluno.nome ||
+                            "Sem nome"
                         )}
                     </h2>
 
                     <span
                         class="status ${classeStatus}"
                     >
-                        ${escapeHTML(statusTexto)}
+                        ${escapeHTML(
+                            statusTexto
+                        )}
                     </span>
 
                 </div>
@@ -487,9 +568,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
                 <div class="cursos">
 
-                    <span
-                        class="dado-label"
-                    >
+                    <span class="dado-label">
                         Cursos / Matrículas
                     </span>
 
@@ -497,7 +576,38 @@ document.addEventListener("DOMContentLoaded", async function () {
 
                 </div>
 
+
+                <div class="acoes-aluno">
+
+                    <button
+                        type="button"
+                        class="btn-acao"
+                        data-usuario-id="${aluno.id}"
+                    >
+                        ⚙️ Gerenciar matrícula
+                    </button>
+
+                </div>
+
             `;
+
+
+            const botao =
+                card.querySelector(
+                    ".btn-acao"
+                );
+
+
+            botao.addEventListener(
+                "click",
+                function () {
+
+                    abrirModalMatricula(
+                        aluno.id
+                    );
+
+                }
+            );
 
 
             lista.appendChild(card);
@@ -508,17 +618,516 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 
     /* =========================================================
-       SEGURANÇA CONTRA HTML
+       ABRIR MODAL
+    ========================================================= */
+
+    async function abrirModalMatricula(
+        usuarioId
+    ) {
+
+        const aluno =
+            alunos.find(function (item) {
+
+                return Number(item.id) ===
+                    Number(usuarioId);
+
+            });
+
+
+        if (!aluno) {
+
+            return;
+        }
+
+
+        matriculaUsuarioId.value =
+            aluno.id;
+
+
+        alunoMatriculaNome.textContent =
+            `${aluno.nome || "Aluno"} · ${aluno.email || ""}`;
+
+
+        mensagemMatricula.textContent =
+            "";
+
+
+        carregarCursosNoSelect();
+
+
+        const matriculasAluno =
+            matriculasDoAluno(
+                usuarioId
+            );
+
+
+        if (
+            matriculasAluno.length > 0
+        ) {
+
+            const matricula =
+                matriculasAluno[0];
+
+
+            matriculaId.value =
+                matricula.id || "";
+
+
+            matriculaCurso.value =
+                matricula.id_curso || "";
+
+
+            matriculaStatus.value =
+                String(
+                    matricula.status ||
+                    "ativo"
+                )
+                .toLowerCase();
+
+
+            matriculaInicio.value =
+                formatarDataInput(
+                    matricula.data_inicio
+                );
+
+
+            matriculaVencimento.value =
+                formatarDataInput(
+                    matricula.data_vencimento
+                );
+
+
+            matriculaValentia.value =
+                matricula.valentia ??
+                "";
+
+        } else {
+
+            matriculaId.value =
+                "";
+
+
+            matriculaCurso.value =
+                "";
+
+
+            matriculaStatus.value =
+                "ativo";
+
+
+            matriculaInicio.value =
+                dataHoje();
+
+
+            matriculaVencimento.value =
+                "";
+
+
+            matriculaValentia.value =
+                "99";
+
+        }
+
+
+        modal.classList.add("aberto");
+    }
+
+
+    /* =========================================================
+       CARREGAR CURSOS NO SELECT
+    ========================================================= */
+
+    function carregarCursosNoSelect() {
+
+        matriculaCurso.innerHTML = `
+
+            <option value="">
+                Selecione um curso
+            </option>
+
+        `;
+
+
+        cursos
+            .filter(function (curso) {
+
+                return curso.ativo !== false;
+
+            })
+            .forEach(function (curso) {
+
+                const option =
+                    document.createElement(
+                        "option"
+                    );
+
+
+                option.value =
+                    curso.id;
+
+
+                option.textContent =
+                    curso.nome;
+
+
+                matriculaCurso.appendChild(
+                    option
+                );
+
+            });
+
+    }
+
+
+    /* =========================================================
+       FECHAR MODAL
+    ========================================================= */
+
+    function fecharModalMatricula() {
+
+        modal.classList.remove(
+            "aberto"
+        );
+
+
+        formMatricula.reset();
+
+
+        matriculaId.value =
+            "";
+
+
+        matriculaUsuarioId.value =
+            "";
+
+
+        mensagemMatricula.textContent =
+            "";
+
+    }
+
+
+    fecharModal.addEventListener(
+        "click",
+        fecharModalMatricula
+    );
+
+
+    cancelarMatricula.addEventListener(
+        "click",
+        fecharModalMatricula
+    );
+
+
+    modal.addEventListener(
+        "click",
+        function (event) {
+
+            if (
+                event.target === modal
+            ) {
+
+                fecharModalMatricula();
+
+            }
+
+        }
+    );
+
+
+    /* =========================================================
+       SALVAR MATRÍCULA
+    ========================================================= */
+
+    formMatricula.addEventListener(
+        "submit",
+        async function (event) {
+
+            event.preventDefault();
+
+
+            mensagemMatricula.textContent =
+                "Salvando matrícula...";
+
+
+            const usuarioId =
+                Number(
+                    matriculaUsuarioId.value
+                );
+
+
+            const cursoId =
+                Number(
+                    matriculaCurso.value
+                );
+
+
+            const status =
+                String(
+                    matriculaStatus.value ||
+                    "ativo"
+                )
+                .toLowerCase();
+
+
+            const dataInicio =
+                matriculaInicio.value ||
+                null;
+
+
+            const dataVencimento =
+                matriculaVencimento.value ||
+                null;
+
+
+            let valentia =
+                matriculaValentia.value;
+
+
+            if (
+                valentia === "" ||
+                valentia === null
+            ) {
+
+                valentia = null;
+
+            } else {
+
+                valentia =
+                    Number(valentia);
+
+            }
+
+
+            if (
+                !usuarioId ||
+                !cursoId ||
+                !dataInicio
+            ) {
+
+                mensagemMatricula.textContent =
+                    "Preencha curso e data de início.";
+
+                return;
+            }
+
+
+            const dados = {
+
+                usuario_id:
+                    usuarioId,
+
+                id_curso:
+                    cursoId,
+
+                status:
+                    status,
+
+                data_inicio:
+                    dataInicio,
+
+                data_vencimento:
+                    dataVencimento,
+
+                valentia:
+                    valentia
+
+            };
+
+
+            const idExistente =
+                matriculaId.value;
+
+
+            let resultado;
+
+
+            if (idExistente) {
+
+                resultado =
+                    await supabaseClient
+                        .from("matriculas")
+                        .update(dados)
+                        .eq(
+                            "id",
+                            Number(idExistente)
+                        );
+
+            } else {
+
+                resultado =
+                    await supabaseClient
+                        .from("matriculas")
+                        .insert(dados);
+
+            }
+
+
+            if (resultado.error) {
+
+                console.error(
+                    "Erro ao salvar matrícula:",
+                    resultado.error
+                );
+
+
+                mensagemMatricula.textContent =
+                    `Erro ao salvar: ${
+                        resultado.error.message ||
+                        "erro desconhecido"
+                    }`;
+
+                return;
+            }
+
+
+            mensagemMatricula.textContent =
+                "Matrícula salva com sucesso!";
+
+
+            await carregarMatriculas();
+
+
+            renderizarAlunos();
+
+
+            setTimeout(
+                function () {
+
+                    fecharModalMatricula();
+
+                },
+                800
+            );
+
+        }
+    );
+
+
+    /* =========================================================
+       DATA DE HOJE
+    ========================================================= */
+
+    function dataHoje() {
+
+        const hoje =
+            new Date();
+
+
+        const ano =
+            hoje.getFullYear();
+
+
+        const mes =
+            String(
+                hoje.getMonth() + 1
+            )
+            .padStart(2, "0");
+
+
+        const dia =
+            String(
+                hoje.getDate()
+            )
+            .padStart(2, "0");
+
+
+        return `${ano}-${mes}-${dia}`;
+    }
+
+
+    /* =========================================================
+       FORMATAR DATA PARA INPUT
+    ========================================================= */
+
+    function formatarDataInput(valor) {
+
+        if (!valor) {
+
+            return "";
+
+        }
+
+
+        const texto =
+            String(valor);
+
+
+        if (
+            /^\d{4}-\d{2}-\d{2}$/.test(
+                texto
+            )
+        ) {
+
+            return texto;
+
+        }
+
+
+        const data =
+            new Date(valor);
+
+
+        if (
+            Number.isNaN(
+                data.getTime()
+            )
+        ) {
+
+            return "";
+
+        }
+
+
+        const ano =
+            data.getFullYear();
+
+
+        const mes =
+            String(
+                data.getMonth() + 1
+            )
+            .padStart(2, "0");
+
+
+        const dia =
+            String(
+                data.getDate()
+            )
+            .padStart(2, "0");
+
+
+        return `${ano}-${mes}-${dia}`;
+    }
+
+
+    /* =========================================================
+       SEGURANÇA HTML
     ========================================================= */
 
     function escapeHTML(valor) {
 
         return String(valor)
-            .replaceAll("&", "&amp;")
-            .replaceAll("<", "&lt;")
-            .replaceAll(">", "&gt;")
-            .replaceAll('"', "&quot;")
-            .replaceAll("'", "&#039;");
+            .replaceAll(
+                "&",
+                "&amp;"
+            )
+            .replaceAll(
+                "<",
+                "&lt;"
+            )
+            .replaceAll(
+                ">",
+                "&gt;"
+            )
+            .replaceAll(
+                '"',
+                "&quot;"
+            )
+            .replaceAll(
+                "'",
+                "&#039;"
+            );
 
     }
 
@@ -555,9 +1164,12 @@ document.addEventListener("DOMContentLoaded", async function () {
 
             event.preventDefault();
 
+
             await supabaseClient.auth.signOut();
 
-            window.location.href = "login.html";
+
+            window.location.href =
+                "login.html";
 
         }
     );
@@ -577,6 +1189,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     }
 
+
+    await carregarCursos();
 
     await carregarAlunos();
 
