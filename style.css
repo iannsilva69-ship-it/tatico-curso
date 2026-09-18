@@ -620,3 +620,240 @@ body.pagina-curso #modulos .course-card strong {
 body.pagina-curso #modulos .course-card > div {
     color: #1f2937;
 }
+/* =========================================================
+   TÁTICOS - TESTE GRÁTIS 6 DIAS
+========================================================= */
+
+.home-trial-section {
+    width: min(1180px, 90%);
+    margin: 0 auto;
+    padding: 25px 0 10px;
+}
+
+.home-trial-box {
+    position: relative;
+    overflow: hidden;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 30px;
+
+    padding: 32px 38px;
+
+    border: 1px solid rgba(200, 163, 85, 0.55);
+    border-radius: 18px;
+
+    background:
+        radial-gradient(
+            circle at 90% 50%,
+            rgba(200, 163, 85, 0.16),
+            transparent 35%
+        ),
+        linear-gradient(
+            135deg,
+            #15120b,
+            #0e121a
+        );
+
+    box-shadow:
+        0 20px 50px rgba(0, 0, 0, 0.35),
+        inset 0 0 35px rgba(200, 163, 85, 0.04);
+}
+
+.home-trial-box::before {
+    content: "";
+
+    position: absolute;
+
+    width: 180px;
+    height: 180px;
+
+    right: -70px;
+    top: -70px;
+
+    border: 1px solid rgba(200, 163, 85, 0.2);
+
+    border-radius: 50%;
+
+    box-shadow:
+        0 0 0 25px rgba(200, 163, 85, 0.03),
+        0 0 0 50px rgba(200, 163, 85, 0.02);
+}
+
+.home-trial-content {
+    position: relative;
+    z-index: 2;
+
+    max-width: 720px;
+}
+
+.home-trial-label {
+    display: inline-flex;
+
+    align-items: center;
+
+    padding: 7px 12px;
+
+    margin-bottom: 12px;
+
+    border: 1px solid rgba(54, 194, 117, 0.35);
+    border-radius: 999px;
+
+    background: rgba(54, 194, 117, 0.08);
+
+    color: #36c275;
+
+    font-size: 10px;
+    font-weight: 900;
+
+    letter-spacing: 1.5px;
+
+    text-transform: uppercase;
+}
+
+.home-trial-title {
+    margin: 0;
+
+    color: #ffffff;
+
+    font-size: clamp(25px, 3vw, 38px);
+
+    line-height: 1.05;
+
+    font-weight: 900;
+
+    text-transform: uppercase;
+}
+
+.home-trial-title span {
+    color: #e5c378;
+}
+
+.home-trial-description {
+    margin: 12px 0 0;
+
+    color: #94a3b8;
+
+    font-size: 13px;
+
+    line-height: 1.7;
+}
+
+.home-trial-list {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 10px;
+
+    margin-top: 16px;
+}
+
+.home-trial-item {
+    color: #cbd5e1;
+
+    font-size: 11px;
+
+    font-weight: 700;
+}
+
+.home-trial-item::before {
+    content: "✓";
+
+    color: #36c275;
+
+    margin-right: 6px;
+}
+
+.home-trial-button {
+    position: relative;
+    z-index: 2;
+
+    flex-shrink: 0;
+
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    min-height: 50px;
+
+    padding: 0 24px;
+
+    border: none;
+
+    border-radius: 9px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #e5c378,
+            #b88b2f
+        );
+
+    color: #080a0f;
+
+    font-size: 11px;
+
+    font-weight: 900;
+
+    text-transform: uppercase;
+
+    text-decoration: none;
+
+    box-shadow:
+        0 0 25px rgba(200, 163, 85, 0.2);
+
+    transition: 0.2s;
+}
+
+.home-trial-button:hover {
+    transform: translateY(-2px);
+
+    filter: brightness(1.08);
+
+    box-shadow:
+        0 0 32px rgba(200, 163, 85, 0.35);
+}
+
+
+/* =========================================================
+   TESTE GRÁTIS - CELULAR
+========================================================= */
+
+@media (max-width: 620px) {
+
+    .home-trial-section {
+        padding: 15px 0 5px;
+    }
+
+    .home-trial-box {
+        flex-direction: column;
+
+        align-items: stretch;
+
+        padding: 25px 22px;
+
+        gap: 20px;
+    }
+
+    .home-trial-title {
+        font-size: 28px;
+    }
+
+    .home-trial-description {
+        font-size: 12px;
+    }
+
+    .home-trial-list {
+        flex-direction: column;
+
+        gap: 7px;
+    }
+
+    .home-trial-button {
+        width: 100%;
+    }
+}
