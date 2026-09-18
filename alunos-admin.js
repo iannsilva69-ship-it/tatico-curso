@@ -935,35 +935,39 @@ document.addEventListener("DOMContentLoaded", async function () {
             };
 
 
-            const idExistente =
-                matriculaId.value;
+         const idExistente =
+    matriculaId.value;
 
+let resultado;
 
-            let resultado;
+resultado =
+    await supabaseClient.rpc(
+        "salvar_matricula",
+        {
+            p_matricula_id:
+                idExistente
+                    ? Number(idExistente)
+                    : null,
 
+            p_usuario_id:
+                usuarioId,
 
-            if (idExistente) {
+            p_id_curso:
+                cursoId,
 
-                resultado =
-                    await supabaseClient
-                        .from("matriculas")
-                        .update(dados)
-                        .eq(
-                            "id",
-                            Number(idExistente)
-                        );
+            p_status:
+                status,
 
-            } else {
+            p_data_inicio:
+                dataInicio,
 
-                resultado =
-                    await supabaseClient
-                        .from("matriculas")
-                        .insert(dados);
+            p_data_vencimento:
+                dataVencimento,
 
-            }
-
-
-            if (resultado.error) {
+            p_valencia:
+                valentia
+        }
+    );
 
                 console.error(
                     "Erro ao salvar matrícula:",
