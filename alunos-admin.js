@@ -1,5 +1,9 @@
 document.addEventListener("DOMContentLoaded", async function () {
 
+    /* =========================================================
+       ELEMENTOS DA PÁGINA
+    ========================================================= */
+
     const busca = document.getElementById("buscaAluno");
     const filtroStatus = document.getElementById("filtroStatus");
     const filtroTipo = document.getElementById("filtroTipo");
@@ -7,13 +11,19 @@ document.addEventListener("DOMContentLoaded", async function () {
     const contador = document.getElementById("contadorAlunos");
     const sair = document.getElementById("sair");
 
+    /* =========================================================
+       MODAL
+    ========================================================= */
+
     const modal = document.getElementById("modalMatricula");
     const fecharModal = document.getElementById("fecharModal");
     const cancelarMatricula = document.getElementById("cancelarMatricula");
 
     const formMatricula = document.getElementById("formMatricula");
 
-    const matriculaId = document.getElementById("matriculaId");
+    const matriculaId =
+        document.getElementById("matriculaId");
+
     const matriculaUsuarioId =
         document.getElementById("matriculaUsuarioId");
 
@@ -29,8 +39,20 @@ document.addEventListener("DOMContentLoaded", async function () {
     const matriculaVencimento =
         document.getElementById("matriculaVencimento");
 
-    const matriculaValentia =
-        document.getElementById("matriculaValentia");
+    const matriculaValor =
+        document.getElementById("matriculaValor");
+
+    const matriculaPermanente =
+        document.getElementById("matriculaPermanente");
+
+    const campoVencimento =
+        document.getElementById("campoVencimento");
+
+    const campoValor =
+        document.getElementById("campoValor");
+
+    const avisoPermanente =
+        document.getElementById("avisoPermanente");
 
     const alunoMatriculaNome =
         document.getElementById("alunoMatriculaNome");
@@ -38,6 +60,10 @@ document.addEventListener("DOMContentLoaded", async function () {
     const mensagemMatricula =
         document.getElementById("mensagemMatricula");
 
+
+    /* =========================================================
+       DADOS
+    ========================================================= */
 
     let alunos = [];
     let cursos = [];
@@ -222,7 +248,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     /* =========================================================
        CARREGAR MATRÍCULAS
-       AGORA USA RPC
+       USA A RPC EXISTENTE
     ========================================================= */
 
     async function carregarMatriculas() {
@@ -269,6 +295,37 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 
     /* =========================================================
+       PEGAR ID DO CURSO
+       ACEITA OS DOIS NOMES PARA COMPATIBILIDADE
+    ========================================================= */
+
+    function pegarCursoId(matricula) {
+
+        return (
+            matricula.curso_id ??
+            matricula.id_curso ??
+            null
+        );
+    }
+
+
+    /* =========================================================
+       PEGAR VALOR
+       ACEITA OS DOIS NOMES PARA COMPATIBILIDADE
+    ========================================================= */
+
+    function pegarValor(matricula) {
+
+        return (
+            matricula.valor ??
+            matricula.valencia ??
+            matricula.valentia ??
+            null
+        );
+    }
+
+
+    /* =========================================================
        NOME DO CURSO
     ========================================================= */
 
@@ -287,6 +344,29 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 
     /* =========================================================
+       ENCONTRAR MATRÍCULA POR ALUNO + CURSO
+    ========================================================= */
+
+    function encontrarMatricula(
+        usuarioId,
+        cursoId
+    ) {
+
+        return matriculas.find(function (matricula) {
+
+            return (
+                Number(matricula.usuario_id) ===
+                    Number(usuarioId)
+                &&
+                Number(pegarCursoId(matricula)) ===
+                    Number(cursoId)
+            );
+
+        }) || null;
+    }
+
+
+    /* =========================================================
        RENDERIZAR ALUNOS
     ========================================================= */
 
@@ -296,24 +376,24 @@ document.addEventListener("DOMContentLoaded", async function () {
             String(
                 busca.value || ""
             )
-            .trim()
-            .toLowerCase();
+                .trim()
+                .toLowerCase();
 
 
         const statusSelecionado =
             String(
                 filtroStatus.value || ""
             )
-            .trim()
-            .toLowerCase();
+                .trim()
+                .toLowerCase();
 
 
         const tipoSelecionado =
             String(
                 filtroTipo.value || ""
             )
-            .trim()
-            .toLowerCase();
+                .trim()
+                .toLowerCase();
 
 
         const filtrados =
@@ -406,7 +486,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                 String(
                     aluno.status || ""
                 )
-                .toLowerCase();
+                    .toLowerCase();
 
 
             let classeStatus =
@@ -441,8 +521,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 
             if (
-                matriculasAluno.length >
-                0
+                matriculasAluno.length > 0
             ) {
 
                 cursosHTML =
@@ -454,18 +533,45 @@ document.addEventListener("DOMContentLoaded", async function () {
                                 "Sem status";
 
 
+                            const cursoId =
+                                pegarCursoId(
+                                    matricula
+                                );
+
+
+                            const vencimento =
+                                matricula.data_vencimento;
+
+
+                            const permanente =
+                                !vencimento &&
+                                Number(
+                                    pegarValor(matricula)
+                                ) === 0;
+
+
+                            const indicador =
+                                permanente
+                                    ? "♾️ Permanente"
+                                    : statusMatricula;
+
+
                             return `
                                 <span class="curso-item">
+
                                     📚
                                     ${escapeHTML(
                                         nomeCurso(
-                                            matricula.id_curso
+                                            cursoId
                                         )
                                     )}
+
                                     ·
+
                                     ${escapeHTML(
-                                        statusMatricula
+                                        indicador
                                     )}
+
                                 </span>
                             `;
 
@@ -492,18 +598,23 @@ document.addEventListener("DOMContentLoaded", async function () {
                 <div class="aluno-topo">
 
                     <h2 class="aluno-nome">
+
                         ${escapeHTML(
                             aluno.nome ||
                             "Sem nome"
                         )}
+
                     </h2>
+
 
                     <span
                         class="status ${classeStatus}"
                     >
+
                         ${escapeHTML(
                             statusTexto
                         )}
+
                     </span>
 
                 </div>
@@ -518,10 +629,12 @@ document.addEventListener("DOMContentLoaded", async function () {
                         </span>
 
                         <span class="dado-valor">
+
                             ${escapeHTML(
                                 aluno.email ||
                                 "Não informado"
                             )}
+
                         </span>
 
                     </div>
@@ -534,10 +647,12 @@ document.addEventListener("DOMContentLoaded", async function () {
                         </span>
 
                         <span class="dado-valor">
+
                             ${escapeHTML(
                                 aluno.telefone ||
                                 "Não informado"
                             )}
+
                         </span>
 
                     </div>
@@ -550,10 +665,12 @@ document.addEventListener("DOMContentLoaded", async function () {
                         </span>
 
                         <span class="dado-valor">
+
                             ${escapeHTML(
                                 aluno.tipo ||
                                 "Não informado"
                             )}
+
                         </span>
 
                     </div>
@@ -647,6 +764,21 @@ document.addEventListener("DOMContentLoaded", async function () {
             "";
 
 
+        matriculaId.value = "";
+
+        matriculaCurso.value = "";
+
+        matriculaStatus.value = "ativo";
+
+        matriculaInicio.value = dataHoje();
+
+        matriculaVencimento.value = "";
+
+        matriculaValor.value = "";
+
+        matriculaPermanente.checked = false;
+
+
         carregarCursosNoSelect();
 
 
@@ -656,74 +788,124 @@ document.addEventListener("DOMContentLoaded", async function () {
             );
 
 
-        if (
-            matriculasAluno.length > 0
-        ) {
+        /*
+         * Se o aluno já possui matrículas,
+         * começamos pela primeira matrícula.
+         *
+         * O administrador pode trocar o curso.
+         * Ao trocar, verificamos automaticamente
+         * se existe matrícula naquele curso.
+         */
 
-            const matricula =
+        if (matriculasAluno.length > 0) {
+
+            const primeira =
                 matriculasAluno[0];
 
 
-            matriculaId.value =
-                matricula.id || "";
+            preencherFormularioMatricula(
+                primeira
+            );
+
+        }
 
 
-            matriculaCurso.value =
-                matricula.id_curso || "";
+        atualizarEstadoPermanente();
 
 
-            matriculaStatus.value =
-                String(
-                    matricula.status ||
-                    "ativo"
-                )
-                .toLowerCase();
+        modal.classList.add("aberto");
+    }
 
 
-            matriculaInicio.value =
-                formatarDataInput(
-                    matricula.data_inicio
-                );
+    /* =========================================================
+       PREENCHER FORMULÁRIO COM MATRÍCULA
+    ========================================================= */
 
+    function preencherFormularioMatricula(
+        matricula
+    ) {
 
-            matriculaVencimento.value =
-                formatarDataInput(
-                    matricula.data_vencimento
-                );
+        if (!matricula) {
 
-
-            matriculaValentia.value =
-                matricula.valentia ??
-                "";
-
-        } else {
-
-            matriculaId.value =
-                "";
-
-
-            matriculaCurso.value =
-                "";
-
+            matriculaId.value = "";
 
             matriculaStatus.value =
                 "ativo";
 
-
             matriculaInicio.value =
                 dataHoje();
-
 
             matriculaVencimento.value =
                 "";
 
+            matriculaValor.value =
+                "";
 
-            matriculaValentia.value =
-                "99";
+            matriculaPermanente.checked =
+                false;
+
+            atualizarEstadoPermanente();
+
+            return;
         }
 
 
-        modal.classList.add("aberto");
+        const cursoId =
+            pegarCursoId(matricula);
+
+
+        matriculaId.value =
+            matricula.id || "";
+
+
+        matriculaCurso.value =
+            cursoId || "";
+
+
+        matriculaStatus.value =
+            String(
+                matricula.status ||
+                "ativo"
+            )
+                .toLowerCase();
+
+
+        matriculaInicio.value =
+            formatarDataInput(
+                matricula.data_inicio
+            );
+
+
+        matriculaVencimento.value =
+            formatarDataInput(
+                matricula.data_vencimento
+            );
+
+
+        const valor =
+            pegarValor(matricula);
+
+
+        matriculaValor.value =
+            valor !== null &&
+            valor !== undefined
+                ? valor
+                : "";
+
+
+        /*
+         * Consideramos permanente quando:
+         *
+         * - não existe vencimento
+         * - valor é zero
+         */
+
+        matriculaPermanente.checked =
+            !matricula.data_vencimento &&
+            Number(valor || 0) === 0;
+
+
+        atualizarEstadoPermanente();
     }
 
 
@@ -774,6 +956,161 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 
     /* =========================================================
+       TROCAR CURSO
+    ========================================================= */
+
+    matriculaCurso.addEventListener(
+        "change",
+        function () {
+
+            const usuarioId =
+                Number(
+                    matriculaUsuarioId.value
+                );
+
+
+            const cursoId =
+                Number(
+                    matriculaCurso.value
+                );
+
+
+            if (
+                !usuarioId ||
+                !cursoId
+            ) {
+
+                matriculaId.value = "";
+
+                return;
+            }
+
+
+            const existente =
+                encontrarMatricula(
+                    usuarioId,
+                    cursoId
+                );
+
+
+            if (existente) {
+
+                preencherFormularioMatricula(
+                    existente
+                );
+
+            } else {
+
+                /*
+                 * Curso novo:
+                 * preparar formulário para
+                 * uma nova matrícula.
+                 */
+
+                matriculaId.value = "";
+
+                matriculaStatus.value =
+                    "ativo";
+
+                matriculaInicio.value =
+                    dataHoje();
+
+                matriculaVencimento.value =
+                    "";
+
+                matriculaValor.value =
+                    "";
+
+                matriculaPermanente.checked =
+                    false;
+
+                atualizarEstadoPermanente();
+            }
+
+        }
+    );
+
+
+    /* =========================================================
+       ATUALIZAR ACESSO PERMANENTE
+    ========================================================= */
+
+    function atualizarEstadoPermanente() {
+
+        const permanente =
+            matriculaPermanente.checked;
+
+
+        if (permanente) {
+
+            /*
+             * Matrícula permanente:
+             *
+             * sem vencimento
+             * valor zero
+             */
+
+            matriculaVencimento.value =
+                "";
+
+            matriculaValor.value =
+                "0";
+
+
+            matriculaVencimento.disabled =
+                true;
+
+            matriculaValor.disabled =
+                true;
+
+
+            campoVencimento.classList.add(
+                "bloqueado"
+            );
+
+
+            campoValor.classList.add(
+                "bloqueado"
+            );
+
+
+            avisoPermanente.style.display =
+                "block";
+
+        } else {
+
+            matriculaVencimento.disabled =
+                false;
+
+            matriculaValor.disabled =
+                false;
+
+
+            campoVencimento.classList.remove(
+                "bloqueado"
+            );
+
+
+            campoValor.classList.remove(
+                "bloqueado"
+            );
+
+
+            avisoPermanente.style.display =
+                "none";
+
+        }
+
+    }
+
+
+    matriculaPermanente.addEventListener(
+        "change",
+        atualizarEstadoPermanente
+    );
+
+
+    /* =========================================================
        FECHAR MODAL
     ========================================================= */
 
@@ -798,6 +1135,27 @@ document.addEventListener("DOMContentLoaded", async function () {
         mensagemMatricula.textContent =
             "";
 
+
+        matriculaVencimento.disabled =
+            false;
+
+
+        matriculaValor.disabled =
+            false;
+
+
+        campoVencimento.classList.remove(
+            "bloqueado"
+        );
+
+
+        campoValor.classList.remove(
+            "bloqueado"
+        );
+
+
+        avisoPermanente.style.display =
+            "none";
     }
 
 
@@ -831,7 +1189,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     /* =========================================================
        SALVAR MATRÍCULA
-       AGORA USA RPC
+       USA A RPC EXISTENTE
     ========================================================= */
 
     formMatricula.addEventListener(
@@ -862,7 +1220,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                     matriculaStatus.value ||
                     "ativo"
                 )
-                .toLowerCase();
+                    .toLowerCase();
 
 
             const dataInicio =
@@ -870,26 +1228,48 @@ document.addEventListener("DOMContentLoaded", async function () {
                 null;
 
 
-            const dataVencimento =
+            /*
+             * =====================================================
+             * MATRÍCULA PERMANENTE
+             * =====================================================
+             */
+
+            let dataVencimento =
                 matriculaVencimento.value ||
                 null;
 
 
-            let valentia =
-                matriculaValentia.value;
+            let valor =
+                matriculaValor.value;
 
 
             if (
-                valentia === "" ||
-                valentia === null
+                matriculaPermanente.checked
             ) {
 
-                valentia = null;
+                dataVencimento =
+                    null;
+
+                valor =
+                    0;
 
             } else {
 
-                valentia =
-                    Number(valentia);
+                if (
+                    valor === "" ||
+                    valor === null ||
+                    valor === undefined
+                ) {
+
+                    valor =
+                        0;
+
+                } else {
+
+                    valor =
+                        Number(valor);
+
+                }
 
             }
 
@@ -907,9 +1287,61 @@ document.addEventListener("DOMContentLoaded", async function () {
             }
 
 
-            const idExistente =
-                matriculaId.value;
+            if (
+                !matriculaPermanente.checked &&
+                dataVencimento &&
+                dataVencimento < dataInicio
+            ) {
 
+                mensagemMatricula.textContent =
+                    "A data de vencimento não pode ser anterior à data de início.";
+
+                return;
+            }
+
+
+            /*
+             * Verificar se existe matrícula
+             * para este aluno neste curso.
+             */
+
+            const existente =
+                encontrarMatricula(
+                    usuarioId,
+                    cursoId
+                );
+
+
+            let idExistente =
+                matriculaId.value
+                    ? Number(matriculaId.value)
+                    : null;
+
+
+            /*
+             * Se mudou o curso e esse curso já possui
+             * matrícula, usamos a matrícula existente.
+             */
+
+            if (existente) {
+
+                idExistente =
+                    Number(existente.id);
+
+            }
+
+
+            /*
+             * IMPORTANTE:
+             *
+             * A RPC atual do projeto recebe:
+             *
+             * p_id_curso
+             * p_valencia
+             *
+             * Mantemos esses nomes para não quebrar
+             * a função SQL que já existe.
+             */
 
             const {
                 data,
@@ -919,7 +1351,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                 {
                     p_matricula_id:
                         idExistente
-                            ? Number(idExistente)
+                            ? idExistente
                             : null,
 
                     p_usuario_id:
@@ -938,7 +1370,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                         dataVencimento,
 
                     p_valencia:
-                        valentia
+                        valor
                 }
             );
 
@@ -968,7 +1400,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 
             mensagemMatricula.textContent =
-                "Matrícula salva com sucesso!";
+                matriculaPermanente.checked
+                    ? "Matrícula permanente criada com sucesso!"
+                    : "Matrícula salva com sucesso!";
 
 
             await carregarMatriculas();
@@ -983,7 +1417,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                     fecharModalMatricula();
 
                 },
-                800
+                900
             );
 
         }
@@ -1008,14 +1442,14 @@ document.addEventListener("DOMContentLoaded", async function () {
             String(
                 hoje.getMonth() + 1
             )
-            .padStart(2, "0");
+                .padStart(2, "0");
 
 
         const dia =
             String(
                 hoje.getDate()
             )
-            .padStart(2, "0");
+                .padStart(2, "0");
 
 
         return `${ano}-${mes}-${dia}`;
@@ -1070,14 +1504,14 @@ document.addEventListener("DOMContentLoaded", async function () {
             String(
                 data.getMonth() + 1
             )
-            .padStart(2, "0");
+                .padStart(2, "0");
 
 
         const dia =
             String(
                 data.getDate()
             )
-            .padStart(2, "0");
+                .padStart(2, "0");
 
 
         return `${ano}-${mes}-${dia}`;
