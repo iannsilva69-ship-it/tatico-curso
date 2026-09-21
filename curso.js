@@ -96,7 +96,7 @@ async function iniciar() {
                 .from("matriculas")
                 .select("*")
                 .eq("usuario_id", perfil.id)
-                .eq("id_curso", cursoId)
+                .eq("curso_id", cursoId)
                 .eq("status", "ativo")
                 .maybeSingle();
 
