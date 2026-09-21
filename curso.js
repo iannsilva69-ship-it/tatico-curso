@@ -219,7 +219,7 @@ async function iniciar() {
                 .select(
                     "id, nome, ordem"
                 )
-                .eq("curso_id", cursoId)
+                .eq("id_curso", cursoId)
                 .order(
                     "ordem",
                     {
