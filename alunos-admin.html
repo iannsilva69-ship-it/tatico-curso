@@ -551,10 +551,10 @@
 
             padding: 10px 14px;
 
-            border-radius: 8px;
-
             border:
                 1px solid rgba(200, 163, 85, 0.30);
+
+            border-radius: 8px;
 
             background:
                 rgba(200, 163, 85, 0.08);
@@ -720,7 +720,7 @@
 
 
         /* =========================================================
-           FORMULÁRIO DE MATRÍCULA
+           FORMULÁRIO
         ========================================================= */
 
         .alunos-admin-page .campo {
@@ -756,8 +756,109 @@
             color: #737c8b;
 
             font-size: 10px;
+
+            line-height: 1.5;
         }
 
+
+        /* =========================================================
+           MATRÍCULA PERMANENTE
+        ========================================================= */
+
+        .alunos-admin-page .campo-permanente {
+
+            margin-top: 5px;
+
+            padding: 15px;
+
+            background:
+                rgba(54, 194, 117, 0.05);
+
+            border:
+                1px solid rgba(54, 194, 117, 0.20);
+
+            border-radius: 10px;
+        }
+
+
+        .alunos-admin-page .checkbox-permanente {
+
+            display: flex;
+
+            align-items: flex-start;
+
+            gap: 11px;
+
+            cursor: pointer;
+        }
+
+
+        .alunos-admin-page .checkbox-permanente input {
+
+            width: 18px;
+
+            height: 18px;
+
+            margin: 1px 0 0;
+
+            padding: 0;
+
+            flex-shrink: 0;
+
+            accent-color: #36C275;
+
+            cursor: pointer;
+        }
+
+
+        .alunos-admin-page .checkbox-texto {
+
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 4px;
+        }
+
+
+        .alunos-admin-page .checkbox-titulo {
+
+            color: #36C275;
+
+            font-size: 12px;
+
+            font-weight: 900;
+        }
+
+
+        .alunos-admin-page .checkbox-descricao {
+
+            color: #8f96a3;
+
+            font-size: 11px;
+
+            line-height: 1.5;
+        }
+
+
+        .alunos-admin-page .campo.bloqueado {
+
+            opacity: 0.45;
+        }
+
+
+        .alunos-admin-page .campo.bloqueado input {
+
+            cursor: not-allowed;
+
+            background: #10141b;
+
+        }
+
+
+        /* =========================================================
+           AÇÕES MODAL
+        ========================================================= */
 
         .alunos-admin-page .acoes-modal {
 
@@ -1240,9 +1341,42 @@
             </div>
 
 
+            <!-- MATRÍCULA PERMANENTE -->
+
+            <div class="campo campo-permanente">
+
+                <label class="checkbox-permanente">
+
+                    <input
+                        type="checkbox"
+                        id="matriculaPermanente"
+                    >
+
+                    <span class="checkbox-texto">
+
+                        <span class="checkbox-titulo">
+                            ♾️ Acesso permanente
+                        </span>
+
+                        <span class="checkbox-descricao">
+                            Sem prazo de vencimento e sem pagamento.
+                            O aluno continuará com acesso enquanto a matrícula
+                            permanecer ativa.
+                        </span>
+
+                    </span>
+
+                </label>
+
+            </div>
+
+
             <!-- DATA VENCIMENTO -->
 
-            <div class="campo">
+            <div
+                class="campo"
+                id="campoVencimento"
+            >
 
                 <label for="matriculaVencimento">
                     Data de vencimento
@@ -1254,30 +1388,57 @@
                 >
 
                 <small>
-                    Deixe vazio para uma matrícula sem data de vencimento.
+                    Para uma matrícula normal, informe a data em que o acesso termina.
                 </small>
 
             </div>
 
 
-            <!-- VALENTIA -->
+            <!-- VALOR -->
 
-            <div class="campo">
+            <div
+                class="campo"
+                id="campoValor"
+            >
 
-                <label for="matriculaValentia">
-                    Valência
+                <label for="matriculaValor">
+                    Valor da matrícula
                 </label>
 
                 <input
                     type="number"
-                    id="matriculaValentia"
-                    placeholder="Ex.: 99"
+                    id="matriculaValor"
+                    min="0"
+                    step="0.01"
+                    placeholder="Ex.: 99.90"
                 >
 
                 <small>
-                    Campo existente na tabela de matrículas.
+                    Informe o valor pago ou que deverá ser pago pelo aluno.
                 </small>
 
+            </div>
+
+
+            <!-- AVISO PERMANENTE -->
+
+            <div
+                id="avisoPermanente"
+                style="
+                    display:none;
+                    margin-top:10px;
+                    padding:12px;
+                    border-radius:9px;
+                    background:rgba(54,194,117,0.08);
+                    border:1px solid rgba(54,194,117,0.20);
+                    color:#36C275;
+                    font-size:11px;
+                    line-height:1.5;
+                "
+            >
+                ♾️ Esta matrícula será permanente.
+                O vencimento ficará vazio e o valor será automaticamente
+                definido como R$ 0,00.
             </div>
 
 
