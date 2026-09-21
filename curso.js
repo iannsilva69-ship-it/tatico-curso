@@ -219,7 +219,7 @@ async function iniciar() {
                 .select(
                     "id, nome, ordem"
                 )
-                .eq("id_curso", cursoId)
+                .eq("curso_id", cursoId)
                 .order(
                     "ordem",
                     {
@@ -1323,8 +1323,6 @@ function renderizarCabecalho() {
         );
     }
 }
-
-
 // =====================================================
 // CONCLUSÃO DA AULA
 // =====================================================
