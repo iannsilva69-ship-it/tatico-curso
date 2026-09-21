@@ -11,15 +11,18 @@ document.addEventListener("DOMContentLoaded", async function () {
     const contador = document.getElementById("contadorAlunos");
     const sair = document.getElementById("sair");
 
+
     /* =========================================================
        MODAL
     ========================================================= */
 
     const modal = document.getElementById("modalMatricula");
     const fecharModal = document.getElementById("fecharModal");
-    const cancelarMatricula = document.getElementById("cancelarMatricula");
+    const cancelarMatricula =
+        document.getElementById("cancelarMatricula");
 
-    const formMatricula = document.getElementById("formMatricula");
+    const formMatricula =
+        document.getElementById("formMatricula");
 
     const matriculaId =
         document.getElementById("matriculaId");
@@ -84,9 +87,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 
         if (!session) {
-
             window.location.href = "login.html";
-
             return false;
         }
 
@@ -239,7 +240,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 
         alunos = data || [];
 
-
         await carregarMatriculas();
 
         renderizarAlunos();
@@ -363,6 +363,236 @@ document.addEventListener("DOMContentLoaded", async function () {
             );
 
         }) || null;
+    }
+
+
+    /* =========================================================
+       SITUAÇÃO DA MATRÍCULA
+       
+       🟢 Ativa
+       🟠 Vencendo
+       🔴 Vencida
+       ♾️ Permanente
+       ⚫ Inativa
+    ========================================================= */
+
+    function situacaoMatricula(matricula) {
+
+        const status =
+            String(
+                matricula.status || ""
+            )
+                .trim()
+                .toLowerCase();
+
+
+        /* -----------------------------------------
+           MATRÍCULA INATIVA
+        ----------------------------------------- */
+
+        if (status !== "ativo") {
+
+            return {
+                nome: "Inativa",
+                emoji: "⚫",
+                classe: "inativa",
+                cor: "#737c8b",
+                fundo: "rgba(115,124,139,0.12)"
+            };
+        }
+
+
+        const vencimento =
+            matricula.data_vencimento;
+
+
+        /* -----------------------------------------
+           MATRÍCULA PERMANENTE
+        ----------------------------------------- */
+
+        if (!vencimento) {
+
+            return {
+                nome: "Permanente",
+                emoji: "♾️",
+                classe: "permanente",
+                cor: "#c8a355",
+                fundo: "rgba(200,163,85,0.12)"
+            };
+        }
+
+
+        /*
+         * Trabalhamos somente com a parte
+         * YYYY-MM-DD para evitar problemas
+         * de horário/fuso.
+         */
+
+        const dataVencimento =
+            String(vencimento).substring(0, 10);
+
+
+        const hoje =
+            dataHoje();
+
+
+        /* -----------------------------------------
+           VENCIDA
+        ----------------------------------------- */
+
+        if (dataVencimento < hoje) {
+
+            return {
+                nome: "Vencida",
+                emoji: "🔴",
+                classe: "vencida",
+                cor: "#ef4444",
+                fundo: "rgba(239,68,68,0.12)"
+            };
+        }
+
+
+        /* -----------------------------------------
+           VENCENDO
+           Até 7 dias
+        ----------------------------------------- */
+
+        const hojeData =
+            new Date(
+                hoje + "T00:00:00"
+            );
+
+        const vencimentoData =
+            new Date(
+                dataVencimento + "T00:00:00"
+            );
+
+
+        const diferenca =
+            Math.ceil(
+                (
+                    vencimentoData -
+                    hojeData
+                ) /
+                (1000 * 60 * 60 * 24)
+            );
+
+
+        if (diferenca <= 7) {
+
+            return {
+                nome: "Vencendo",
+                emoji: "🟠",
+                classe: "vencendo",
+                cor: "#f59e0b",
+                fundo: "rgba(245,158,11,0.12)"
+            };
+        }
+
+
+        /* -----------------------------------------
+           ATIVA
+        ----------------------------------------- */
+
+        return {
+            nome: "Ativa",
+            emoji: "🟢",
+            classe: "ativa",
+            cor: "#36c275",
+            fundo: "rgba(54,194,117,0.12)"
+        };
+    }
+
+
+    /* =========================================================
+       FORMATAR DATA PARA EXIBIÇÃO
+    ========================================================= */
+
+    function formatarDataExibicao(valor) {
+
+        if (!valor) {
+            return "";
+        }
+
+
+        const texto =
+            String(valor).substring(0, 10);
+
+
+        const partes =
+            texto.split("-");
+
+
+        if (partes.length !== 3) {
+            return texto;
+        }
+
+
+        return `${partes[2]}/${partes[1]}/${partes[0]}`;
+    }
+
+
+    /* =========================================================
+       HTML DA SITUAÇÃO
+    ========================================================= */
+
+    function htmlSituacaoMatricula(matricula) {
+
+        const situacao =
+            situacaoMatricula(matricula);
+
+
+        const vencimento =
+            matricula.data_vencimento;
+
+
+        let dataHTML = "";
+
+
+        if (vencimento) {
+
+            dataHTML = `
+                <span
+                    style="
+                        color:#8d96a5;
+                        font-size:11px;
+                        margin-left:4px;
+                    "
+                >
+                    · vence ${escapeHTML(
+                        formatarDataExibicao(
+                            vencimento
+                        )
+                    )}
+                </span>
+            `;
+        }
+
+
+        return `
+            <span
+                class="matricula-situacao"
+                style="
+                    display:inline-flex;
+                    align-items:center;
+                    gap:4px;
+                    padding:4px 8px;
+                    margin-left:4px;
+                    border-radius:999px;
+                    font-size:11px;
+                    font-weight:700;
+                    color:${situacao.cor};
+                    background:${situacao.fundo};
+                    border:1px solid ${situacao.cor}33;
+                    white-space:nowrap;
+                "
+            >
+                ${situacao.emoji}
+                ${escapeHTML(situacao.nome)}
+            </span>
+
+            ${dataHTML}
+        `;
     }
 
 
@@ -528,51 +758,42 @@ document.addEventListener("DOMContentLoaded", async function () {
                     matriculasAluno
                         .map(function (matricula) {
 
-                            const statusMatricula =
-                                matricula.status ||
-                                "Sem status";
-
-
                             const cursoId =
                                 pegarCursoId(
                                     matricula
                                 );
 
 
-                            const vencimento =
-                                matricula.data_vencimento;
-
-
-                            const permanente =
-                                !vencimento &&
-                                Number(
-                                    pegarValor(matricula)
-                                ) === 0;
-
-
-                            const indicador =
-                                permanente
-                                    ? "♾️ Permanente"
-                                    : statusMatricula;
+                            const situacaoHTML =
+                                htmlSituacaoMatricula(
+                                    matricula
+                                );
 
 
                             return `
-                                <span class="curso-item">
+                                <div
+                                    class="curso-item"
+                                    style="
+                                        display:flex;
+                                        align-items:center;
+                                        flex-wrap:wrap;
+                                        gap:5px;
+                                        margin-bottom:7px;
+                                    "
+                                >
 
-                                    📚
-                                    ${escapeHTML(
-                                        nomeCurso(
-                                            cursoId
-                                        )
-                                    )}
+                                    <span>
+                                        📚
+                                        ${escapeHTML(
+                                            nomeCurso(
+                                                cursoId
+                                            )
+                                        )}
+                                    </span>
 
-                                    ·
+                                    ${situacaoHTML}
 
-                                    ${escapeHTML(
-                                        indicador
-                                    )}
-
-                                </span>
+                                </div>
                             `;
 
                         })
@@ -684,7 +905,13 @@ document.addEventListener("DOMContentLoaded", async function () {
                         Cursos / Matrículas
                     </span>
 
-                    ${cursosHTML}
+                    <div
+                        style="
+                            margin-top:8px;
+                        "
+                    >
+                        ${cursosHTML}
+                    </div>
 
                 </div>
 
@@ -747,7 +974,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 
         if (!aluno) {
-
             return;
         }
 
@@ -787,15 +1013,6 @@ document.addEventListener("DOMContentLoaded", async function () {
                 usuarioId
             );
 
-
-        /*
-         * Se o aluno já possui matrículas,
-         * começamos pela primeira matrícula.
-         *
-         * O administrador pode trocar o curso.
-         * Ao trocar, verificamos automaticamente
-         * se existe matrícula naquele curso.
-         */
 
         if (matriculasAluno.length > 0) {
 
@@ -1098,7 +1315,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 
             avisoPermanente.style.display =
                 "none";
-
         }
 
     }
@@ -1332,15 +1548,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 
             /*
-             * IMPORTANTE:
-             *
              * A RPC atual do projeto recebe:
              *
              * p_id_curso
              * p_valencia
-             *
-             * Mantemos esses nomes para não quebrar
-             * a função SQL que já existe.
              */
 
             const {
@@ -1463,7 +1674,6 @@ document.addEventListener("DOMContentLoaded", async function () {
     function formatarDataInput(valor) {
 
         if (!valor) {
-
             return "";
         }
 
@@ -1525,26 +1735,11 @@ document.addEventListener("DOMContentLoaded", async function () {
     function escapeHTML(valor) {
 
         return String(valor)
-            .replaceAll(
-                "&",
-                "&amp;"
-            )
-            .replaceAll(
-                "<",
-                "&lt;"
-            )
-            .replaceAll(
-                ">",
-                "&gt;"
-            )
-            .replaceAll(
-                '"',
-                "&quot;"
-            )
-            .replaceAll(
-                "'",
-                "&#039;"
-            );
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
 
     }
 
@@ -1601,7 +1796,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 
     if (!autorizado) {
-
         return;
     }
 
