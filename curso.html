@@ -1164,7 +1164,393 @@
             }
 
         }
+/* =====================================================
+   TÁTICOS - MELHORIA VISUAL DA ÁREA DE AULAS
+   ===================================================== */
 
+body.pagina-curso {
+    background:
+        radial-gradient(
+            circle at 85% 10%,
+            rgba(200, 163, 85, 0.08),
+            transparent 30%
+        ),
+        #080A0F !important;
+
+    color: #F4F4F5 !important;
+}
+
+
+/* CONTEÚDO PRINCIPAL */
+
+body.pagina-curso .conteudo-curso {
+    width: min(1200px, calc(100% - 40px)) !important;
+    max-width: 1200px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+
+/* TÍTULO */
+
+body.pagina-curso .titulo-conteudo {
+    color: #FFFFFF !important;
+    font-size: 26px !important;
+    font-weight: 800 !important;
+    margin-bottom: 22px !important;
+}
+
+
+/* ÁREA DOS MÓDULOS */
+
+body.pagina-curso #modulos {
+    width: 100% !important;
+    max-width: none !important;
+}
+
+
+/* CARD DO MÓDULO */
+
+body.pagina-curso .modulo-card {
+    width: 100% !important;
+    max-width: none !important;
+    box-sizing: border-box !important;
+
+    background:
+        linear-gradient(
+            145deg,
+            #11161F,
+            #0D1118
+        ) !important;
+
+    border: 1px solid #252C36 !important;
+    border-left: 3px solid #C8A355 !important;
+
+    border-radius: 14px !important;
+
+    padding: 0 !important;
+
+    margin-bottom: 24px !important;
+
+    overflow: hidden !important;
+
+    box-shadow:
+        0 12px 35px rgba(0, 0, 0, 0.30) !important;
+}
+
+
+/* CABEÇALHO DO MÓDULO */
+
+body.pagina-curso .modulo-card > h3 {
+    margin: 0 !important;
+    padding: 18px 22px !important;
+
+    color: #E5C378 !important;
+
+    font-size: 18px !important;
+    font-weight: 800 !important;
+
+    background: rgba(255,255,255,0.02) !important;
+
+    border-bottom: 1px solid #252C36 !important;
+}
+
+
+/* CARDS DAS AULAS */
+
+body.pagina-curso .aula-card {
+    margin: 12px !important;
+
+    padding: 20px !important;
+
+    background: #0E121A !important;
+
+    border: 1px solid #252C36 !important;
+
+    border-radius: 11px !important;
+
+    color: #F4F4F5 !important;
+
+    box-sizing: border-box !important;
+}
+
+
+/* TÍTULO DA AULA */
+
+body.pagina-curso .aula-info h4 {
+    color: #FFFFFF !important;
+
+    font-size: 16px !important;
+    font-weight: 750 !important;
+
+    margin: 0 0 5px 0 !important;
+}
+
+
+/* STATUS DA AULA */
+
+body.pagina-curso .aula-info span {
+    color: #9DA6B2 !important;
+
+    font-size: 13px !important;
+}
+
+
+/* NÚMERO / ÍCONE */
+
+body.pagina-curso .aula-numero {
+    color: #E5C378 !important;
+
+    font-weight: 800 !important;
+}
+
+
+/* LINKS */
+
+body.pagina-curso .aula-links {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+
+    margin-top: 16px !important;
+}
+
+
+body.pagina-curso .aula-links a {
+    text-decoration: none !important;
+
+    border-radius: 7px !important;
+
+    padding: 9px 13px !important;
+
+    font-size: 13px !important;
+    font-weight: 700 !important;
+
+    transition: 0.2s ease !important;
+}
+
+
+/* BOTÃO VÍDEO */
+
+body.pagina-curso .link-video {
+    background: #C8A355 !important;
+    color: #080A0F !important;
+
+    border: 1px solid #C8A355 !important;
+}
+
+
+body.pagina-curso .link-video:hover {
+    background: #E5C378 !important;
+    transform: translateY(-1px);
+}
+
+
+/* BOTÕES MATERIAL */
+
+body.pagina-curso .link-material {
+    background: #171D27 !important;
+    color: #E5C378 !important;
+
+    border: 1px solid #303845 !important;
+}
+
+
+body.pagina-curso .link-material:hover {
+    background: #202733 !important;
+    border-color: #C8A355 !important;
+}
+
+
+/* BOTÃO CONCLUSÃO */
+
+body.pagina-curso .botao-conclusao {
+    margin-top: 14px !important;
+
+    padding: 10px 15px !important;
+
+    border: 1px solid #303845 !important;
+    border-radius: 8px !important;
+
+    background: #151B25 !important;
+
+    color: #FFFFFF !important;
+
+    font-size: 13px !important;
+    font-weight: 700 !important;
+
+    cursor: pointer !important;
+}
+
+
+body.pagina-curso .botao-conclusao:hover {
+    border-color: #C8A355 !important;
+}
+
+
+body.pagina-curso .botao-conclusao.concluida {
+    background: rgba(54, 194, 117, 0.12) !important;
+
+    border-color: rgba(54, 194, 117, 0.45) !important;
+
+    color: #5BE09A !important;
+}
+
+
+/* =====================================================
+   ÁREA DA IA
+   ===================================================== */
+
+body.pagina-curso .area-ia {
+    margin-top: 18px !important;
+
+    padding: 18px !important;
+
+    background:
+        linear-gradient(
+            145deg,
+            #151A22,
+            #10141B
+        ) !important;
+
+    border: 1px solid #3A3425 !important;
+
+    border-radius: 10px !important;
+}
+
+
+body.pagina-curso .ia-titulo {
+    color: #E5C378 !important;
+
+    font-size: 14px !important;
+}
+
+
+body.pagina-curso .ia-descricao {
+    color: #9DA6B2 !important;
+
+    font-size: 13px !important;
+}
+
+
+body.pagina-curso .ia-input {
+    width: 100% !important;
+    box-sizing: border-box !important;
+
+    padding: 11px 12px !important;
+
+    background: #090D13 !important;
+
+    border: 1px solid #303845 !important;
+
+    border-radius: 7px !important;
+
+    color: #FFFFFF !important;
+
+    outline: none !important;
+}
+
+
+body.pagina-curso .ia-input:focus {
+    border-color: #C8A355 !important;
+}
+
+
+body.pagina-curso .ia-botao {
+    margin-top: 9px !important;
+
+    padding: 10px 16px !important;
+
+    background: #C8A355 !important;
+
+    color: #080A0F !important;
+
+    border: none !important;
+
+    border-radius: 7px !important;
+
+    font-weight: 800 !important;
+
+    cursor: pointer !important;
+}
+
+
+/* =====================================================
+   AULA BLOQUEADA
+   ===================================================== */
+
+body.pagina-curso .aula-bloqueada {
+    background:
+        linear-gradient(
+            145deg,
+            #11151C,
+            #0C1016
+        ) !important;
+
+    border-color: #292F38 !important;
+
+    opacity: 0.78 !important;
+}
+
+
+body.pagina-curso .aula-bloqueada h4 {
+    color: #B6BDC7 !important;
+}
+
+
+body.pagina-curso .mensagem-bloqueio {
+    color: #8D96A3 !important;
+
+    font-size: 13px !important;
+
+    line-height: 1.5 !important;
+}
+
+
+body.pagina-curso .botao-liberar {
+    display: inline-block !important;
+
+    margin-top: 8px !important;
+
+    padding: 10px 15px !important;
+
+    background: #C8A355 !important;
+
+    color: #080A0F !important;
+
+    border-radius: 7px !important;
+
+    text-decoration: none !important;
+
+    font-weight: 800 !important;
+}
+
+
+/* =====================================================
+   RESPONSIVO
+   ===================================================== */
+
+@media (max-width: 700px) {
+
+    body.pagina-curso .conteudo-curso {
+        width: calc(100% - 24px) !important;
+    }
+
+    body.pagina-curso .aula-card {
+        margin: 8px !important;
+        padding: 15px !important;
+    }
+
+    body.pagina-curso .aula-links {
+        flex-direction: column !important;
+    }
+
+    body.pagina-curso .aula-links a {
+        width: 100% !important;
+        box-sizing: border-box !important;
+        text-align: center !important;
+    }
+}
     </style>
 
 </head>
