@@ -1,311 +1,909 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Área do Aluno - Tático Curso</title>
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-    <link rel="stylesheet" href="style.css">
+    <meta
+        name="theme-color"
+        content="#080A0F"
+    >
+
+    <title>Área do Aluno - TÁTICOS CURSO</title>
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
 
     <style>
-        /* =========================================================
-           ÁREA DO ALUNO - TÁTICOS
-           ========================================================= */
+
+        /* =====================================================
+           ÁREA DO ALUNO - TÁTICOS CURSO
+        ===================================================== */
+
+        :root {
+            --aluno-bg: #080A0F;
+            --aluno-bg-2: #0D1118;
+            --aluno-card: #11161F;
+            --aluno-card-2: #151B25;
+
+            --aluno-border: rgba(255,255,255,0.08);
+
+            --aluno-gold: #C8A355;
+            --aluno-gold-light: #E5C378;
+
+            --aluno-text: #F4F4F5;
+            --aluno-text-soft: #A8AFBA;
+
+            --aluno-green: #36C275;
+            --aluno-red: #E25555;
+        }
+
+
+        /* =====================================================
+           BODY
+        ===================================================== */
 
         body.aluno-page {
             margin: 0;
-            padding: 0;
             min-height: 100vh;
+
             background:
                 radial-gradient(
-                    circle at 10% 0%,
-                    rgba(200, 163, 85, 0.10),
-                    transparent 28%
+                    circle at top right,
+                    rgba(200,163,85,0.08),
+                    transparent 32%
                 ),
-                #080A0F;
-            color: #ffffff;
+                linear-gradient(
+                    180deg,
+                    var(--aluno-bg) 0%,
+                    #090C12 100%
+                );
+
+            color: var(--aluno-text);
+
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
         }
 
-        /* HEADER */
+
+        /* =====================================================
+           HEADER
+        ===================================================== */
 
         body.aluno-page > header {
-            min-height: 78px;
-            padding: 0 6%;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+
+            width: 100%;
             box-sizing: border-box;
+
+            min-height: 74px;
 
             display: flex;
             align-items: center;
             justify-content: space-between;
 
-            background: rgba(8, 10, 15, 0.97);
-            border-bottom: 1px solid rgba(200, 163, 85, 0.22);
+            padding: 14px 5%;
+
+            background:
+                rgba(8,10,15,0.94);
+
+            border-bottom:
+                1px solid var(--aluno-border);
+
+            backdrop-filter: blur(14px);
         }
+
+
+        body.aluno-page > header .marca-aluno {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+
+        body.aluno-page > header .logo-aluno {
+            width: 42px;
+            height: 42px;
+
+            object-fit: contain;
+
+            border-radius: 10px;
+        }
+
 
         body.aluno-page > header h1 {
             margin: 0;
-            color: #E5C378;
-            font-size: 22px;
-            font-weight: 900;
-            letter-spacing: 2px;
+
+            font-size: 18px;
+            font-weight: 800;
+
+            letter-spacing: 1.5px;
+
+            color: #ffffff;
         }
+
 
         body.aluno-page > header p {
-            margin: 4px 0 0;
-            color: #8f96a3;
-            font-size: 12px;
+            margin: 3px 0 0;
+
+            color: var(--aluno-gold-light);
+
+            font-size: 11px;
+            font-weight: 700;
+
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
         }
+
 
         body.aluno-page #logout {
-            padding: 10px 20px;
-            border: 1px solid rgba(200, 163, 85, 0.35);
-            border-radius: 8px;
+            border: 1px solid rgba(200,163,85,0.35);
 
             background: transparent;
-            color: #E5C378;
 
-            font-size: 13px;
-            font-weight: 800;
+            color: var(--aluno-gold-light);
+
+            padding: 10px 18px;
+
+            border-radius: 8px;
+
             cursor: pointer;
 
-            transition: 0.2s;
+            font-weight: 700;
+            font-size: 13px;
+
+            transition:
+                background 0.2s ease,
+                border-color 0.2s ease,
+                transform 0.2s ease;
         }
 
+
         body.aluno-page #logout:hover {
-            background: rgba(200, 163, 85, 0.10);
+            background: rgba(200,163,85,0.10);
+
+            border-color:
+                var(--aluno-gold);
+
             transform: translateY(-1px);
         }
 
-        /* CONTEÚDO */
+
+        /* =====================================================
+           MAIN
+        ===================================================== */
 
         body.aluno-page main {
             width: 100%;
-            max-width: 1200px;
+            max-width: 1250px;
+
             margin: 0 auto;
 
-            padding: 45px 24px 70px;
+            padding:
+                42px 5% 70px;
+
             box-sizing: border-box;
         }
 
-        /* BOAS-VINDAS */
+
+        /* =====================================================
+           BOAS-VINDAS
+        ===================================================== */
 
         body.aluno-page .boas-vindas {
-            margin-bottom: 40px;
-            padding: 30px;
+            position: relative;
+
+            overflow: hidden;
+
+            padding: 32px;
+
+            margin-bottom: 42px;
 
             border-radius: 18px;
-            border: 1px solid rgba(200, 163, 85, 0.20);
+
+            border:
+                1px solid var(--aluno-border);
 
             background:
                 linear-gradient(
                     135deg,
-                    rgba(200, 163, 85, 0.08),
-                    rgba(14, 18, 26, 0.95)
+                    rgba(200,163,85,0.10),
+                    rgba(17,22,31,0.95) 48%,
+                    rgba(13,17,24,0.95)
                 );
+
+            box-shadow:
+                0 18px 50px rgba(0,0,0,0.22);
         }
+
+
+        body.aluno-page .boas-vindas::after {
+            content: "";
+
+            position: absolute;
+
+            width: 220px;
+            height: 220px;
+
+            right: -80px;
+            top: -100px;
+
+            border-radius: 50%;
+
+            border:
+                1px solid rgba(200,163,85,0.12);
+
+            box-shadow:
+                0 0 0 35px rgba(200,163,85,0.025),
+                0 0 0 70px rgba(200,163,85,0.015);
+
+            pointer-events: none;
+        }
+
 
         body.aluno-page .boas-vindas h2 {
+            position: relative;
+            z-index: 1;
+
             margin: 0 0 8px;
 
-            font-size: 28px;
-            font-weight: 900;
-        }
+            font-size: 30px;
+            line-height: 1.2;
 
-        body.aluno-page .boas-vindas p {
-            margin: 0;
-
-            color: #aeb4bf;
-            font-size: 15px;
-        }
-
-        /* TÍTULOS DAS SEÇÕES */
-
-        body.aluno-page main > section:not(.boas-vindas) {
-            margin-bottom: 42px;
-        }
-
-        body.aluno-page main > section > h2 {
-            margin: 0 0 20px;
-
-            font-size: 22px;
-            font-weight: 850;
             color: #ffffff;
         }
 
-        /* CURSOS */
+
+        body.aluno-page .boas-vindas p {
+            position: relative;
+            z-index: 1;
+
+            margin: 0;
+
+            color: var(--aluno-text-soft);
+
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+
+        /* =====================================================
+           SEÇÕES
+        ===================================================== */
+
+        body.aluno-page main > section:not(.boas-vindas) {
+            margin-bottom: 46px;
+        }
+
+
+        body.aluno-page main > section:not(.boas-vindas) > h2 {
+            margin: 0 0 18px;
+
+            display: flex;
+            align-items: center;
+            gap: 10px;
+
+            color: #ffffff;
+
+            font-size: 21px;
+            font-weight: 800;
+        }
+
+
+        /* =====================================================
+           LISTA DE CURSOS
+        ===================================================== */
 
         body.aluno-page #listaCursos {
             display: grid;
-            grid-template-columns: repeat(
-                auto-fit,
-                minmax(280px, 1fr)
-            );
-            gap: 22px;
 
-            width: 100%;
+            grid-template-columns:
+                repeat(2, minmax(0, 1fr));
+
+            gap: 22px;
         }
 
-        /* SIMULADOS */
+
+        /* =====================================================
+           CARDS
+        ===================================================== */
+
+        body.aluno-page #listaCursos .card,
+        body.aluno-page #listaSimulados .card {
+
+            overflow: hidden;
+
+            background:
+                linear-gradient(
+                    180deg,
+                    var(--aluno-card-2),
+                    var(--aluno-card)
+                );
+
+            border:
+                1px solid var(--aluno-border);
+
+            border-radius: 16px;
+
+            box-shadow:
+                0 12px 35px rgba(0,0,0,0.20);
+
+            transition:
+                transform 0.2s ease,
+                border-color 0.2s ease,
+                box-shadow 0.2s ease;
+        }
+
+
+        body.aluno-page #listaCursos .card:hover,
+        body.aluno-page #listaSimulados .card:hover {
+
+            transform: translateY(-4px);
+
+            border-color:
+                rgba(200,163,85,0.35);
+
+            box-shadow:
+                0 18px 45px rgba(0,0,0,0.30);
+        }
+
+
+        /* =====================================================
+           IMAGEM DO CURSO
+        ===================================================== */
+
+        body.aluno-page #listaCursos .card img {
+            width: 100% !important;
+
+            aspect-ratio: 16 / 8 !important;
+
+            object-fit: cover !important;
+
+            display: block !important;
+
+            border-radius: 0 !important;
+
+            border-bottom:
+                1px solid var(--aluno-border);
+        }
+
+
+        /* =====================================================
+           CONTEÚDO DOS CARDS
+        ===================================================== */
+
+        body.aluno-page #listaCursos .card > div {
+            padding: 22px !important;
+        }
+
+
+        body.aluno-page #listaCursos .card h3,
+        body.aluno-page #listaSimulados .card h3 {
+
+            margin:
+                0 0 10px;
+
+            color: #ffffff;
+
+            font-size: 20px;
+            line-height: 1.3;
+        }
+
+
+        body.aluno-page #listaCursos .card p,
+        body.aluno-page #listaSimulados .card p {
+
+            color:
+                var(--aluno-text-soft);
+
+            font-size: 14px;
+
+            line-height: 1.6;
+        }
+
+
+        /* =====================================================
+           BADGE TESTE GRÁTIS
+        ===================================================== */
+
+        body.aluno-page #listaCursos .card div[style*="background:#d4af37"] {
+
+            background:
+                rgba(200,163,85,0.14) !important;
+
+            color:
+                var(--aluno-gold-light) !important;
+
+            border:
+                1px solid rgba(200,163,85,0.30);
+
+            padding:
+                7px 11px !important;
+
+            font-size: 11px !important;
+
+            letter-spacing: 0.5px;
+
+            border-radius: 999px !important;
+        }
+
+
+        /* =====================================================
+           BARRA DE PROGRESSO
+        ===================================================== */
+
+        body.aluno-page #listaCursos .card div[style*="height:12px"] {
+
+            height: 8px !important;
+
+            background:
+                #252C37 !important;
+
+            border-radius:
+                999px !important;
+
+            margin:
+                12px 0 !important;
+        }
+
+
+        body.aluno-page #listaCursos .card div[style*="background:#d4af37"] {
+
+            background:
+                linear-gradient(
+                    90deg,
+                    var(--aluno-gold),
+                    var(--aluno-gold-light)
+                ) !important;
+
+            border-radius:
+                999px !important;
+        }
+
+
+        /* =====================================================
+           BOTÕES DOS CURSOS
+        ===================================================== */
+
+        body.aluno-page #listaCursos .card button {
+
+            width: 100%;
+
+            margin-top: 14px;
+
+            padding: 13px 18px;
+
+            border: none;
+
+            border-radius: 9px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    var(--aluno-gold),
+                    var(--aluno-gold-light)
+                );
+
+            color:
+                #080A0F;
+
+            font-size: 13px;
+            font-weight: 800;
+
+            letter-spacing: 0.4px;
+
+            cursor: pointer;
+
+            transition:
+                transform 0.2s ease,
+                filter 0.2s ease;
+        }
+
+
+        body.aluno-page #listaCursos .card button:hover {
+
+            transform:
+                translateY(-1px);
+
+            filter:
+                brightness(1.08);
+        }
+
+
+        /* =====================================================
+           SIMULADOS
+        ===================================================== */
 
         body.aluno-page #listaSimulados {
-            display: grid;
-            grid-template-columns: repeat(
-                auto-fit,
-                minmax(280px, 1fr)
-            );
-            gap: 22px;
 
-            width: 100%;
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, minmax(0, 1fr));
+
+            gap: 18px;
         }
 
-        /* CARDS GERADOS PELO JS */
 
-        body.aluno-page #listaCursos > *,
-        body.aluno-page #listaSimulados > * {
+        body.aluno-page #listaSimulados .card {
+
+            padding: 22px;
+
             box-sizing: border-box;
         }
 
-        /* =========================================================
-           COMPATIBILIDADE COM OS CARDS ATUAIS
-           ========================================================= */
 
-        body.aluno-page #listaCursos img {
-            max-width: 100%;
+        body.aluno-page #listaSimulados .card h3 {
+
+            font-size: 17px;
         }
 
-        body.aluno-page #listaCursos button,
-        body.aluno-page #listaSimulados button {
-            transition: 0.2s;
+
+        body.aluno-page #listaSimulados .card button {
+
+            width: 100%;
+
+            margin-top: 12px;
+
+            padding: 11px 16px;
+
+            border:
+                1px solid rgba(200,163,85,0.35);
+
+            border-radius: 8px;
+
+            background:
+                rgba(200,163,85,0.08);
+
+            color:
+                var(--aluno-gold-light);
+
+            font-size: 13px;
+            font-weight: 700;
+
+            cursor: pointer;
+
+            transition:
+                background 0.2s ease,
+                border-color 0.2s ease;
         }
 
-        body.aluno-page #listaCursos button:hover,
-        body.aluno-page #listaSimulados button:hover {
-            transform: translateY(-2px);
+
+        body.aluno-page #listaSimulados .card button:hover {
+
+            background:
+                rgba(200,163,85,0.15);
+
+            border-color:
+                var(--aluno-gold);
         }
 
-        /* =========================================================
-           MOBILE
-           ========================================================= */
 
-        @media (max-width: 700px) {
+        /* =====================================================
+           MENSAGENS VAZIAS / CARREGANDO
+        ===================================================== */
+
+        body.aluno-page #listaCursos > p,
+        body.aluno-page #listaSimulados > p {
+
+            grid-column: 1 / -1;
+
+            margin: 0;
+
+            padding: 28px;
+
+            text-align: center;
+
+            color:
+                var(--aluno-text-soft);
+
+            background:
+                var(--aluno-card);
+
+            border:
+                1px solid var(--aluno-border);
+
+            border-radius: 12px;
+        }
+
+
+        /* =====================================================
+           RODAPÉ
+        ===================================================== */
+
+        body.aluno-page main::after {
+
+            content:
+                "TÁTICOS CURSO • Sua preparação começa aqui.";
+
+            display: block;
+
+            margin-top: 30px;
+
+            padding-top: 24px;
+
+            border-top:
+                1px solid var(--aluno-border);
+
+            color:
+                #656C77;
+
+            font-size: 12px;
+
+            text-align: center;
+        }
+
+
+        /* =====================================================
+           RESPONSIVO - TABLET
+        ===================================================== */
+
+        @media (max-width: 900px) {
+
+            body.aluno-page #listaCursos {
+
+                grid-template-columns:
+                    1fr;
+            }
+
+
+            body.aluno-page #listaSimulados {
+
+                grid-template-columns:
+                    repeat(2, minmax(0, 1fr));
+            }
+        }
+
+
+        /* =====================================================
+           RESPONSIVO - CELULAR
+        ===================================================== */
+
+        @media (max-width: 600px) {
 
             body.aluno-page > header {
-                min-height: 70px;
-                padding: 14px 18px;
+
+                min-height: 66px;
+
+                padding:
+                    11px 18px;
             }
+
+
+            body.aluno-page > header .logo-aluno {
+
+                width: 36px;
+                height: 36px;
+            }
+
 
             body.aluno-page > header h1 {
-                font-size: 18px;
+
+                font-size: 15px;
             }
+
 
             body.aluno-page > header p {
-                font-size: 11px;
+
+                font-size: 9px;
             }
 
+
             body.aluno-page #logout {
-                padding: 9px 15px;
+
+                padding:
+                    8px 12px;
+
                 font-size: 12px;
             }
 
+
             body.aluno-page main {
-                padding: 25px 15px 50px;
+
+                padding:
+                    25px 16px 50px;
             }
+
 
             body.aluno-page .boas-vindas {
+
                 padding: 24px 20px;
+
+                margin-bottom: 32px;
+
                 border-radius: 14px;
-                margin-bottom: 30px;
             }
 
+
             body.aluno-page .boas-vindas h2 {
+
                 font-size: 23px;
             }
 
-            body.aluno-page main > section > h2 {
-                font-size: 20px;
+
+            body.aluno-page .boas-vindas p {
+
+                font-size: 13px;
             }
 
-            body.aluno-page #listaCursos,
-            body.aluno-page #listaSimulados {
+
+            body.aluno-page main > section:not(.boas-vindas) {
+
+                margin-bottom: 36px;
+            }
+
+
+            body.aluno-page main > section:not(.boas-vindas) > h2 {
+
+                font-size: 18px;
+            }
+
+
+            body.aluno-page #listaCursos {
+
                 grid-template-columns: 1fr;
+
+                gap: 16px;
+            }
+
+
+            body.aluno-page #listaSimulados {
+
+                grid-template-columns: 1fr;
+
+                gap: 14px;
+            }
+
+
+            body.aluno-page #listaCursos .card > div {
+
+                padding: 18px !important;
+            }
+
+
+            body.aluno-page #listaCursos .card h3 {
+
+                font-size: 18px;
+            }
+
+
+            body.aluno-page #listaCursos .card p {
+
+                font-size: 13px;
             }
         }
+
     </style>
 </head>
 
+
 <body class="aluno-page">
 
-<header>
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
 
-    <div>
-        <h1>TÁTICO CURSO</h1>
-        <p>Área do Aluno</p>
-    </div>
+    <header>
 
-    <button id="logout">
-        Sair
-    </button>
+        <div class="marca-aluno">
 
-</header>
+            <img
+                src="icons/logo-192.png"
+                alt="TÁTICOS"
+                class="logo-aluno"
+            >
 
-<main>
+            <div>
 
-    <section class="boas-vindas">
+                <h1>
+                    TÁTICOS CURSO
+                </h1>
 
-        <h2>
-            Olá, aluno! 👋
-        </h2>
+                <p>
+                    Área do Aluno
+                </p>
 
-        <p>
-            Seja bem-vindo à sua área de estudos.
-        </p>
-
-    </section>
-
-    <!-- CURSOS -->
-
-    <section>
-
-        <h2>
-            📚 Meus Cursos
-        </h2>
-
-        <div id="listaCursos">
-
-            <p>
-                Carregando cursos...
-            </p>
+            </div>
 
         </div>
 
-    </section>
 
-    <!-- SIMULADOS -->
+        <button id="logout">
+            Sair
+        </button>
 
-    <section>
+    </header>
 
-        <h2>
-            📝 Simulados
-        </h2>
 
-        <div id="listaSimulados">
+    <!-- =====================================================
+         CONTEÚDO
+    ====================================================== -->
+
+    <main>
+
+        <!-- =================================================
+             BOAS-VINDAS
+        ================================================== -->
+
+        <section class="boas-vindas">
+
+            <h2>
+                Olá, aluno! 👋
+            </h2>
 
             <p>
-                Carregando simulados...
+                Seja bem-vindo à sua área de estudos.
+                Continue sua preparação e avance rumo à aprovação.
             </p>
 
-        </div>
+        </section>
 
-    </section>
 
-</main>
+        <!-- =================================================
+             CURSOS
+        ================================================== -->
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+        <section>
 
-<script src="supabase.js"></script>
-<script src="aluno.js"></script>
+            <h2>
+                📚 Meus Cursos
+            </h2>
+
+            <div id="listaCursos">
+
+                <p>
+                    Carregando cursos...
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             SIMULADOS
+        ================================================== -->
+
+        <section>
+
+            <h2>
+                📝 Simulados
+            </h2>
+
+            <div id="listaSimulados">
+
+                <p>
+                    Carregando simulados...
+                </p>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- =====================================================
+         SUPABASE
+    ====================================================== -->
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
+    </script>
+
+    <script src="supabase.js"></script>
+
+    <script src="aluno.js"></script>
 
 </body>
-
 </html>
