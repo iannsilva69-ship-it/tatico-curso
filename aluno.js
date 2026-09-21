@@ -10,9 +10,7 @@ async function verificarUsuario() {
     } = await supabaseClient.auth.getUser();
 
     if (error || !user) {
-
         window.location.href = "login.html";
-
         return null;
     }
 
@@ -91,6 +89,11 @@ async function carregarCursos(perfil) {
     const lista =
         document.getElementById("listaCursos");
 
+    if (!lista) {
+        return;
+    }
+
+
     // ==========================================
     // VERIFICAR TESTE GRÁTIS
     // ==========================================
@@ -120,15 +123,18 @@ async function carregarCursos(perfil) {
             erroMatriculas
         );
 
-        lista.innerHTML =
-            "<p>Não foi possível carregar seus cursos.</p>";
+        lista.innerHTML = `
+            <p>
+                Não foi possível carregar seus cursos.
+            </p>
+        `;
 
         return;
     }
 
 
     // ==========================================
-    // MAPEAR CURSOS MATRICULADOS
+    // CURSOS MATRICULADOS
     // ==========================================
 
     const cursosMatriculados =
@@ -137,12 +143,12 @@ async function carregarCursos(perfil) {
 
     const idsCursosMatriculados =
         cursosMatriculados
-            .map(matricula => matricula.curso_id)
+            .map(matricula => matricula.id_curso)
             .filter(id => id);
 
 
     // ==========================================
-    // SE NÃO TEM MATRÍCULA E NÃO TEM TESTE
+    // SEM MATRÍCULA E SEM TESTE
     // ==========================================
 
     if (
@@ -170,10 +176,11 @@ async function carregarCursos(perfil) {
     let cursos = [];
 
 
-    if (testeGratis) {
+    // ==========================================
+    // DURANTE O TESTE GRÁTIS
+    // ==========================================
 
-        // Durante o teste grátis,
-        // mostra todos os cursos ativos.
+    if (testeGratis) {
 
         const {
             data: cursosAtivos,
@@ -194,8 +201,11 @@ async function carregarCursos(perfil) {
                 erroCursos
             );
 
-            lista.innerHTML =
-                "<p>Não foi possível carregar seus cursos.</p>";
+            lista.innerHTML = `
+                <p>
+                    Não foi possível carregar seus cursos.
+                </p>
+            `;
 
             return;
         }
@@ -206,16 +216,20 @@ async function carregarCursos(perfil) {
 
     } else {
 
-        // Sem teste grátis:
-        // mostra somente cursos matriculados.
+        // ==========================================
+        // CURSOS MATRICULADOS
+        // ==========================================
 
         for (
             const matricula
             of cursosMatriculados
         ) {
 
+            // CORREÇÃO:
+            // a tabela usa id_curso
+
             const cursoId =
-                matricula.curso_id;
+                matricula.id_curso;
 
 
             if (!cursoId) {
@@ -250,7 +264,7 @@ async function carregarCursos(perfil) {
 
 
     // ==========================================
-    // NENHUM CURSO ENCONTRADO
+    // NENHUM CURSO
     // ==========================================
 
     if (cursos.length === 0) {
@@ -266,17 +280,23 @@ async function carregarCursos(perfil) {
 
 
     // ==========================================
-    // EVITAR CURSOS DUPLICADOS
+    // EVITAR DUPLICADOS
     // ==========================================
 
     const cursosUnicos = [];
 
-    const idsJaAdicionados = new Set();
+    const idsJaAdicionados =
+        new Set();
 
 
-    for (const curso of cursos) {
+    for (
+        const curso
+        of cursos
+    ) {
 
-        if (!idsJaAdicionados.has(curso.id)) {
+        if (
+            !idsJaAdicionados.has(curso.id)
+        ) {
 
             idsJaAdicionados.add(curso.id);
 
@@ -289,16 +309,19 @@ async function carregarCursos(perfil) {
     // CADA CURSO
     // ==========================================
 
-    for (const curso of cursosUnicos) {
+    for (
+        const curso
+        of cursosUnicos
+    ) {
 
         // ==========================================
-        // VERIFICAR MATRÍCULA DESTE CURSO
+        // MATRÍCULA DESTE CURSO
         // ==========================================
 
         const matricula =
             cursosMatriculados.find(
                 item =>
-                    item.curso_id === curso.id
+                    item.id_curso === curso.id
             );
 
 
@@ -327,9 +350,10 @@ async function carregarCursos(perfil) {
 
 
         const moduloIds =
-            (modulos || []).map(
-                modulo => modulo.id
-            );
+            (modulos || [])
+                .map(
+                    modulo => modulo.id
+                );
 
 
         let totalAulas = 0;
@@ -448,7 +472,13 @@ async function carregarCursos(perfil) {
         let informacaoAcesso = "";
 
 
-        if (matricula && matricula.data_fim) {
+        // CORREÇÃO:
+        // a tabela usa data_vencimento
+
+        if (
+            matricula &&
+            matricula.data_vencimento
+        ) {
 
             informacaoAcesso = `
                 <p>
@@ -457,7 +487,7 @@ async function carregarCursos(perfil) {
                     </strong>
 
                     ${new Date(
-                        matricula.data_fim
+                        matricula.data_vencimento
                     ).toLocaleDateString(
                         "pt-BR"
                     )}
@@ -490,8 +520,7 @@ async function carregarCursos(perfil) {
             document.createElement("div");
 
 
-        card.className =
-            "card";
+        card.className = "card";
 
 
         card.innerHTML = `
@@ -502,36 +531,45 @@ async function carregarCursos(perfil) {
                         <img
                             src="${curso.imagem}"
                             alt="${curso.nome}"
-                            style="
-                                width:100%;
-                                aspect-ratio:16 / 9;
-                                object-fit:cover;
-                                display:block;
-                                border-radius:10px 10px 0 0;
-                            "
                         >
                     `
-                    : ""
+                    : `
+                        <div
+                            style="
+                                width:100%;
+                                aspect-ratio:16 / 8;
+                                display:flex;
+                                align-items:center;
+                                justify-content:center;
+                                background:#151B25;
+                                color:#C8A355;
+                                font-weight:800;
+                                font-size:18px;
+                            "
+                        >
+                            TÁTICOS CURSO
+                        </div>
+                    `
             }
 
 
-            <div style="
-                padding:20px;
-            ">
+            <div>
 
                 ${
                     testeGratis && !matricula
                         ? `
-                            <div style="
-                                display:inline-block;
-                                margin-bottom:10px;
-                                padding:6px 10px;
-                                border-radius:20px;
-                                background:#d4af37;
-                                color:#080a0f;
-                                font-size:12px;
-                                font-weight:700;
-                            ">
+                            <div
+                                style="
+                                    display:inline-block;
+                                    margin-bottom:10px;
+                                    padding:6px 10px;
+                                    border-radius:20px;
+                                    background:#d4af37;
+                                    color:#080a0f;
+                                    font-size:12px;
+                                    font-weight:700;
+                                "
+                            >
                                 🎁 TESTE GRÁTIS
                             </div>
                         `
@@ -558,21 +596,25 @@ async function carregarCursos(perfil) {
                 </p>
 
 
-                <div style="
-                    width:100%;
-                    height:12px;
-                    background:#ddd;
-                    border-radius:10px;
-                    overflow:hidden;
-                    margin:10px 0;
-                ">
+                <div
+                    style="
+                        width:100%;
+                        height:12px;
+                        background:#ddd;
+                        border-radius:10px;
+                        overflow:hidden;
+                        margin:10px 0;
+                    "
+                >
 
-                    <div style="
-                        width:${porcentagem}%;
-                        height:100%;
-                        background:#d4af37;
-                        transition:width 0.3s ease;
-                    "></div>
+                    <div
+                        style="
+                            width:${porcentagem}%;
+                            height:100%;
+                            background:#d4af37;
+                            transition:width 0.3s ease;
+                        "
+                    ></div>
 
                 </div>
 
@@ -590,7 +632,7 @@ async function carregarCursos(perfil) {
 
                 <button
                     onclick="
-                        window.location.href=
+                        window.location.href =
                         'curso.html?id=${curso.id}'
                     "
                 >
@@ -598,7 +640,6 @@ async function carregarCursos(perfil) {
                 </button>
 
             </div>
-
         `;
 
 
@@ -617,6 +658,11 @@ async function carregarSimulados() {
         document.getElementById(
             "listaSimulados"
         );
+
+
+    if (!lista) {
+        return;
+    }
 
 
     const {
@@ -643,17 +689,26 @@ async function carregarSimulados() {
             error
         );
 
-        lista.innerHTML =
-            "<p>Não foi possível carregar os simulados.</p>";
+        lista.innerHTML = `
+            <p>
+                Não foi possível carregar os simulados.
+            </p>
+        `;
 
         return;
     }
 
 
-    if (!simulados || simulados.length === 0) {
+    if (
+        !simulados ||
+        simulados.length === 0
+    ) {
 
-        lista.innerHTML =
-            "<p>Nenhum simulado disponível no momento.</p>";
+        lista.innerHTML = `
+            <p>
+                Nenhum simulado disponível no momento.
+            </p>
+        `;
 
         return;
     }
@@ -731,7 +786,7 @@ if (botaoLogout) {
 
 
 // ==========================================
-// INICIAR
+// INICIAR ÁREA DO ALUNO
 // ==========================================
 
 async function iniciarAluno() {
@@ -754,6 +809,33 @@ async function iniciarAluno() {
     }
 
 
+    // ==========================================
+    // MOSTRAR NOME DO ALUNO
+    // ==========================================
+
+    const nomeAluno =
+        perfil.nome ||
+        user.user_metadata?.nome ||
+        "Aluno";
+
+
+    const tituloBoasVindas =
+        document.querySelector(
+            ".boas-vindas h2"
+        );
+
+
+    if (tituloBoasVindas) {
+
+        tituloBoasVindas.innerHTML =
+            `Olá, ${nomeAluno}! 👋`;
+    }
+
+
+    // ==========================================
+    // CARREGAR CONTEÚDO
+    // ==========================================
+
     await carregarCursos(
         perfil
     );
@@ -762,5 +844,9 @@ async function iniciarAluno() {
     await carregarSimulados();
 }
 
+
+// ==========================================
+// INICIAR
+// ==========================================
 
 iniciarAluno();
