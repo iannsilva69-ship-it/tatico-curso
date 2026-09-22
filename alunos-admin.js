@@ -87,7 +87,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 
         if (!session) {
+
             window.location.href = "login.html";
+
             return false;
         }
 
@@ -240,11 +242,12 @@ document.addEventListener("DOMContentLoaded", async function () {
 
         alunos = data || [];
 
-       await carregarMatriculas();
+        await carregarMatriculas();
 
-atualizarResumoMatriculas();
+        atualizarResumoMatriculas();
 
-renderizarAlunos();
+        renderizarAlunos();
+    }
 
 
     /* =========================================================
@@ -369,7 +372,7 @@ renderizarAlunos();
 
     /* =========================================================
        SITUAÇÃO DA MATRÍCULA
-       
+
        🟢 Ativa
        🟠 Vencendo
        🔴 Vencida
@@ -387,10 +390,6 @@ renderizarAlunos();
                 .toLowerCase();
 
 
-        /* -----------------------------------------
-           MATRÍCULA INATIVA
-        ----------------------------------------- */
-
         if (status !== "ativo") {
 
             return {
@@ -407,10 +406,6 @@ renderizarAlunos();
             matricula.data_vencimento;
 
 
-        /* -----------------------------------------
-           MATRÍCULA PERMANENTE
-        ----------------------------------------- */
-
         if (!vencimento) {
 
             return {
@@ -423,12 +418,6 @@ renderizarAlunos();
         }
 
 
-        /*
-         * Trabalhamos somente com a parte
-         * YYYY-MM-DD para evitar problemas
-         * de horário/fuso.
-         */
-
         const dataVencimento =
             String(vencimento).substring(0, 10);
 
@@ -436,10 +425,6 @@ renderizarAlunos();
         const hoje =
             dataHoje();
 
-
-        /* -----------------------------------------
-           VENCIDA
-        ----------------------------------------- */
 
         if (dataVencimento < hoje) {
 
@@ -453,15 +438,11 @@ renderizarAlunos();
         }
 
 
-        /* -----------------------------------------
-           VENCENDO
-           Até 7 dias
-        ----------------------------------------- */
-
         const hojeData =
             new Date(
                 hoje + "T00:00:00"
             );
+
 
         const vencimentoData =
             new Date(
@@ -490,10 +471,6 @@ renderizarAlunos();
             };
         }
 
-
-        /* -----------------------------------------
-           ATIVA
-        ----------------------------------------- */
 
         return {
             nome: "Ativa",
@@ -596,207 +573,213 @@ renderizarAlunos();
         `;
     }
 
-/* =========================================================
-   RESUMO DAS MATRÍCULAS
-========================================================= */
 
-function atualizarResumoMatriculas() {
+    /* =========================================================
+       RESUMO DAS MATRÍCULAS
+    ========================================================= */
 
-    let resumo = document.getElementById(
-        "resumoMatriculas"
-    );
+    function atualizarResumoMatriculas() {
 
-    if (!resumo) {
-
-        resumo = document.createElement("div");
-
-        resumo.id = "resumoMatriculas";
-
-        resumo.style.cssText = `
-            display:grid;
-            grid-template-columns:repeat(5, 1fr);
-            gap:10px;
-            margin:18px 0;
-        `;
-
-        const referencia =
-            lista.parentElement;
-
-        referencia.insertBefore(
-            resumo,
-            lista
-        );
-    }
+        let resumo =
+            document.getElementById(
+                "resumoMatriculas"
+            );
 
 
-    let ativas = 0;
-    let vencendo = 0;
-    let vencidas = 0;
-    let permanentes = 0;
-    let inativas = 0;
+        if (!resumo) {
+
+            resumo =
+                document.createElement("div");
+
+            resumo.id =
+                "resumoMatriculas";
+
+            resumo.style.cssText = `
+                display:grid;
+                grid-template-columns:repeat(5, 1fr);
+                gap:10px;
+                margin:18px 0;
+            `;
 
 
-    matriculas.forEach(function (matricula) {
-
-        const situacao =
-            situacaoMatricula(matricula);
+            const referencia =
+                lista.parentElement;
 
 
-        switch (situacao.classe) {
-
-            case "ativa":
-                ativas++;
-                break;
-
-            case "vencendo":
-                vencendo++;
-                break;
-
-            case "vencida":
-                vencidas++;
-                break;
-
-            case "permanente":
-                permanentes++;
-                break;
-
-            case "inativa":
-                inativas++;
-                break;
+            referencia.insertBefore(
+                resumo,
+                lista
+            );
         }
 
-    });
+
+        let ativas = 0;
+        let vencendo = 0;
+        let vencidas = 0;
+        let permanentes = 0;
+        let inativas = 0;
 
 
-    resumo.innerHTML = `
+        matriculas.forEach(function (matricula) {
 
-        <div style="
-            background:#10151e;
-            border:1px solid #36c27555;
-            border-radius:10px;
-            padding:12px;
-        ">
-            <div style="
-                color:#36c275;
-                font-size:11px;
-                font-weight:700;
-                margin-bottom:5px;
-            ">
-                🟢 ATIVAS
-            </div>
-
-            <div style="
-                color:#fff;
-                font-size:22px;
-                font-weight:800;
-            ">
-                ${ativas}
-            </div>
-        </div>
+            const situacao =
+                situacaoMatricula(matricula);
 
 
-        <div style="
-            background:#10151e;
-            border:1px solid #f59e0b55;
-            border-radius:10px;
-            padding:12px;
-        ">
-            <div style="
-                color:#f59e0b;
-                font-size:11px;
-                font-weight:700;
-                margin-bottom:5px;
-            ">
-                🟠 VENCENDO
-            </div>
+            switch (situacao.classe) {
+
+                case "ativa":
+                    ativas++;
+                    break;
+
+                case "vencendo":
+                    vencendo++;
+                    break;
+
+                case "vencida":
+                    vencidas++;
+                    break;
+
+                case "permanente":
+                    permanentes++;
+                    break;
+
+                case "inativa":
+                    inativas++;
+                    break;
+            }
+
+        });
+
+
+        resumo.innerHTML = `
 
             <div style="
-                color:#fff;
-                font-size:22px;
-                font-weight:800;
+                background:#10151e;
+                border:1px solid #36c27555;
+                border-radius:10px;
+                padding:12px;
             ">
-                ${vencendo}
-            </div>
-        </div>
+                <div style="
+                    color:#36c275;
+                    font-size:11px;
+                    font-weight:700;
+                    margin-bottom:5px;
+                ">
+                    🟢 ATIVAS
+                </div>
 
-
-        <div style="
-            background:#10151e;
-            border:1px solid #ef444455;
-            border-radius:10px;
-            padding:12px;
-        ">
-            <div style="
-                color:#ef4444;
-                font-size:11px;
-                font-weight:700;
-                margin-bottom:5px;
-            ">
-                🔴 VENCIDAS
+                <div style="
+                    color:#fff;
+                    font-size:22px;
+                    font-weight:800;
+                ">
+                    ${ativas}
+                </div>
             </div>
 
-            <div style="
-                color:#fff;
-                font-size:22px;
-                font-weight:800;
-            ">
-                ${vencidas}
-            </div>
-        </div>
-
-
-        <div style="
-            background:#10151e;
-            border:1px solid #c8a35555;
-            border-radius:10px;
-            padding:12px;
-        ">
-            <div style="
-                color:#c8a355;
-                font-size:11px;
-                font-weight:700;
-                margin-bottom:5px;
-            ">
-                ♾️ PERMANENTES
-            </div>
 
             <div style="
-                color:#fff;
-                font-size:22px;
-                font-weight:800;
+                background:#10151e;
+                border:1px solid #f59e0b55;
+                border-radius:10px;
+                padding:12px;
             ">
-                ${permanentes}
+                <div style="
+                    color:#f59e0b;
+                    font-size:11px;
+                    font-weight:700;
+                    margin-bottom:5px;
+                ">
+                    🟠 VENCENDO
+                </div>
+
+                <div style="
+                    color:#fff;
+                    font-size:22px;
+                    font-weight:800;
+                ">
+                    ${vencendo}
+                </div>
             </div>
-        </div>
 
 
-        <div style="
-            background:#10151e;
-            border:1px solid #737c8b55;
-            border-radius:10px;
-            padding:12px;
-        ">
             <div style="
-                color:#737c8b;
-                font-size:11px;
-                font-weight:700;
-                margin-bottom:5px;
+                background:#10151e;
+                border:1px solid #ef444455;
+                border-radius:10px;
+                padding:12px;
             ">
-                ⚫ INATIVAS
+                <div style="
+                    color:#ef4444;
+                    font-size:11px;
+                    font-weight:700;
+                    margin-bottom:5px;
+                ">
+                    🔴 VENCIDAS
+                </div>
+
+                <div style="
+                    color:#fff;
+                    font-size:22px;
+                    font-weight:800;
+                ">
+                    ${vencidas}
+                </div>
             </div>
+
 
             <div style="
-                color:#fff;
-                font-size:22px;
-                font-weight:800;
+                background:#10151e;
+                border:1px solid #c8a35555;
+                border-radius:10px;
+                padding:12px;
             ">
-                ${inativas}
-            </div>
-        </div>
+                <div style="
+                    color:#c8a355;
+                    font-size:11px;
+                    font-weight:700;
+                    margin-bottom:5px;
+                ">
+                    ♾️ PERMANENTES
+                </div>
 
-    `;
-}
-    /* =========================================================
+                <div style="
+                    color:#fff;
+                    font-size:22px;
+                    font-weight:800;
+                ">
+                    ${permanentes}
+                </div>
+            </div>
+
+
+            <div style="
+                background:#10151e;
+                border:1px solid #737c8b55;
+                border-radius:10px;
+                padding:12px;
+            ">
+                <div style="
+                    color:#737c8b;
+                    font-size:11px;
+                    font-weight:700;
+                    margin-bottom:5px;
+                ">
+                    ⚫ INATIVAS
+                </div>
+
+                <div style="
+                    color:#fff;
+                    font-size:22px;
+                    font-weight:800;
+                ">
+                    ${inativas}
+                </div>
+            </div>
+
+        `;
+    }    /* =========================================================
        RENDERIZAR ALUNOS
     ========================================================= */
 
@@ -924,16 +907,14 @@ function atualizarResumoMatriculas() {
 
 
             if (
-                statusNormalizado ===
-                "ativo"
+                statusNormalizado === "ativo"
             ) {
 
                 classeStatus =
                     "ativo";
 
             } else if (
-                statusNormalizado ===
-                "inativo"
+                statusNormalizado === "inativo"
             ) {
 
                 classeStatus =
@@ -1196,7 +1177,8 @@ function atualizarResumoMatriculas() {
 
         matriculaStatus.value = "ativo";
 
-        matriculaInicio.value = dataHoje();
+        matriculaInicio.value =
+            dataHoje();
 
         matriculaVencimento.value = "";
 
@@ -1214,7 +1196,9 @@ function atualizarResumoMatriculas() {
             );
 
 
-        if (matriculasAluno.length > 0) {
+        if (
+            matriculasAluno.length > 0
+        ) {
 
             const primeira =
                 matriculasAluno[0];
@@ -1223,7 +1207,6 @@ function atualizarResumoMatriculas() {
             preencherFormularioMatricula(
                 primeira
             );
-
         }
 
 
@@ -1235,7 +1218,7 @@ function atualizarResumoMatriculas() {
 
 
     /* =========================================================
-       PREENCHER FORMULÁRIO COM MATRÍCULA
+       PREENCHER FORMULÁRIO
     ========================================================= */
 
     function preencherFormularioMatricula(
@@ -1310,13 +1293,6 @@ function atualizarResumoMatriculas() {
                 : "";
 
 
-        /*
-         * Consideramos permanente quando:
-         *
-         * - não existe vencimento
-         * - valor é zero
-         */
-
         matriculaPermanente.checked =
             !matricula.data_vencimento &&
             Number(valor || 0) === 0;
@@ -1368,7 +1344,6 @@ function atualizarResumoMatriculas() {
                 );
 
             });
-
     }
 
 
@@ -1418,12 +1393,6 @@ function atualizarResumoMatriculas() {
 
             } else {
 
-                /*
-                 * Curso novo:
-                 * preparar formulário para
-                 * uma nova matrícula.
-                 */
-
                 matriculaId.value = "";
 
                 matriculaStatus.value =
@@ -1449,7 +1418,7 @@ function atualizarResumoMatriculas() {
 
 
     /* =========================================================
-       ATUALIZAR ACESSO PERMANENTE
+       ACESSO PERMANENTE
     ========================================================= */
 
     function atualizarEstadoPermanente() {
@@ -1459,13 +1428,6 @@ function atualizarResumoMatriculas() {
 
 
         if (permanente) {
-
-            /*
-             * Matrícula permanente:
-             *
-             * sem vencimento
-             * valor zero
-             */
 
             matriculaVencimento.value =
                 "";
@@ -1484,7 +1446,6 @@ function atualizarResumoMatriculas() {
             campoVencimento.classList.add(
                 "bloqueado"
             );
-
 
             campoValor.classList.add(
                 "bloqueado"
@@ -1507,7 +1468,6 @@ function atualizarResumoMatriculas() {
                 "bloqueado"
             );
 
-
             campoValor.classList.remove(
                 "bloqueado"
             );
@@ -1516,7 +1476,6 @@ function atualizarResumoMatriculas() {
             avisoPermanente.style.display =
                 "none";
         }
-
     }
 
 
@@ -1540,21 +1499,15 @@ function atualizarResumoMatriculas() {
         formMatricula.reset();
 
 
-        matriculaId.value =
-            "";
+        matriculaId.value = "";
 
+        matriculaUsuarioId.value = "";
 
-        matriculaUsuarioId.value =
-            "";
-
-
-        mensagemMatricula.textContent =
-            "";
+        mensagemMatricula.textContent = "";
 
 
         matriculaVencimento.disabled =
             false;
-
 
         matriculaValor.disabled =
             false;
@@ -1563,7 +1516,6 @@ function atualizarResumoMatriculas() {
         campoVencimento.classList.remove(
             "bloqueado"
         );
-
 
         campoValor.classList.remove(
             "bloqueado"
@@ -1596,7 +1548,6 @@ function atualizarResumoMatriculas() {
             ) {
 
                 fecharModalMatricula();
-
             }
 
         }
@@ -1605,7 +1556,6 @@ function atualizarResumoMatriculas() {
 
     /* =========================================================
        SALVAR MATRÍCULA
-       USA A RPC EXISTENTE
     ========================================================= */
 
     formMatricula.addEventListener(
@@ -1644,12 +1594,6 @@ function atualizarResumoMatriculas() {
                 null;
 
 
-            /*
-             * =====================================================
-             * MATRÍCULA PERMANENTE
-             * =====================================================
-             */
-
             let dataVencimento =
                 matriculaVencimento.value ||
                 null;
@@ -1663,11 +1607,9 @@ function atualizarResumoMatriculas() {
                 matriculaPermanente.checked
             ) {
 
-                dataVencimento =
-                    null;
+                dataVencimento = null;
 
-                valor =
-                    0;
+                valor = 0;
 
             } else {
 
@@ -1677,16 +1619,12 @@ function atualizarResumoMatriculas() {
                     valor === undefined
                 ) {
 
-                    valor =
-                        0;
+                    valor = 0;
 
                 } else {
 
-                    valor =
-                        Number(valor);
-
+                    valor = Number(valor);
                 }
-
             }
 
 
@@ -1716,11 +1654,6 @@ function atualizarResumoMatriculas() {
             }
 
 
-            /*
-             * Verificar se existe matrícula
-             * para este aluno neste curso.
-             */
-
             const existente =
                 encontrarMatricula(
                     usuarioId,
@@ -1734,25 +1667,12 @@ function atualizarResumoMatriculas() {
                     : null;
 
 
-            /*
-             * Se mudou o curso e esse curso já possui
-             * matrícula, usamos a matrícula existente.
-             */
-
             if (existente) {
 
                 idExistente =
                     Number(existente.id);
-
             }
 
-
-            /*
-             * A RPC atual do projeto recebe:
-             *
-             * p_id_curso
-             * p_valencia
-             */
 
             const {
                 data,
@@ -1816,11 +1736,12 @@ function atualizarResumoMatriculas() {
                     : "Matrícula salva com sucesso!";
 
 
-         await carregarMatriculas();
+            await carregarMatriculas();
 
-atualizarResumoMatriculas();
+            atualizarResumoMatriculas();
 
-renderizarAlunos();
+            renderizarAlunos();
+
 
             setTimeout(
                 function () {
@@ -1940,7 +1861,6 @@ renderizarAlunos();
             .replace(/>/g, "&gt;")
             .replace(/"/g, "&quot;")
             .replace(/'/g, "&#039;");
-
     }
 
 
@@ -1982,7 +1902,6 @@ renderizarAlunos();
 
             window.location.href =
                 "login.html";
-
         }
     );
 
