@@ -240,10 +240,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 
         alunos = data || [];
 
-        await carregarMatriculas();
+       await carregarMatriculas();
 
-        renderizarAlunos();
-    }
+atualizarResumoMatriculas();
+
+renderizarAlunos();
 
 
     /* =========================================================
@@ -595,7 +596,206 @@ document.addEventListener("DOMContentLoaded", async function () {
         `;
     }
 
+/* =========================================================
+   RESUMO DAS MATRÍCULAS
+========================================================= */
 
+function atualizarResumoMatriculas() {
+
+    let resumo = document.getElementById(
+        "resumoMatriculas"
+    );
+
+    if (!resumo) {
+
+        resumo = document.createElement("div");
+
+        resumo.id = "resumoMatriculas";
+
+        resumo.style.cssText = `
+            display:grid;
+            grid-template-columns:repeat(5, 1fr);
+            gap:10px;
+            margin:18px 0;
+        `;
+
+        const referencia =
+            lista.parentElement;
+
+        referencia.insertBefore(
+            resumo,
+            lista
+        );
+    }
+
+
+    let ativas = 0;
+    let vencendo = 0;
+    let vencidas = 0;
+    let permanentes = 0;
+    let inativas = 0;
+
+
+    matriculas.forEach(function (matricula) {
+
+        const situacao =
+            situacaoMatricula(matricula);
+
+
+        switch (situacao.classe) {
+
+            case "ativa":
+                ativas++;
+                break;
+
+            case "vencendo":
+                vencendo++;
+                break;
+
+            case "vencida":
+                vencidas++;
+                break;
+
+            case "permanente":
+                permanentes++;
+                break;
+
+            case "inativa":
+                inativas++;
+                break;
+        }
+
+    });
+
+
+    resumo.innerHTML = `
+
+        <div style="
+            background:#10151e;
+            border:1px solid #36c27555;
+            border-radius:10px;
+            padding:12px;
+        ">
+            <div style="
+                color:#36c275;
+                font-size:11px;
+                font-weight:700;
+                margin-bottom:5px;
+            ">
+                🟢 ATIVAS
+            </div>
+
+            <div style="
+                color:#fff;
+                font-size:22px;
+                font-weight:800;
+            ">
+                ${ativas}
+            </div>
+        </div>
+
+
+        <div style="
+            background:#10151e;
+            border:1px solid #f59e0b55;
+            border-radius:10px;
+            padding:12px;
+        ">
+            <div style="
+                color:#f59e0b;
+                font-size:11px;
+                font-weight:700;
+                margin-bottom:5px;
+            ">
+                🟠 VENCENDO
+            </div>
+
+            <div style="
+                color:#fff;
+                font-size:22px;
+                font-weight:800;
+            ">
+                ${vencendo}
+            </div>
+        </div>
+
+
+        <div style="
+            background:#10151e;
+            border:1px solid #ef444455;
+            border-radius:10px;
+            padding:12px;
+        ">
+            <div style="
+                color:#ef4444;
+                font-size:11px;
+                font-weight:700;
+                margin-bottom:5px;
+            ">
+                🔴 VENCIDAS
+            </div>
+
+            <div style="
+                color:#fff;
+                font-size:22px;
+                font-weight:800;
+            ">
+                ${vencidas}
+            </div>
+        </div>
+
+
+        <div style="
+            background:#10151e;
+            border:1px solid #c8a35555;
+            border-radius:10px;
+            padding:12px;
+        ">
+            <div style="
+                color:#c8a355;
+                font-size:11px;
+                font-weight:700;
+                margin-bottom:5px;
+            ">
+                ♾️ PERMANENTES
+            </div>
+
+            <div style="
+                color:#fff;
+                font-size:22px;
+                font-weight:800;
+            ">
+                ${permanentes}
+            </div>
+        </div>
+
+
+        <div style="
+            background:#10151e;
+            border:1px solid #737c8b55;
+            border-radius:10px;
+            padding:12px;
+        ">
+            <div style="
+                color:#737c8b;
+                font-size:11px;
+                font-weight:700;
+                margin-bottom:5px;
+            ">
+                ⚫ INATIVAS
+            </div>
+
+            <div style="
+                color:#fff;
+                font-size:22px;
+                font-weight:800;
+            ">
+                ${inativas}
+            </div>
+        </div>
+
+    `;
+}
     /* =========================================================
        RENDERIZAR ALUNOS
     ========================================================= */
@@ -1616,11 +1816,11 @@ document.addEventListener("DOMContentLoaded", async function () {
                     : "Matrícula salva com sucesso!";
 
 
-            await carregarMatriculas();
+         await carregarMatriculas();
 
+atualizarResumoMatriculas();
 
-            renderizarAlunos();
-
+renderizarAlunos();
 
             setTimeout(
                 function () {
