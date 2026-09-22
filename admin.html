@@ -4,11 +4,18 @@
 <head>
 
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>Área do Sócio - Tático Curso</title>
 
-    <link rel="stylesheet" href="style.css">
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
 
     <style>
 
@@ -17,8 +24,10 @@
         ========================================================= */
 
         body.admin-page {
+
             margin: 0 !important;
             padding: 0 !important;
+
             min-height: 100vh;
 
             background:
@@ -51,8 +60,10 @@
 
             background: rgba(8, 10, 15, 0.97);
 
-            border-bottom: 1px solid rgba(200, 163, 85, 0.22);
+            border-bottom:
+                1px solid rgba(200, 163, 85, 0.22);
         }
+
 
         body.admin-page > header h1 {
 
@@ -66,6 +77,7 @@
 
             letter-spacing: 2px;
         }
+
 
         body.admin-page > header p {
 
@@ -85,7 +97,8 @@
 
             padding: 10px 20px;
 
-            border: 1px solid rgba(200, 163, 85, 0.35);
+            border:
+                1px solid rgba(200, 163, 85, 0.35);
 
             border-radius: 8px;
 
@@ -102,11 +115,14 @@
             transition: 0.2s;
         }
 
+
         body.admin-page #logout:hover {
 
-            background: rgba(200, 163, 85, 0.10);
+            background:
+                rgba(200, 163, 85, 0.10);
 
-            transform: translateY(-1px);
+            transform:
+                translateY(-1px);
         }
 
 
@@ -140,7 +156,8 @@
 
             border-radius: 18px;
 
-            border: 1px solid rgba(200, 163, 85, 0.20);
+            border:
+                1px solid rgba(200, 163, 85, 0.20);
 
             background:
                 linear-gradient(
@@ -153,6 +170,7 @@
                 0 15px 40px rgba(0, 0, 0, 0.20);
         }
 
+
         body.admin-page .boas-vindas h2 {
 
             margin: 0 0 10px;
@@ -163,6 +181,7 @@
 
             font-weight: 900;
         }
+
 
         body.admin-page .boas-vindas p {
 
@@ -180,7 +199,8 @@
            TÍTULO
         ========================================================= */
 
-        body.admin-page main > section:not(.boas-vindas) > h2 {
+        body.admin-page
+        main > section:not(.boas-vindas) > h2 {
 
             margin: 0 0 22px;
 
@@ -219,7 +239,8 @@
 
             padding: 25px 20px;
 
-            border: 1px solid rgba(200, 163, 85, 0.20);
+            border:
+                1px solid rgba(200, 163, 85, 0.20);
 
             border-radius: 15px;
 
@@ -247,11 +268,14 @@
                 background 0.2s;
         }
 
+
         body.admin-page .admin-menu button:hover {
 
-            transform: translateY(-4px);
+            transform:
+                translateY(-4px);
 
-            border-color: rgba(200, 163, 85, 0.55);
+            border-color:
+                rgba(200, 163, 85, 0.55);
 
             background:
                 linear-gradient(
@@ -266,9 +290,11 @@
            PRIMEIRO BOTÃO
         ========================================================= */
 
-        body.admin-page .admin-menu button:first-child {
+        body.admin-page
+        .admin-menu button:first-child {
 
-            border-top: 3px solid #C8A355;
+            border-top:
+                3px solid #C8A355;
         }
 
 
@@ -276,9 +302,23 @@
            BOTÃO GERENCIAR ALUNOS
         ========================================================= */
 
-        body.admin-page .admin-menu button:nth-child(4) {
+        body.admin-page
+        .admin-menu button:nth-child(4) {
 
-            border-top: 3px solid #36C275;
+            border-top:
+                3px solid #36C275;
+        }
+
+
+        /* =========================================================
+           BOTÃO GERENCIAR EDITAIS
+        ========================================================= */
+
+        body.admin-page
+        .admin-menu button:nth-child(5) {
+
+            border-top:
+                3px solid #C8A355;
         }
 
 
@@ -305,15 +345,18 @@
                 padding: 14px 18px;
             }
 
+
             body.admin-page > header h1 {
 
                 font-size: 18px;
             }
 
+
             body.admin-page > header p {
 
                 font-size: 11px;
             }
+
 
             body.admin-page #logout {
 
@@ -322,22 +365,28 @@
                 font-size: 12px;
             }
 
+
             body.admin-page main {
 
-                padding: 30px 15px 50px;
+                padding:
+                    30px 15px 50px;
             }
+
 
             body.admin-page .boas-vindas {
 
-                padding: 25px 20px;
+                padding:
+                    25px 20px;
 
                 border-radius: 14px;
             }
+
 
             body.admin-page .boas-vindas h2 {
 
                 font-size: 24px;
             }
+
 
             body.admin-page .admin-menu {
 
@@ -345,6 +394,7 @@
 
                 gap: 15px;
             }
+
 
             body.admin-page .admin-menu button {
 
@@ -409,30 +459,57 @@
 
 
             <button
-                onclick="window.location.href='cursos-admin.html'"
+                type="button"
+                onclick="
+                    window.location.href =
+                    'cursos-admin.html'
+                "
             >
                 📚 Gerenciar Cursos
             </button>
 
 
             <button
-                onclick="window.location.href='simulados-admin.html'"
+                type="button"
+                onclick="
+                    window.location.href =
+                    'simulados-admin.html'
+                "
             >
                 📝 Gerenciar Simulados
             </button>
 
 
             <button
-                onclick="window.location.href='socios-admin.html'"
+                type="button"
+                onclick="
+                    window.location.href =
+                    'socios-admin.html'
+                "
             >
                 👥 Gerenciar Sócios
             </button>
 
 
             <button
-                onclick="window.location.href='alunos-admin.html'"
+                type="button"
+                onclick="
+                    window.location.href =
+                    'alunos-admin.html'
+                "
             >
                 👨‍🎓 Gerenciar Alunos
+            </button>
+
+
+            <button
+                type="button"
+                onclick="
+                    window.location.href =
+                    'editais-admin.html'
+                "
+            >
+                📢 Gerenciar Editais
             </button>
 
 
@@ -444,9 +521,13 @@
 </main>
 
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script
+    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+></script>
+
 
 <script src="supabase.js"></script>
+
 <script src="admin.js"></script>
 
 
