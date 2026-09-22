@@ -1283,49 +1283,208 @@ document.addEventListener("DOMContentLoaded", async function () {
     /* =========================================================
        RENOVAÇÃO
     ========================================================= */
+function abrirRenovacao(matricula) {
 
-    function abrirRenovacao(
-        aluno,
-        matricula
-    ) {
-
-        if (!matricula) {
-
-            alert(
-                "Não foi encontrada uma matrícula para renovar."
-            );
-
-            return;
-        }
-
-
-        const situacao =
-            situacaoMatricula(
-                matricula
-            );
-
-
-        if (
-            situacao.classe !==
-            "vencida"
-        ) {
-
-            alert(
-                "A renovação está disponível somente para matrículas vencidas."
-            );
-
-            return;
-        }
-
-
-        abrirModalMatricula(
-            aluno,
-            matricula,
-            true
-        );
+    if (!matricula) {
+        return;
     }
 
 
+    const usuarioId =
+        Number(matricula.usuario_id);
+
+
+    const cursoId =
+        Number(pegarCursoId(matricula));
+
+
+    const aluno =
+        alunos.find(function (item) {
+
+            return Number(item.id) ===
+                usuarioId;
+
+        });
+
+
+    if (!aluno) {
+        return;
+    }
+
+
+    /* =====================================================
+       DADOS DO ALUNO
+    ===================================================== */
+
+    matriculaUsuarioId.value =
+        usuarioId;
+
+
+    alunoMatriculaNome.textContent =
+        `${aluno.nome || "Aluno"} · ${aluno.email || ""}`;
+
+
+    /* =====================================================
+       PREENCHER CURSOS
+    ===================================================== */
+
+    matriculaCurso.innerHTML = "";
+
+
+    const opcaoInicial =
+        document.createElement("option");
+
+
+    opcaoInicial.value = "";
+
+
+    opcaoInicial.textContent =
+        "Selecione um curso";
+
+
+    matriculaCurso.appendChild(
+        opcaoInicial
+    );
+
+
+    cursos
+        .filter(function (curso) {
+
+            return curso.ativo !== false;
+
+        })
+        .forEach(function (curso) {
+
+            const option =
+                document.createElement("option");
+
+
+            option.value =
+                curso.id;
+
+
+            option.textContent =
+                curso.nome;
+
+
+            matriculaCurso.appendChild(
+                option
+            );
+
+        });
+
+
+    /* =====================================================
+       SELECIONAR O CURSO DA MATRÍCULA
+    ===================================================== */
+
+    matriculaCurso.value =
+        String(cursoId);
+
+
+    /* =====================================================
+       MATRÍCULA
+    ===================================================== */
+
+    matriculaId.value =
+        matricula.id || "";
+
+
+    matriculaStatus.value =
+        "ativo";
+
+
+    /* =====================================================
+       RENOVAÇÃO COMEÇA HOJE
+    ===================================================== */
+
+    matriculaInicio.value =
+        dataHoje();
+
+
+    /* =====================================================
+       VENCIMENTO
+       DEIXA VAZIO PARA O SÓCIO INFORMAR
+    ===================================================== */
+
+    matriculaVencimento.value =
+        "";
+
+
+    /* =====================================================
+       VALOR
+       MANTÉM O VALOR ANTERIOR, SE EXISTIR
+    ===================================================== */
+
+    const valorAnterior =
+        pegarValor(matricula);
+
+
+    matriculaValor.value =
+        valorAnterior !== null &&
+        valorAnterior !== undefined
+            ? valorAnterior
+            : "";
+
+
+    /* =====================================================
+       RENOVAÇÃO NORMAL POR PADRÃO
+    ===================================================== */
+
+    matriculaPermanente.checked =
+        false;
+
+
+    matriculaVencimento.disabled =
+        false;
+
+
+    matriculaValor.disabled =
+        false;
+
+
+    campoVencimento.classList.remove(
+        "bloqueado"
+    );
+
+
+    campoValor.classList.remove(
+        "bloqueado"
+    );
+
+
+    avisoPermanente.style.display =
+        "none";
+
+
+    /* =====================================================
+       TÍTULO
+    ===================================================== */
+
+    const titulo =
+        modal.querySelector(".modal-titulo");
+
+
+    if (titulo) {
+
+        titulo.textContent =
+            "Renovar matrícula";
+
+    }
+
+
+    mensagemMatricula.textContent =
+        "";
+
+
+    /* =====================================================
+       ABRIR MODAL
+    ===================================================== */
+
+    modal.classList.add(
+        "aberto"
+    );
+}
     /* =========================================================
        SALVAR MATRÍCULA
     ========================================================= */
