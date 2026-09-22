@@ -1,25 +1,45 @@
-document.addEventListener("DOMContentLoaded", async function () {
+document.addEventListener(
+    "DOMContentLoaded",
+    async function () {
+
 
     /* =========================================================
        ELEMENTOS DA PÁGINA
     ========================================================= */
 
-    const busca = document.getElementById("buscaAluno");
-    const filtroStatus = document.getElementById("filtroStatus");
-    const filtroTipo = document.getElementById("filtroTipo");
-    const lista = document.getElementById("listaAlunos");
-    const contador = document.getElementById("contadorAlunos");
-    const sair = document.getElementById("sair");
+    const busca =
+        document.getElementById("buscaAluno");
+
+    const filtroStatus =
+        document.getElementById("filtroStatus");
+
+    const filtroTipo =
+        document.getElementById("filtroTipo");
+
+    const lista =
+        document.getElementById("listaAlunos");
+
+    const contador =
+        document.getElementById("contadorAlunos");
+
+    const sair =
+        document.getElementById("sair");
 
 
     /* =========================================================
        MODAL
     ========================================================= */
 
-    const modal = document.getElementById("modalMatricula");
-    const fecharModal = document.getElementById("fecharModal");
+    const modal =
+        document.getElementById("modalMatricula");
+
+    const fecharModal =
+        document.getElementById("fecharModal");
+
     const cancelarMatricula =
-        document.getElementById("cancelarMatricula");
+        document.getElementById(
+            "cancelarMatricula"
+        );
 
     const formMatricula =
         document.getElementById("formMatricula");
@@ -28,40 +48,64 @@ document.addEventListener("DOMContentLoaded", async function () {
         document.getElementById("matriculaId");
 
     const matriculaUsuarioId =
-        document.getElementById("matriculaUsuarioId");
+        document.getElementById(
+            "matriculaUsuarioId"
+        );
 
     const matriculaCurso =
-        document.getElementById("matriculaCurso");
+        document.getElementById(
+            "matriculaCurso"
+        );
 
     const matriculaStatus =
-        document.getElementById("matriculaStatus");
+        document.getElementById(
+            "matriculaStatus"
+        );
 
     const matriculaInicio =
-        document.getElementById("matriculaInicio");
+        document.getElementById(
+            "matriculaInicio"
+        );
 
     const matriculaVencimento =
-        document.getElementById("matriculaVencimento");
+        document.getElementById(
+            "matriculaVencimento"
+        );
 
     const matriculaValor =
-        document.getElementById("matriculaValor");
+        document.getElementById(
+            "matriculaValor"
+        );
 
     const matriculaPermanente =
-        document.getElementById("matriculaPermanente");
+        document.getElementById(
+            "matriculaPermanente"
+        );
 
     const campoVencimento =
-        document.getElementById("campoVencimento");
+        document.getElementById(
+            "campoVencimento"
+        );
 
     const campoValor =
-        document.getElementById("campoValor");
+        document.getElementById(
+            "campoValor"
+        );
 
     const avisoPermanente =
-        document.getElementById("avisoPermanente");
+        document.getElementById(
+            "avisoPermanente"
+        );
 
     const alunoMatriculaNome =
-        document.getElementById("alunoMatriculaNome");
+        document.getElementById(
+            "alunoMatriculaNome"
+        );
 
     const mensagemMatricula =
-        document.getElementById("mensagemMatricula");
+        document.getElementById(
+            "mensagemMatricula"
+        );
 
 
     /* =========================================================
@@ -69,9 +113,148 @@ document.addEventListener("DOMContentLoaded", async function () {
     ========================================================= */
 
     let alunos = [];
+
     let cursos = [];
+
     let matriculas = [];
+
     let modoRenovacao = false;
+
+
+    /* =========================================================
+       DATA DE HOJE
+    ========================================================= */
+
+    function dataHoje() {
+
+        const hoje =
+            new Date();
+
+        const ano =
+            hoje.getFullYear();
+
+        const mes =
+            String(
+                hoje.getMonth() + 1
+            ).padStart(2, "0");
+
+        const dia =
+            String(
+                hoje.getDate()
+            ).padStart(2, "0");
+
+        return `${ano}-${mes}-${dia}`;
+    }
+
+
+    /* =========================================================
+       FORMATAR DATA
+    ========================================================= */
+
+    function formatarDataInput(valor) {
+
+        if (!valor) {
+            return "";
+        }
+
+        const texto =
+            String(valor);
+
+        if (
+            /^\d{4}-\d{2}-\d{2}$/.test(
+                texto
+            )
+        ) {
+            return texto;
+        }
+
+        const data =
+            new Date(valor);
+
+        if (
+            Number.isNaN(
+                data.getTime()
+            )
+        ) {
+            return "";
+        }
+
+        const ano =
+            data.getFullYear();
+
+        const mes =
+            String(
+                data.getMonth() + 1
+            ).padStart(2, "0");
+
+        const dia =
+            String(
+                data.getDate()
+            ).padStart(2, "0");
+
+        return `${ano}-${mes}-${dia}`;
+    }
+
+
+    function formatarDataExibicao(valor) {
+
+        if (!valor) {
+            return "";
+        }
+
+        const texto =
+            String(valor).substring(
+                0,
+                10
+            );
+
+        const partes =
+            texto.split("-");
+
+        if (
+            partes.length !== 3
+        ) {
+            return texto;
+        }
+
+        return (
+            `${partes[2]}/` +
+            `${partes[1]}/` +
+            `${partes[0]}`
+        );
+    }
+
+
+    /* =========================================================
+       SEGURANÇA HTML
+    ========================================================= */
+
+    function escapeHTML(valor) {
+
+        return String(
+            valor ?? ""
+        )
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+        .replace(
+            /</g,
+            "&lt;"
+        )
+        .replace(
+            />/g,
+            "&gt;"
+        )
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+    }
 
 
     /* =========================================================
@@ -84,11 +267,16 @@ document.addEventListener("DOMContentLoaded", async function () {
             data: {
                 session
             }
-        } = await supabaseClient.auth.getSession();
+        } =
+            await supabaseClient.auth
+                .getSession();
 
 
         if (!session) {
-            window.location.href = "login.html";
+
+            window.location.href =
+                "login.html";
+
             return false;
         }
 
@@ -96,11 +284,17 @@ document.addEventListener("DOMContentLoaded", async function () {
         const {
             data: perfil,
             error
-        } = await supabaseClient
-            .from("perfis")
-            .select("id, nome, tipo, status")
-            .eq("auth_user_id", session.user.id)
-            .maybeSingle();
+        } =
+            await supabaseClient
+                .from("perfis")
+                .select(
+                    "id, nome, tipo, status"
+                )
+                .eq(
+                    "auth_user_id",
+                    session.user.id
+                )
+                .maybeSingle();
 
 
         if (error) {
@@ -114,27 +308,35 @@ document.addEventListener("DOMContentLoaded", async function () {
                 "Erro ao verificar seu acesso."
             );
 
-            window.location.href = "admin.html";
+            window.location.href =
+                "admin.html";
 
             return false;
         }
 
 
         const tipo =
-            String(perfil?.tipo || "")
-                .trim()
-                .toLowerCase();
+            String(
+                perfil?.tipo || ""
+            )
+            .trim()
+            .toLowerCase();
 
 
         const status =
-            String(perfil?.status || "")
-                .trim()
-                .toLowerCase();
+            String(
+                perfil?.status || ""
+            )
+            .trim()
+            .toLowerCase();
 
 
         if (
             !perfil ||
-            !["socio", "sócio"].includes(tipo) ||
+            ![
+                "socio",
+                "sócio"
+            ].includes(tipo) ||
             status !== "ativo"
         ) {
 
@@ -142,7 +344,8 @@ document.addEventListener("DOMContentLoaded", async function () {
                 "Acesso permitido somente para sócios ativos."
             );
 
-            window.location.href = "aluno.html";
+            window.location.href =
+                "aluno.html";
 
             return false;
         }
@@ -161,12 +364,18 @@ document.addEventListener("DOMContentLoaded", async function () {
         const {
             data,
             error
-        } = await supabaseClient
-            .from("cursos")
-            .select("id, nome, ativo")
-            .order("nome", {
-                ascending: true
-            });
+        } =
+            await supabaseClient
+                .from("cursos")
+                .select(
+                    "id, nome, ativo"
+                )
+                .order(
+                    "nome",
+                    {
+                        ascending: true
+                    }
+                );
 
 
         if (error) {
@@ -182,7 +391,8 @@ document.addEventListener("DOMContentLoaded", async function () {
         }
 
 
-        cursos = data || [];
+        cursos =
+            data || [];
     }
 
 
@@ -202,19 +412,23 @@ document.addEventListener("DOMContentLoaded", async function () {
         const {
             data,
             error
-        } = await supabaseClient
-            .from("perfis")
-            .select(`
-                id,
-                nome,
-                telefone,
-                email,
-                tipo,
-                status
-            `)
-            .order("nome", {
-                ascending: true
-            });
+        } =
+            await supabaseClient
+                .from("perfis")
+                .select(`
+                    id,
+                    nome,
+                    telefone,
+                    email,
+                    tipo,
+                    status
+                `)
+                .order(
+                    "nome",
+                    {
+                        ascending: true
+                    }
+                );
 
 
         if (error) {
@@ -224,14 +438,9 @@ document.addEventListener("DOMContentLoaded", async function () {
                 error
             );
 
-
             lista.innerHTML = `
                 <div class="mensagem erro">
                     Não foi possível carregar os alunos.
-                    <br><br>
-                    ${escapeHTML(
-                        error.message || ""
-                    )}
                 </div>
             `;
 
@@ -239,19 +448,17 @@ document.addEventListener("DOMContentLoaded", async function () {
         }
 
 
-        alunos = data || [];
+        alunos =
+            data || [];
+
 
         await carregarMatriculas();
 
-        atualizarResumoMatriculas();
-
-        renderizarAlunos();
     }
 
 
     /* =========================================================
        CARREGAR MATRÍCULAS
-       USA A RPC EXISTENTE
     ========================================================= */
 
     async function carregarMatriculas() {
@@ -259,9 +466,10 @@ document.addEventListener("DOMContentLoaded", async function () {
         const {
             data,
             error
-        } = await supabaseClient.rpc(
-            "listar_matriculas_admin"
-        );
+        } =
+            await supabaseClient.rpc(
+                "listar_matriculas_admin"
+            );
 
 
         if (error) {
@@ -277,32 +485,41 @@ document.addEventListener("DOMContentLoaded", async function () {
         }
 
 
-        matriculas = data || [];
+        matriculas =
+            data || [];
     }
 
 
     /* =========================================================
-       ENCONTRAR MATRÍCULAS DO ALUNO
+       MATRÍCULAS DO ALUNO
     ========================================================= */
 
-    function matriculasDoAluno(usuarioId) {
+    function matriculasDoAluno(
+        usuarioId
+    ) {
 
-        return matriculas.filter(function (matricula) {
+        return matriculas.filter(
+            function (matricula) {
 
-            return Number(
-                matricula.usuario_id
-            ) === Number(usuarioId);
+                return (
+                    Number(
+                        matricula.usuario_id
+                    ) ===
+                    Number(usuarioId)
+                );
 
-        });
+            }
+        );
     }
 
 
     /* =========================================================
-       PEGAR ID DO CURSO
-       ACEITA OS DOIS NOMES PARA COMPATIBILIDADE
+       ID DO CURSO
     ========================================================= */
 
-    function pegarCursoId(matricula) {
+    function pegarCursoId(
+        matricula
+    ) {
 
         return (
             matricula.curso_id ??
@@ -313,11 +530,12 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 
     /* =========================================================
-       PEGAR VALOR
-       ACEITA OS DOIS NOMES PARA COMPATIBILIDADE
+       VALOR DA MATRÍCULA
     ========================================================= */
 
-    function pegarValor(matricula) {
+    function pegarValor(
+        matricula
+    ) {
 
         return (
             matricula.valor ??
@@ -332,22 +550,32 @@ document.addEventListener("DOMContentLoaded", async function () {
        NOME DO CURSO
     ========================================================= */
 
-    function nomeCurso(cursoId) {
+    function nomeCurso(
+        cursoId
+    ) {
 
-        const curso = cursos.find(function (item) {
+        const curso =
+            cursos.find(
+                function (item) {
 
-            return Number(item.id) === Number(cursoId);
+                    return (
+                        Number(item.id) ===
+                        Number(cursoId)
+                    );
 
-        });
+                }
+            );
 
 
-        return curso?.nome ||
-            "Curso não encontrado";
+        return (
+            curso?.nome ||
+            "Curso não encontrado"
+        );
     }
 
 
     /* =========================================================
-       ENCONTRAR MATRÍCULA POR ALUNO + CURSO
+       ENCONTRAR MATRÍCULA
     ========================================================= */
 
     function encontrarMatricula(
@@ -355,52 +583,59 @@ document.addEventListener("DOMContentLoaded", async function () {
         cursoId
     ) {
 
-        return matriculas.find(function (matricula) {
+        return (
+            matriculas.find(
+                function (matricula) {
 
-            return (
-                Number(matricula.usuario_id) ===
-                    Number(usuarioId)
-                &&
-                Number(pegarCursoId(matricula)) ===
-                    Number(cursoId)
-            );
+                    return (
+                        Number(
+                            matricula.usuario_id
+                        ) ===
+                        Number(usuarioId)
 
-        }) || null;
+                        &&
+
+                        Number(
+                            pegarCursoId(
+                                matricula
+                            )
+                        ) ===
+                        Number(cursoId)
+                    );
+
+                }
+            ) || null
+        );
     }
 
 
     /* =========================================================
        SITUAÇÃO DA MATRÍCULA
-
-       🟢 Ativa
-       🟠 Vencendo
-       🔴 Vencida
-       ♾️ Permanente
-       ⚫ Inativa
     ========================================================= */
 
-    function situacaoMatricula(matricula) {
+    function situacaoMatricula(
+        matricula
+    ) {
 
         const status =
             String(
                 matricula.status || ""
             )
-                .trim()
-                .toLowerCase();
+            .trim()
+            .toLowerCase();
 
 
-        /* -----------------------------------------
-           MATRÍCULA INATIVA
-        ----------------------------------------- */
-
-        if (status !== "ativo") {
+        if (
+            status !== "ativo"
+        ) {
 
             return {
                 nome: "Inativa",
                 emoji: "⚫",
                 classe: "inativa",
                 cor: "#737c8b",
-                fundo: "rgba(115,124,139,0.12)"
+                fundo:
+                    "rgba(115,124,139,0.12)"
             };
         }
 
@@ -409,10 +644,6 @@ document.addEventListener("DOMContentLoaded", async function () {
             matricula.data_vencimento;
 
 
-        /* -----------------------------------------
-           MATRÍCULA PERMANENTE
-        ----------------------------------------- */
-
         if (!vencimento) {
 
             return {
@@ -420,54 +651,47 @@ document.addEventListener("DOMContentLoaded", async function () {
                 emoji: "♾️",
                 classe: "permanente",
                 cor: "#c8a355",
-                fundo: "rgba(200,163,85,0.12)"
+                fundo:
+                    "rgba(200,163,85,0.12)"
             };
         }
 
 
-        /*
-         * Trabalhamos somente com a parte
-         * YYYY-MM-DD para evitar problemas
-         * de horário/fuso.
-         */
-
         const dataVencimento =
-            String(vencimento).substring(0, 10);
+            String(
+                vencimento
+            ).substring(0, 10);
 
 
         const hoje =
             dataHoje();
 
 
-        /* -----------------------------------------
-           VENCIDA
-        ----------------------------------------- */
-
-        if (dataVencimento < hoje) {
+        if (
+            dataVencimento < hoje
+        ) {
 
             return {
                 nome: "Vencida",
                 emoji: "🔴",
                 classe: "vencida",
                 cor: "#ef4444",
-                fundo: "rgba(239,68,68,0.12)"
+                fundo:
+                    "rgba(239,68,68,0.12)"
             };
         }
 
-
-        /* -----------------------------------------
-           VENCENDO
-           Até 7 dias
-        ----------------------------------------- */
 
         const hojeData =
             new Date(
                 hoje + "T00:00:00"
             );
 
+
         const vencimentoData =
             new Date(
-                dataVencimento + "T00:00:00"
+                dataVencimento +
+                "T00:00:00"
             );
 
 
@@ -477,128 +701,47 @@ document.addEventListener("DOMContentLoaded", async function () {
                     vencimentoData -
                     hojeData
                 ) /
-                (1000 * 60 * 60 * 24)
+                (
+                    1000 *
+                    60 *
+                    60 *
+                    24
+                )
             );
 
 
-        if (diferenca <= 7) {
+        if (
+            diferenca <= 7
+        ) {
 
             return {
                 nome: "Vencendo",
                 emoji: "🟠",
                 classe: "vencendo",
                 cor: "#f59e0b",
-                fundo: "rgba(245,158,11,0.12)"
+                fundo:
+                    "rgba(245,158,11,0.12)"
             };
         }
 
-
-        /* -----------------------------------------
-           ATIVA
-        ----------------------------------------- */
 
         return {
             nome: "Ativa",
             emoji: "🟢",
             classe: "ativa",
             cor: "#36c275",
-            fundo: "rgba(54,194,117,0.12)"
+            fundo:
+                "rgba(54,194,117,0.12)"
         };
     }
-        /* =========================================================
-       FORMATAR DATA PARA EXIBIÇÃO
-    ========================================================= */
-
-    function formatarDataExibicao(valor) {
-
-        if (!valor) {
-            return "";
-        }
-
-
-        const texto =
-            String(valor).substring(0, 10);
-
-
-        const partes =
-            texto.split("-");
-
-
-        if (partes.length !== 3) {
-            return texto;
-        }
-
-
-        return `${partes[2]}/${partes[1]}/${partes[0]}`;
-    }
-
 
     /* =========================================================
-       FORMATAR DATA PARA INPUT
+       HTML DA SITUAÇÃO
     ========================================================= */
 
-    function formatarDataInput(valor) {
-
-        if (!valor) {
-            return "";
-        }
-
-
-        const texto =
-            String(valor);
-
-
-        if (
-            /^\d{4}-\d{2}-\d{2}$/.test(
-                texto
-            )
-        ) {
-
-            return texto;
-        }
-
-
-        const data =
-            new Date(valor);
-
-
-        if (
-            Number.isNaN(
-                data.getTime()
-            )
-        ) {
-
-            return "";
-        }
-
-
-        const ano =
-            data.getFullYear();
-
-
-        const mes =
-            String(
-                data.getMonth() + 1
-            )
-            .padStart(2, "0");
-
-
-        const dia =
-            String(
-                data.getDate()
-            )
-            .padStart(2, "0");
-
-
-        return `${ano}-${mes}-${dia}`;
-    }
-
-
-    /* =========================================================
-       HTML DA SITUAÇÃO DA MATRÍCULA
-    ========================================================= */
-
-    function htmlSituacaoMatricula(matricula) {
+    function htmlSituacaoMatricula(
+        matricula
+    ) {
 
         const situacao =
             situacaoMatricula(
@@ -610,7 +753,8 @@ document.addEventListener("DOMContentLoaded", async function () {
             matricula.data_vencimento;
 
 
-        let dataHTML = "";
+        let dataHTML =
+            "";
 
 
         if (vencimento) {
@@ -623,13 +767,12 @@ document.addEventListener("DOMContentLoaded", async function () {
                         margin-left:4px;
                     "
                 >
-                    · vence ${
-                        escapeHTML(
-                            formatarDataExibicao(
-                                vencimento
-                            )
+                    · vence
+                    ${escapeHTML(
+                        formatarDataExibicao(
+                            vencimento
                         )
-                    }
+                    )}
                 </span>
             `;
         }
@@ -683,24 +826,25 @@ document.addEventListener("DOMContentLoaded", async function () {
                     "div"
                 );
 
+
             resumo.id =
                 "resumoMatriculas";
 
 
-            resumo.style.display =
-                "grid";
-
-            resumo.style.gridTemplateColumns =
-                "repeat(5, minmax(0, 1fr))";
-
-            resumo.style.gap =
-                "14px";
-
-            resumo.style.margin =
-                "22px 0";
+            resumo.style.cssText = `
+                display:grid;
+                grid-template-columns:
+                    repeat(5, 1fr);
+                gap:10px;
+                margin:18px 0;
+            `;
 
 
-            lista.parentNode.insertBefore(
+            const referencia =
+                lista.parentElement;
+
+
+            referencia.insertBefore(
                 resumo,
                 lista
             );
@@ -708,9 +852,13 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 
         let ativas = 0;
+
         let vencendo = 0;
+
         let vencidas = 0;
+
         let permanentes = 0;
+
         let inativas = 0;
 
 
@@ -723,37 +871,43 @@ document.addEventListener("DOMContentLoaded", async function () {
                     );
 
 
-                if (
-                    situacao.classe ===
-                    "ativa"
+                switch (
+                    situacao.classe
                 ) {
 
-                    ativas++;
+                    case "ativa":
 
-                } else if (
-                    situacao.classe ===
-                    "vencendo"
-                ) {
+                        ativas++;
 
-                    vencendo++;
+                        break;
 
-                } else if (
-                    situacao.classe ===
-                    "vencida"
-                ) {
 
-                    vencidas++;
+                    case "vencendo":
 
-                } else if (
-                    situacao.classe ===
-                    "permanente"
-                ) {
+                        vencendo++;
 
-                    permanentes++;
+                        break;
 
-                } else {
 
-                    inativas++;
+                    case "vencida":
+
+                        vencidas++;
+
+                        break;
+
+
+                    case "permanente":
+
+                        permanentes++;
+
+                        break;
+
+
+                    case "inativa":
+
+                        inativas++;
+
+                        break;
                 }
 
             }
@@ -764,156 +918,176 @@ document.addEventListener("DOMContentLoaded", async function () {
 
             <div
                 style="
-                    border:1px solid rgba(54,194,117,.35);
-                    background:rgba(54,194,117,.06);
-                    border-radius:16px;
-                    padding:14px;
+                    background:#10151e;
+                    border:
+                        1px solid #36c27555;
+                    border-radius:10px;
+                    padding:12px;
                 "
             >
+
                 <div
                     style="
                         color:#36c275;
-                        font-size:12px;
+                        font-size:11px;
                         font-weight:700;
+                        margin-bottom:5px;
                     "
                 >
                     🟢 ATIVAS
                 </div>
 
+
                 <div
                     style="
                         color:#fff;
-                        font-size:28px;
+                        font-size:22px;
                         font-weight:800;
-                        margin-top:6px;
                     "
                 >
                     ${ativas}
                 </div>
+
             </div>
 
 
             <div
                 style="
-                    border:1px solid rgba(245,158,11,.35);
-                    background:rgba(245,158,11,.06);
-                    border-radius:16px;
-                    padding:14px;
+                    background:#10151e;
+                    border:
+                        1px solid #f59e0b55;
+                    border-radius:10px;
+                    padding:12px;
                 "
             >
+
                 <div
                     style="
                         color:#f59e0b;
-                        font-size:12px;
+                        font-size:11px;
                         font-weight:700;
+                        margin-bottom:5px;
                     "
                 >
                     🟠 VENCENDO
                 </div>
 
+
                 <div
                     style="
                         color:#fff;
-                        font-size:28px;
+                        font-size:22px;
                         font-weight:800;
-                        margin-top:6px;
                     "
                 >
                     ${vencendo}
                 </div>
+
             </div>
 
 
             <div
                 style="
-                    border:1px solid rgba(239,68,68,.35);
-                    background:rgba(239,68,68,.06);
-                    border-radius:16px;
-                    padding:14px;
+                    background:#10151e;
+                    border:
+                        1px solid #ef444455;
+                    border-radius:10px;
+                    padding:12px;
                 "
             >
+
                 <div
                     style="
                         color:#ef4444;
-                        font-size:12px;
+                        font-size:11px;
                         font-weight:700;
+                        margin-bottom:5px;
                     "
                 >
                     🔴 VENCIDAS
                 </div>
 
+
                 <div
                     style="
                         color:#fff;
-                        font-size:28px;
+                        font-size:22px;
                         font-weight:800;
-                        margin-top:6px;
                     "
                 >
                     ${vencidas}
                 </div>
+
             </div>
 
 
             <div
                 style="
-                    border:1px solid rgba(200,163,85,.35);
-                    background:rgba(200,163,85,.06);
-                    border-radius:16px;
-                    padding:14px;
+                    background:#10151e;
+                    border:
+                        1px solid #c8a35555;
+                    border-radius:10px;
+                    padding:12px;
                 "
             >
+
                 <div
                     style="
                         color:#c8a355;
-                        font-size:12px;
+                        font-size:11px;
                         font-weight:700;
+                        margin-bottom:5px;
                     "
                 >
                     ♾️ PERMANENTES
                 </div>
 
+
                 <div
                     style="
                         color:#fff;
-                        font-size:28px;
+                        font-size:22px;
                         font-weight:800;
-                        margin-top:6px;
                     "
                 >
                     ${permanentes}
                 </div>
+
             </div>
 
 
             <div
                 style="
-                    border:1px solid rgba(115,124,139,.35);
-                    background:rgba(115,124,139,.06);
-                    border-radius:16px;
-                    padding:14px;
+                    background:#10151e;
+                    border:
+                        1px solid #737c8b55;
+                    border-radius:10px;
+                    padding:12px;
                 "
             >
+
                 <div
                     style="
-                        color:#8d96a5;
-                        font-size:12px;
+                        color:#737c8b;
+                        font-size:11px;
                         font-weight:700;
+                        margin-bottom:5px;
                     "
                 >
                     ⚫ INATIVAS
                 </div>
 
+
                 <div
                     style="
                         color:#fff;
-                        font-size:28px;
+                        font-size:22px;
                         font-weight:800;
-                        margin-top:6px;
                     "
                 >
                     ${inativas}
                 </div>
+
             </div>
 
         `;
@@ -921,194 +1095,129 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 
     /* =========================================================
-       ABRIR MODAL
+       CARREGAR CURSOS NO SELECT
     ========================================================= */
 
-    function abrirModalMatricula(
-        aluno,
-        matricula = null,
-        renovacao = false
-    ) {
+    function carregarCursosNoSelect() {
 
-        modoRenovacao =
-            renovacao === true;
-
-
-        modal.style.display =
-            "flex";
+        matriculaCurso.innerHTML = `
+            <option value="">
+                Selecione um curso
+            </option>
+        `;
 
 
-        alunoMatriculaNome.textContent =
-            aluno.nome || "Aluno";
+        cursos
+            .filter(
+                function (curso) {
+
+                    return (
+                        curso.ativo !== false
+                    );
+
+                }
+            )
+            .forEach(
+                function (curso) {
+
+                    const option =
+                        document.createElement(
+                            "option"
+                        );
 
 
-        matriculaUsuarioId.value =
-            aluno.id;
+                    option.value =
+                        curso.id;
 
 
-        matriculaId.value =
-            matricula
-                ? matricula.id
-                : "";
+                    option.textContent =
+                        curso.nome;
 
 
-        mensagemMatricula.textContent =
-            "";
+                    matriculaCurso.appendChild(
+                        option
+                    );
+                }
+            );
+    }
 
 
-        /* -----------------------------------------
-           CURSO
-        ----------------------------------------- */
+    /* =========================================================
+       ATUALIZAR CAMPOS PERMANENTE
+    ========================================================= */
 
-        if (matricula) {
+    function atualizarCamposPermanente() {
 
-            matriculaCurso.value =
-                pegarCursoId(
-                    matricula
-                );
-
-        } else {
-
-            matriculaCurso.value =
-                "";
-        }
+        const permanente =
+            matriculaPermanente.checked;
 
 
-        /* -----------------------------------------
-           STATUS
-        ----------------------------------------- */
-
-        matriculaStatus.value =
-            "ativo";
-
-
-        /* -----------------------------------------
-           DATA DE INÍCIO
-        ----------------------------------------- */
-
-        if (
-            modoRenovacao
-        ) {
-
-            /*
-             * Na renovação, a nova matrícula
-             * começa hoje.
-             */
-
-            matriculaInicio.value =
-                dataHoje();
-
-        } else if (
-            matricula &&
-            matricula.data_inicio
-        ) {
-
-            matriculaInicio.value =
-                formatarDataInput(
-                    matricula.data_inicio
-                );
-
-        } else {
-
-            matriculaInicio.value =
-                dataHoje();
-        }
-
-
-        /* -----------------------------------------
-           DATA DE VENCIMENTO
-        ----------------------------------------- */
-
-        if (
-            matricula &&
-            matricula.data_vencimento &&
-            !modoRenovacao
-        ) {
-
-            matriculaVencimento.value =
-                formatarDataInput(
-                    matricula.data_vencimento
-                );
-
-        } else {
-
-            matriculaVencimento.value =
-                "";
-        }
-
-
-        /* -----------------------------------------
-           VALOR
-        ----------------------------------------- */
-
-        if (
-            matricula &&
-            pegarValor(matricula) !== null &&
-            pegarValor(matricula) !== undefined &&
-            !modoRenovacao
-        ) {
-
-            matriculaValor.value =
-                pegarValor(
-                    matricula
-                );
-
-        } else {
-
-            matriculaValor.value =
-                "";
-        }
-
-
-        /* -----------------------------------------
-           RENOVAÇÃO
-        ----------------------------------------- */
-
-        if (
-            modoRenovacao
-        ) {
-
-            matriculaStatus.value =
-                "ativo";
+        if (permanente) {
 
             matriculaVencimento.value =
                 "";
 
+
             matriculaValor.value =
-                "";
-
-            matriculaPermanente.checked =
-                false;
-
-        } else {
-
-            matriculaPermanente.checked =
-                !matricula ||
-                !matricula.data_vencimento;
-        }
+                "0";
 
 
-        atualizarCamposPermanente();
+            matriculaVencimento.disabled =
+                true;
 
 
-        /* -----------------------------------------
-           TÍTULO DO MODAL
-        ----------------------------------------- */
+            matriculaValor.disabled =
+                true;
 
-        const titulo =
-            modal.querySelector(
-                ".modal-titulo"
+
+            campoVencimento.classList.add(
+                "bloqueado"
             );
 
 
-        if (titulo) {
+            campoValor.classList.add(
+                "bloqueado"
+            );
 
-            titulo.textContent =
-                modoRenovacao
-                    ? "🔄 Renovar matrícula"
-                    : "⚙️ Gerenciar matrícula";
+
+            avisoPermanente.style.display =
+                "block";
+
+
+        } else {
+
+            matriculaVencimento.disabled =
+                false;
+
+
+            matriculaValor.disabled =
+                false;
+
+
+            campoVencimento.classList.remove(
+                "bloqueado"
+            );
+
+
+            campoValor.classList.remove(
+                "bloqueado"
+            );
+
+
+            avisoPermanente.style.display =
+                "none";
         }
     }
+
+
+    /* =========================================================
+       CHECKBOX PERMANENTE
+    ========================================================= */
+
+    matriculaPermanente.addEventListener(
+        "change",
+        atualizarCamposPermanente
+    );
 
 
     /* =========================================================
@@ -1117,12 +1226,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     function fecharModalMatricula() {
 
-        modal.style.display =
-            "none";
-
-
-        modoRenovacao =
-            false;
+        modal.classList.remove(
+            "aberto"
+        );
 
 
         formMatricula.reset();
@@ -1140,351 +1246,502 @@ document.addEventListener("DOMContentLoaded", async function () {
             "";
 
 
+        matriculaVencimento.disabled =
+            false;
+
+
+        matriculaValor.disabled =
+            false;
+
+
+        campoVencimento.classList.remove(
+            "bloqueado"
+        );
+
+
+        campoValor.classList.remove(
+            "bloqueado"
+        );
+
+
+        avisoPermanente.style.display =
+            "none";
+
+
+        modoRenovacao =
+            false;
+    }
+
+
+    if (fecharModal) {
+
+        fecharModal.addEventListener(
+            "click",
+            fecharModalMatricula
+        );
+    }
+
+
+    if (cancelarMatricula) {
+
+        cancelarMatricula.addEventListener(
+            "click",
+            fecharModalMatricula
+        );
+    }
+
+
+    if (modal) {
+
+        modal.addEventListener(
+            "click",
+            function (event) {
+
+                if (
+                    event.target ===
+                    modal
+                ) {
+
+                    fecharModalMatricula();
+                }
+            }
+        );
+    }
+
+
+    /* =========================================================
+       ABRIR GERENCIAMENTO DE MATRÍCULA
+    ========================================================= */
+
+    async function abrirGerenciamentoAluno(
+        usuarioId
+    ) {
+
+        const aluno =
+            alunos.find(
+                function (item) {
+
+                    return (
+                        Number(item.id) ===
+                        Number(usuarioId)
+                    );
+
+                }
+            );
+
+
+        if (!aluno) {
+            return;
+        }
+
+
+        const matriculasAluno =
+            matriculasDoAluno(
+                usuarioId
+            );
+
+
+        modoRenovacao =
+            false;
+
+
+        matriculaUsuarioId.value =
+            aluno.id;
+
+
+        alunoMatriculaNome.textContent =
+            `${aluno.nome || "Aluno"} · ${
+                aluno.email || ""
+            }`;
+
+
+        matriculaId.value =
+            "";
+
+
+        matriculaCurso.innerHTML = `
+            <option value="">
+                Selecione um curso
+            </option>
+        `;
+
+
+        cursos
+            .filter(
+                function (curso) {
+
+                    return (
+                        curso.ativo !== false
+                    );
+
+                }
+            )
+            .forEach(
+                function (curso) {
+
+                    const option =
+                        document.createElement(
+                            "option"
+                        );
+
+
+                    option.value =
+                        curso.id;
+
+
+                    option.textContent =
+                        curso.nome;
+
+
+                    matriculaCurso.appendChild(
+                        option
+                    );
+                }
+            );
+
+
+        if (
+            matriculasAluno.length === 1
+        ) {
+
+            preencherFormularioMatricula(
+                matriculasAluno[0]
+            );
+
+        } else {
+
+            matriculaStatus.value =
+                "ativo";
+
+            matriculaInicio.value =
+                dataHoje();
+
+            matriculaVencimento.value =
+                "";
+
+            matriculaValor.value =
+                "";
+
+            matriculaPermanente.checked =
+                false;
+
+            atualizarCamposPermanente();
+        }
+
+
+        modal.classList.add(
+            "aberto"
+        );
+    }
+
+
+    /* =========================================================
+       PREENCHER MATRÍCULA
+    ========================================================= */
+
+    function preencherFormularioMatricula(
+        matricula
+    ) {
+
+        if (!matricula) {
+            return;
+        }
+
+
+        const cursoId =
+            pegarCursoId(
+                matricula
+            );
+
+
+        matriculaId.value =
+            matricula.id || "";
+
+
+        matriculaCurso.value =
+            String(cursoId || "");
+
+
+        matriculaStatus.value =
+            String(
+                matricula.status ||
+                "ativo"
+            )
+            .toLowerCase();
+
+
+        matriculaInicio.value =
+            formatarDataInput(
+                matricula.data_inicio
+            );
+
+
+        matriculaVencimento.value =
+            formatarDataInput(
+                matricula.data_vencimento
+            );
+
+
+        const valor =
+            pegarValor(
+                matricula
+            );
+
+
+        matriculaValor.value =
+            valor !== null &&
+            valor !== undefined
+                ? valor
+                : "";
+
+
+        matriculaPermanente.checked =
+            !matricula.data_vencimento &&
+            Number(valor || 0) === 0;
+
+
         atualizarCamposPermanente();
     }
 
 
     /* =========================================================
-       FECHAR PELOS BOTÕES
+       TROCAR CURSO
     ========================================================= */
 
-    fecharModal.addEventListener(
-        "click",
-        fecharModalMatricula
-    );
+    matriculaCurso.addEventListener(
+        "change",
+        function () {
+
+            const usuarioId =
+                Number(
+                    matriculaUsuarioId.value
+                );
 
 
-    cancelarMatricula.addEventListener(
-        "click",
-        fecharModalMatricula
-    );
+            const cursoId =
+                Number(
+                    matriculaCurso.value
+                );
 
-
-    modal.addEventListener(
-        "click",
-        function (event) {
 
             if (
-                event.target ===
-                modal
+                !usuarioId ||
+                !cursoId
             ) {
 
-                fecharModalMatricula();
-
-            }
-
-        }
-    );
-
-
-    /* =========================================================
-       PRÓXIMA PARTE
-       SALVAMENTO + RENOVAÇÃO
-    ========================================================= */    /* =========================================================
-       CAMPOS DA MATRÍCULA PERMANENTE
-    ========================================================= */
-
-    function atualizarCamposPermanente() {
-
-        const permanente =
-            matriculaPermanente.checked;
-
-
-        if (permanente) {
-
-            if (campoVencimento) {
-                campoVencimento.style.display =
-                    "none";
-            }
-
-
-            if (campoValor) {
-                campoValor.style.display =
-                    "none";
-            }
-
-
-            if (avisoPermanente) {
-
-                avisoPermanente.style.display =
-                    "block";
-            }
-
-
-            matriculaVencimento.value =
-                "";
-
-
-            matriculaValor.value =
-                "0";
-
-
-            matriculaVencimento.disabled =
-                true;
-
-
-            matriculaValor.disabled =
-                true;
-
-        } else {
-
-            if (campoVencimento) {
-                campoVencimento.style.display =
+                matriculaId.value =
                     "";
+
+                return;
             }
 
 
-            if (campoValor) {
-                campoValor.style.display =
-                    "";
-            }
+            const existente =
+                encontrarMatricula(
+                    usuarioId,
+                    cursoId
+                );
 
 
-            if (avisoPermanente) {
+            if (existente) {
 
-                avisoPermanente.style.display =
-                    "none";
-            }
-
-
-            matriculaVencimento.disabled =
-                false;
-
-
-            matriculaValor.disabled =
-                false;
-
-
-            /*
-             * Na renovação, a matrícula comum
-             * precisa obrigatoriamente de
-             * uma nova data de vencimento.
-             */
-            if (modoRenovacao) {
-
-                matriculaVencimento.required =
-                    true;
+                preencherFormularioMatricula(
+                    existente
+                );
 
             } else {
 
-                matriculaVencimento.required =
+                matriculaId.value =
+                    "";
+
+                matriculaStatus.value =
+                    "ativo";
+
+                matriculaInicio.value =
+                    dataHoje();
+
+                matriculaVencimento.value =
+                    "";
+
+                matriculaValor.value =
+                    "";
+
+                matriculaPermanente.checked =
                     false;
+
+                atualizarCamposPermanente();
             }
         }
-    }
-
-
-    matriculaPermanente.addEventListener(
-        "change",
-        atualizarCamposPermanente
     );
-
-
-    /* =========================================================
-       RENOVAÇÃO
+            /* =========================================================
+       RENOVAR MATRÍCULA
     ========================================================= */
-function abrirRenovacao(matricula) {
 
-    if (!matricula) {
-        return;
-    }
+    function abrirRenovacao(
+        matricula
+    ) {
 
-
-    const usuarioId =
-        Number(matricula.usuario_id);
-
-
-    const cursoId =
-        Number(pegarCursoId(matricula));
+        if (!matricula) {
+            return;
+        }
 
 
-    const aluno =
-        alunos.find(function (item) {
-
-            return Number(item.id) ===
-                usuarioId;
-
-        });
-
-
-    if (!aluno) {
-        return;
-    }
-
-
-    /* =====================================================
-       DADOS DO ALUNO
-    ===================================================== */
-
-    matriculaUsuarioId.value =
-        usuarioId;
-
-
-    alunoMatriculaNome.textContent =
-        `${aluno.nome || "Aluno"} · ${aluno.email || ""}`;
-
-
-    /* =====================================================
-       PREENCHER CURSOS
-    ===================================================== */
-
-    matriculaCurso.innerHTML = "";
-
-
-    const opcaoInicial =
-        document.createElement("option");
-
-
-    opcaoInicial.value = "";
-
-
-    opcaoInicial.textContent =
-        "Selecione um curso";
-
-
-    matriculaCurso.appendChild(
-        opcaoInicial
-    );
-
-
-    cursos
-        .filter(function (curso) {
-
-            return curso.ativo !== false;
-
-        })
-        .forEach(function (curso) {
-
-            const option =
-                document.createElement("option");
-
-
-            option.value =
-                curso.id;
-
-
-            option.textContent =
-                curso.nome;
-
-
-            matriculaCurso.appendChild(
-                option
+        const usuarioId =
+            Number(
+                matricula.usuario_id
             );
 
-        });
+
+        const cursoId =
+            Number(
+                pegarCursoId(
+                    matricula
+                )
+            );
 
 
-    /* =====================================================
-       SELECIONAR O CURSO DA MATRÍCULA
-    ===================================================== */
+        const aluno =
+            alunos.find(
+                function (item) {
 
-    matriculaCurso.value =
-        String(cursoId);
+                    return (
+                        Number(item.id) ===
+                        usuarioId
+                    );
 
-
-    /* =====================================================
-       MATRÍCULA
-    ===================================================== */
-
-    matriculaId.value =
-        matricula.id || "";
+                }
+            );
 
 
-    matriculaStatus.value =
-        "ativo";
+        if (!aluno) {
+            return;
+        }
 
 
-    /* =====================================================
-       RENOVAÇÃO COMEÇA HOJE
-    ===================================================== */
-
-    matriculaInicio.value =
-        dataHoje();
+        modoRenovacao =
+            true;
 
 
-    /* =====================================================
-       VENCIMENTO
-       DEIXA VAZIO PARA O SÓCIO INFORMAR
-    ===================================================== */
+        /* =====================================================
+           DADOS DO ALUNO
+        ===================================================== */
 
-    matriculaVencimento.value =
-        "";
-
-
-    /* =====================================================
-       VALOR
-       MANTÉM O VALOR ANTERIOR, SE EXISTIR
-    ===================================================== */
-
-    const valorAnterior =
-        pegarValor(matricula);
+        matriculaUsuarioId.value =
+            usuarioId;
 
 
-    matriculaValor.value =
-        valorAnterior !== null &&
-        valorAnterior !== undefined
-            ? valorAnterior
-            : "";
+        alunoMatriculaNome.textContent =
+            `${aluno.nome || "Aluno"} · ${
+                aluno.email || ""
+            }`;
 
 
-    /* =====================================================
-       RENOVAÇÃO NORMAL POR PADRÃO
-    ===================================================== */
-
-    matriculaPermanente.checked =
-        false;
+        mensagemMatricula.textContent =
+            "";
 
 
-    matriculaVencimento.disabled =
-        false;
+        /* =====================================================
+           CARREGAR CURSOS
+        ===================================================== */
+
+        carregarCursosNoSelect();
 
 
-    matriculaValor.disabled =
-        false;
+        /* =====================================================
+           SELECIONAR O CURSO DA MATRÍCULA
+        ===================================================== */
+
+        matriculaCurso.value =
+            String(cursoId);
 
 
-    campoVencimento.classList.remove(
-        "bloqueado"
-    );
+        /* =====================================================
+           ID DA MATRÍCULA
+        ===================================================== */
+
+        matriculaId.value =
+            matricula.id || "";
 
 
-    campoValor.classList.remove(
-        "bloqueado"
-    );
+        /* =====================================================
+           RENOVAÇÃO FICA ATIVA
+        ===================================================== */
+
+        matriculaStatus.value =
+            "ativo";
 
 
-    avisoPermanente.style.display =
-        "none";
+        /* =====================================================
+           NOVO PERÍODO COMEÇA HOJE
+        ===================================================== */
+
+        matriculaInicio.value =
+            dataHoje();
 
 
-    /* =====================================================
-       TÍTULO
-    ===================================================== */
+        /* =====================================================
+           NOVO VENCIMENTO
+        ===================================================== */
 
-    const titulo =
-        modal.querySelector(".modal-titulo");
+        matriculaVencimento.value =
+            "";
 
 
-    if (titulo) {
+        /* =====================================================
+           MANTER VALOR ANTERIOR
+        ===================================================== */
 
-        titulo.textContent =
-            "Renovar matrícula";
+        const valorAnterior =
+            pegarValor(
+                matricula
+            );
 
+
+        matriculaValor.value =
+            valorAnterior !== null &&
+            valorAnterior !== undefined
+                ? valorAnterior
+                : "";
+
+
+        /* =====================================================
+           RENOVAÇÃO NORMAL
+        ===================================================== */
+
+        matriculaPermanente.checked =
+            false;
+
+
+        atualizarCamposPermanente();
+
+
+        /* =====================================================
+           TÍTULO DO MODAL
+        ===================================================== */
+
+        const titulo =
+            modal.querySelector(
+                ".modal-titulo"
+            );
+
+
+        if (titulo) {
+
+            titulo.textContent =
+                "Renovar matrícula";
+        }
+
+
+        /* =====================================================
+           ABRIR
+        ===================================================== */
+
+        modal.classList.add(
+            "aberto"
+        );
     }
 
 
-    mensagemMatricula.textContent =
-        "";
-
-
-    /* =====================================================
-       ABRIR MODAL
-    ===================================================== */
-
-    modal.classList.add(
-        "aberto"
-    );
-}
     /* =========================================================
        SALVAR MATRÍCULA
     ========================================================= */
@@ -1517,7 +1774,6 @@ function abrirRenovacao(matricula) {
                     matriculaStatus.value ||
                     "ativo"
                 )
-                .trim()
                 .toLowerCase();
 
 
@@ -1526,41 +1782,51 @@ function abrirRenovacao(matricula) {
                 null;
 
 
-            const permanente =
-                matriculaPermanente.checked;
-
-
-            const dataVencimento =
-                permanente
-                    ? null
-                    : (
-                        matriculaVencimento.value ||
-                        null
-                    );
+            let dataVencimento =
+                matriculaVencimento.value ||
+                null;
 
 
             let valor =
                 matriculaValor.value;
 
 
+            /* =================================================
+               MATRÍCULA PERMANENTE
+            ================================================= */
+
             if (
-                valor === "" ||
-                valor === null ||
-                valor === undefined
+                matriculaPermanente.checked
             ) {
 
-                valor = 0;
+                dataVencimento =
+                    null;
+
+                valor =
+                    0;
 
             } else {
 
-                valor =
-                    Number(valor);
+                if (
+                    valor === "" ||
+                    valor === null ||
+                    valor === undefined
+                ) {
+
+                    valor =
+                        0;
+
+                } else {
+
+                    valor =
+                        Number(valor);
+                }
             }
 
 
-            /* -----------------------------------------
-               VALIDAÇÕES BÁSICAS
-            ----------------------------------------- */
+            /* =================================================
+               VALIDAÇÕES
+            ================================================= */
 
             if (
                 !usuarioId ||
@@ -1575,13 +1841,15 @@ function abrirRenovacao(matricula) {
             }
 
 
-            /* -----------------------------------------
-               RENOVAÇÃO
-            ----------------------------------------- */
+            /*
+             * Na renovação normal,
+             * exigimos uma nova data
+             * de vencimento.
+             */
 
             if (
                 modoRenovacao &&
-                !permanente &&
+                !matriculaPermanente.checked &&
                 !dataVencimento
             ) {
 
@@ -1592,12 +1860,8 @@ function abrirRenovacao(matricula) {
             }
 
 
-            /* -----------------------------------------
-               DATA DE VENCIMENTO
-            ----------------------------------------- */
-
             if (
-                !permanente &&
+                !matriculaPermanente.checked &&
                 dataVencimento &&
                 dataVencimento < dataInicio
             ) {
@@ -1609,9 +1873,9 @@ function abrirRenovacao(matricula) {
             }
 
 
-            /* -----------------------------------------
+            /* =================================================
                ENCONTRAR MATRÍCULA EXISTENTE
-            ----------------------------------------- */
+            ================================================= */
 
             const existente =
                 encontrarMatricula(
@@ -1628,12 +1892,6 @@ function abrirRenovacao(matricula) {
                     : null;
 
 
-            /*
-             * Se já existe uma matrícula para
-             * este aluno neste curso, usamos
-             * o ID dela.
-             */
-
             if (existente) {
 
                 idExistente =
@@ -1643,60 +1901,42 @@ function abrirRenovacao(matricula) {
             }
 
 
-            /* -----------------------------------------
-               RENOVAÇÃO CONFIRMADA
-            ----------------------------------------- */
-
-            if (modoRenovacao) {
-
-                console.log(
-                    "Renovando matrícula:",
-                    {
-                        usuarioId,
-                        cursoId,
-                        idExistente,
-                        dataInicio,
-                        dataVencimento,
-                        valor
-                    }
-                );
-            }
-
-
-            /* -----------------------------------------
-               RPC
-            ----------------------------------------- */
+            /* =================================================
+               SALVAR PELA RPC
+            ================================================= */
 
             const {
                 data,
                 error
-            } = await supabaseClient.rpc(
-                "salvar_matricula",
-                {
-                    p_matricula_id:
-                        idExistente
-                            ? idExistente
-                            : null,
+            } =
+                await supabaseClient.rpc(
+                    "salvar_matricula",
+                    {
 
-                    p_usuario_id:
-                        usuarioId,
+                        p_matricula_id:
+                            idExistente
+                                ? idExistente
+                                : null,
 
-                    p_id_curso:
-                        cursoId,
+                        p_usuario_id:
+                            usuarioId,
 
-                    p_status:
-                        status,
+                        p_id_curso:
+                            cursoId,
 
-                    p_data_inicio:
-                        dataInicio,
+                        p_status:
+                            status,
 
-                    p_data_vencimento:
-                        dataVencimento,
+                        p_data_inicio:
+                            dataInicio,
 
-                    p_valencia:
-                        valor
-                }
-            );
+                        p_data_vencimento:
+                            dataVencimento,
+
+                        p_valencia:
+                            valor
+                    }
+                );
 
 
             if (error) {
@@ -1723,30 +1963,19 @@ function abrirRenovacao(matricula) {
             );
 
 
-            if (
+            mensagemMatricula.textContent =
                 modoRenovacao
-            ) {
-
-                mensagemMatricula.textContent =
-                    "🔄 Matrícula renovada com sucesso!";
-
-            } else if (
-                permanente
-            ) {
-
-                mensagemMatricula.textContent =
-                    "♾️ Matrícula permanente criada com sucesso!";
-
-            } else {
-
-                mensagemMatricula.textContent =
-                    "Matrícula salva com sucesso!";
-            }
+                    ? "Matrícula renovada com sucesso!"
+                    : (
+                        matriculaPermanente.checked
+                            ? "Matrícula permanente criada com sucesso!"
+                            : "Matrícula salva com sucesso!"
+                    );
 
 
-            /* -----------------------------------------
-               RECARREGAR DADOS
-            ----------------------------------------- */
+            /* =================================================
+               ATUALIZAR DADOS
+            ================================================= */
 
             await carregarMatriculas();
 
@@ -1757,9 +1986,9 @@ function abrirRenovacao(matricula) {
             renderizarAlunos();
 
 
-            /* -----------------------------------------
+            /* =================================================
                FECHAR MODAL
-            ----------------------------------------- */
+            ================================================= */
 
             setTimeout(
                 function () {
@@ -1771,133 +2000,7 @@ function abrirRenovacao(matricula) {
             );
 
         }
-    );
-
-
-    /* =========================================================
-       BOTÃO PARA ABRIR MATRÍCULA
-    ========================================================= */
-
-    function abrirGerenciamentoAluno(
-        aluno
-    ) {
-
-        const matriculasAluno =
-            matriculasDoAluno(
-                aluno.id
-            );
-
-
-        /*
-         * Se o aluno possui apenas uma matrícula,
-         * abrimos diretamente.
-         */
-
-        if (
-            matriculasAluno.length ===
-            1
-        ) {
-
-            abrirModalMatricula(
-                aluno,
-                matriculasAluno[0],
-                false
-            );
-
-            return;
-        }
-
-
-        /*
-         * Se não possui matrícula,
-         * abrimos o modal vazio.
-         */
-
-        if (
-            matriculasAluno.length ===
-            0
-        ) {
-
-            abrirModalMatricula(
-                aluno,
-                null,
-                false
-            );
-
-            return;
-        }
-
-
-        /*
-         * Se possui vários cursos,
-         * o sócio escolhe qual deseja gerenciar.
-         */
-
-        let mensagem =
-            "Selecione o curso para gerenciar:\n\n";
-
-
-        matriculasAluno.forEach(
-            function (
-                matricula,
-                indice
-            ) {
-
-                const cursoId =
-                    pegarCursoId(
-                        matricula
-                    );
-
-
-                const situacao =
-                    situacaoMatricula(
-                        matricula
-                    );
-
-
-                mensagem +=
-                    `${indice + 1} - ` +
-                    `${nomeCurso(cursoId)} ` +
-                    `${situacao.emoji} ` +
-                    `${situacao.nome}\n`;
-            }
-        );
-
-
-        const escolha =
-            prompt(
-                mensagem
-            );
-
-
-        if (!escolha) {
-            return;
-        }
-
-
-        const indice =
-            Number(escolha) - 1;
-
-
-        if (
-            indice < 0 ||
-            indice >= matriculasAluno.length
-        ) {
-
-            alert(
-                "Opção inválida."
-            );
-
-            return;
-        }
-
-
-        abrirModalMatricula(
-            aluno,
-            matriculasAluno[indice],
-            false
-        );
-    }    /* =========================================================
+    );    /* =========================================================
        RENDERIZAR ALUNOS
     ========================================================= */
 
@@ -1905,76 +2008,72 @@ function abrirRenovacao(matricula) {
 
         const termo =
             String(
-                busca?.value || ""
+                busca.value || ""
             )
             .trim()
             .toLowerCase();
 
 
-        const statusFiltro =
+        const statusSelecionado =
             String(
-                filtroStatus?.value || ""
+                filtroStatus.value || ""
             )
             .trim()
             .toLowerCase();
 
 
-        const tipoFiltro =
+        const tipoSelecionado =
             String(
-                filtroTipo?.value || ""
+                filtroTipo.value || ""
             )
             .trim()
             .toLowerCase();
 
 
-        let listaFiltrada =
+        const filtrados =
             alunos.filter(
                 function (aluno) {
 
                     const nome =
                         String(
                             aluno.nome || ""
-                        )
-                        .toLowerCase();
+                        ).toLowerCase();
 
 
                     const email =
                         String(
                             aluno.email || ""
-                        )
-                        .toLowerCase();
+                        ).toLowerCase();
 
 
-                    const telefone =
+                    const status =
                         String(
-                            aluno.telefone || ""
-                        )
-                        .toLowerCase();
+                            aluno.status || ""
+                        ).toLowerCase();
+
+
+                    const tipo =
+                        String(
+                            aluno.tipo || ""
+                        ).toLowerCase();
 
 
                     const correspondeBusca =
                         !termo ||
                         nome.includes(termo) ||
-                        email.includes(termo) ||
-                        telefone.includes(termo);
+                        email.includes(termo);
 
 
                     const correspondeStatus =
-                        !statusFiltro ||
-                        String(
-                            aluno.status || ""
-                        )
-                        .toLowerCase() ===
-                        statusFiltro;
+                        !statusSelecionado ||
+                        status ===
+                        statusSelecionado;
 
 
                     const correspondeTipo =
-                        !tipoFiltro ||
-                        String(
-                            aluno.tipo || ""
-                        )
-                        .toLowerCase() ===
-                        tipoFiltro;
+                        !tipoSelecionado ||
+                        tipo ===
+                        tipoSelecionado;
 
 
                     return (
@@ -1982,25 +2081,22 @@ function abrirRenovacao(matricula) {
                         correspondeStatus &&
                         correspondeTipo
                     );
+
                 }
             );
 
 
         contador.textContent =
-            `${listaFiltrada.length} aluno${
-                listaFiltrada.length === 1
-                    ? ""
-                    : "s"
-            }`;
+            filtrados.length;
 
 
         if (
-            listaFiltrada.length === 0
+            filtrados.length === 0
         ) {
 
             lista.innerHTML = `
                 <div class="mensagem">
-                    Nenhum aluno encontrado.
+                    Nenhum usuário encontrado.
                 </div>
             `;
 
@@ -2008,20 +2104,54 @@ function abrirRenovacao(matricula) {
         }
 
 
-        lista.innerHTML = "";
+        lista.innerHTML =
+            "";
 
 
-        listaFiltrada.forEach(
+        filtrados.forEach(
             function (aluno) {
 
                 const card =
                     document.createElement(
-                        "div"
+                        "article"
                     );
 
 
                 card.className =
                     "aluno-card";
+
+
+                const statusTexto =
+                    aluno.status ||
+                    "Não informado";
+
+
+                const statusNormalizado =
+                    String(
+                        aluno.status || ""
+                    ).toLowerCase();
+
+
+                let classeStatus =
+                    "outro";
+
+
+                if (
+                    statusNormalizado ===
+                    "ativo"
+                ) {
+
+                    classeStatus =
+                        "ativo";
+
+                } else if (
+                    statusNormalizado ===
+                    "inativo"
+                ) {
+
+                    classeStatus =
+                        "inativo";
+                }
 
 
                 const matriculasAluno =
@@ -2030,7 +2160,8 @@ function abrirRenovacao(matricula) {
                     );
 
 
-                let cursosHTML = "";
+                let cursosHTML =
+                    "";
 
 
                 if (
@@ -2062,14 +2193,7 @@ function abrirRenovacao(matricula) {
                                         );
 
 
-                                    /*
-                                     * BOTÃO DE RENOVAÇÃO
-                                     *
-                                     * Só aparece quando
-                                     * a matrícula está vencida.
-                                     */
-
-                                    let botaoRenovar =
+                                    let renovacaoHTML =
                                         "";
 
 
@@ -2078,24 +2202,23 @@ function abrirRenovacao(matricula) {
                                         "vencida"
                                     ) {
 
-                                        botaoRenovar = `
+                                        renovacaoHTML = `
                                             <button
                                                 type="button"
-                                                class="btn-renovar-matricula"
-                                                data-usuario-id="${aluno.id}"
-                                                data-matricula-id="${matricula.id}"
+                                                class="btn-renovar"
+                                                data-matricula-id="${
+                                                    matricula.id
+                                                }"
                                                 style="
-                                                    margin-top:8px;
-                                                    width:100%;
-                                                    border:1px solid rgba(54,194,117,.35);
-                                                    background:rgba(54,194,117,.08);
-                                                    color:#36c275;
-                                                    padding:9px 12px;
-                                                    border-radius:10px;
+                                                    margin-top:5px;
+                                                    padding:6px 10px;
+                                                    border:1px solid #c8a355;
+                                                    border-radius:7px;
+                                                    background:rgba(200,163,85,0.10);
+                                                    color:#e5c378;
                                                     cursor:pointer;
-                                                    font-size:12px;
+                                                    font-size:11px;
                                                     font-weight:700;
-                                                    text-align:left;
                                                 "
                                             >
                                                 🔄 Renovar matrícula
@@ -2106,22 +2229,23 @@ function abrirRenovacao(matricula) {
 
                                     return `
                                         <div
+                                            class="curso-item"
                                             style="
-                                                padding:10px;
-                                                margin-bottom:8px;
-                                                border:1px solid rgba(255,255,255,.06);
-                                                background:#0e121a;
-                                                border-radius:12px;
+                                                display:flex;
+                                                align-items:center;
+                                                flex-wrap:wrap;
+                                                gap:5px;
+                                                margin-bottom:10px;
                                             "
                                         >
 
                                             <div
                                                 style="
+                                                    width:100%;
                                                     display:flex;
                                                     align-items:center;
-                                                    justify-content:space-between;
-                                                    gap:8px;
                                                     flex-wrap:wrap;
+                                                    gap:4px;
                                                 "
                                             >
 
@@ -2138,10 +2262,14 @@ function abrirRenovacao(matricula) {
 
                                             </div>
 
-                                            ${botaoRenovar}
+
+                                            ${
+                                                renovacaoHTML
+                                            }
 
                                         </div>
                                     `;
+
                                 }
                             )
                             .join("");
@@ -2161,41 +2289,6 @@ function abrirRenovacao(matricula) {
                 }
 
 
-                const statusAluno =
-                    String(
-                        aluno.status || ""
-                    )
-                    .trim()
-                    .toLowerCase();
-
-
-                let classeStatus =
-                    "status-inativo";
-
-
-                let statusTexto =
-                    aluno.status ||
-                    "Sem status";
-
-
-                if (
-                    statusAluno ===
-                    "ativo"
-                ) {
-
-                    classeStatus =
-                        "status-ativo";
-
-                } else if (
-                    statusAluno ===
-                    "bloqueado"
-                ) {
-
-                    classeStatus =
-                        "status-bloqueado";
-                }
-
-
                 card.innerHTML = `
 
                     <div class="aluno-topo">
@@ -2211,7 +2304,9 @@ function abrirRenovacao(matricula) {
 
 
                         <span
-                            class="status ${classeStatus}"
+                            class="status ${
+                                classeStatus
+                            }"
                         >
 
                             ${escapeHTML(
@@ -2306,7 +2401,6 @@ function abrirRenovacao(matricula) {
                         <button
                             type="button"
                             class="btn-acao"
-                            data-usuario-id="${aluno.id}"
                         >
                             ⚙️ Gerenciar matrícula
                         </button>
@@ -2317,7 +2411,7 @@ function abrirRenovacao(matricula) {
 
 
                 /* =================================================
-                   BOTÃO GERENCIAR MATRÍCULA
+                   BOTÃO GERENCIAR
                 ================================================= */
 
                 const botaoGerenciar =
@@ -2333,7 +2427,7 @@ function abrirRenovacao(matricula) {
                         function () {
 
                             abrirGerenciamentoAluno(
-                                aluno
+                                aluno.id
                             );
 
                         }
@@ -2342,12 +2436,12 @@ function abrirRenovacao(matricula) {
 
 
                 /* =================================================
-                   BOTÕES RENOVAR
+                   BOTÕES DE RENOVAÇÃO
                 ================================================= */
 
                 const botoesRenovar =
                     card.querySelectorAll(
-                        ".btn-renovar-matricula"
+                        ".btn-renovar"
                     );
 
 
@@ -2360,9 +2454,11 @@ function abrirRenovacao(matricula) {
                             "click",
                             function () {
 
-                                const matriculaId =
+                                const id =
                                     Number(
-                                        botaoRenovar.dataset.matriculaId
+                                        botaoRenovar
+                                            .dataset
+                                            .matriculaId
                                     );
 
 
@@ -2372,32 +2468,29 @@ function abrirRenovacao(matricula) {
                                             item
                                         ) {
 
-                                            return Number(
-                                                item.id
-                                            ) ===
-                                            matriculaId;
+                                            return (
+                                                Number(
+                                                    item.id
+                                                ) ===
+                                                id
+                                            );
 
                                         }
                                     );
 
 
-                                if (!matricula) {
-
-                                    alert(
-                                        "Matrícula não encontrada."
-                                    );
-
-                                    return;
-                                }
-
-
-                                abrirRenovacao(
-                                    aluno,
+                                if (
                                     matricula
-                                );
+                                ) {
+
+                                    abrirRenovacao(
+                                        matricula
+                                    );
+                                }
 
                             }
                         );
+
                     }
                 );
 
@@ -2412,6 +2505,254 @@ function abrirRenovacao(matricula) {
 
 
     /* =========================================================
+       RESUMO
+    ========================================================= */
+
+    function atualizarResumoMatriculas() {
+
+        let resumo =
+            document.getElementById(
+                "resumoMatriculas"
+            );
+
+
+        if (!resumo) {
+
+            resumo =
+                document.createElement(
+                    "div"
+                );
+
+
+            resumo.id =
+                "resumoMatriculas";
+
+
+            resumo.style.cssText = `
+                display:grid;
+                grid-template-columns:
+                    repeat(5, 1fr);
+                gap:10px;
+                margin:18px 0;
+            `;
+
+
+            lista.parentElement.insertBefore(
+                resumo,
+                lista
+            );
+        }
+
+
+        let ativas = 0;
+        let vencendo = 0;
+        let vencidas = 0;
+        let permanentes = 0;
+        let inativas = 0;
+
+
+        matriculas.forEach(
+            function (matricula) {
+
+                const situacao =
+                    situacaoMatricula(
+                        matricula
+                    );
+
+
+                if (
+                    situacao.classe ===
+                    "ativa"
+                ) {
+
+                    ativas++;
+
+                } else if (
+                    situacao.classe ===
+                    "vencendo"
+                ) {
+
+                    vencendo++;
+
+                } else if (
+                    situacao.classe ===
+                    "vencida"
+                ) {
+
+                    vencidas++;
+
+                } else if (
+                    situacao.classe ===
+                    "permanente"
+                ) {
+
+                    permanentes++;
+
+                } else if (
+                    situacao.classe ===
+                    "inativa"
+                ) {
+
+                    inativas++;
+                }
+
+            }
+        );
+
+
+        resumo.innerHTML = `
+
+            <div
+                style="
+                    background:#10151e;
+                    border:1px solid #36c27555;
+                    border-radius:10px;
+                    padding:12px;
+                "
+            >
+                <div
+                    style="
+                        color:#36c275;
+                        font-size:11px;
+                        font-weight:700;
+                    "
+                >
+                    🟢 ATIVAS
+                </div>
+
+                <div
+                    style="
+                        color:#fff;
+                        font-size:22px;
+                        font-weight:800;
+                    "
+                >
+                    ${ativas}
+                </div>
+            </div>
+
+
+            <div
+                style="
+                    background:#10151e;
+                    border:1px solid #f59e0b55;
+                    border-radius:10px;
+                    padding:12px;
+                "
+            >
+                <div
+                    style="
+                        color:#f59e0b;
+                        font-size:11px;
+                        font-weight:700;
+                    "
+                >
+                    🟠 VENCENDO
+                </div>
+
+                <div
+                    style="
+                        color:#fff;
+                        font-size:22px;
+                        font-weight:800;
+                    "
+                >
+                    ${vencendo}
+                </div>
+            </div>
+
+
+            <div
+                style="
+                    background:#10151e;
+                    border:1px solid #ef444455;
+                    border-radius:10px;
+                    padding:12px;
+                "
+            >
+                <div
+                    style="
+                        color:#ef4444;
+                        font-size:11px;
+                        font-weight:700;
+                    "
+                >
+                    🔴 VENCIDAS
+                </div>
+
+                <div
+                    style="
+                        color:#fff;
+                        font-size:22px;
+                        font-weight:800;
+                    "
+                >
+                    ${vencidas}
+                </div>
+            </div>
+
+
+            <div
+                style="
+                    background:#10151e;
+                    border:1px solid #c8a35555;
+                    border-radius:10px;
+                    padding:12px;
+                "
+            >
+                <div
+                    style="
+                        color:#c8a355;
+                        font-size:11px;
+                        font-weight:700;
+                    "
+                >
+                    ♾️ PERMANENTES
+                </div>
+
+                <div
+                    style="
+                        color:#fff;
+                        font-size:22px;
+                        font-weight:800;
+                    "
+                >
+                    ${permanentes}
+                </div>
+            </div>
+
+
+            <div
+                style="
+                    background:#10151e;
+                    border:1px solid #737c8b55;
+                    border-radius:10px;
+                    padding:12px;
+                "
+            >
+                <div
+                    style="
+                        color:#737c8b;
+                        font-size:11px;
+                        font-weight:700;
+                    "
+                >
+                    ⚫ INATIVAS
+                </div>
+
+                <div
+                    style="
+                        color:#fff;
+                        font-size:22px;
+                        font-weight:800;
+                    "
+                >
+                    ${inativas}
+                </div>
+            </div>
+
+        `;
+    }    /* =========================================================
        FILTROS
     ========================================================= */
 
@@ -2419,8 +2760,11 @@ function abrirRenovacao(matricula) {
 
         busca.addEventListener(
             "input",
-            renderizarAlunos
+            function () {
+                renderizarAlunos();
+            }
         );
+
     }
 
 
@@ -2428,8 +2772,11 @@ function abrirRenovacao(matricula) {
 
         filtroStatus.addEventListener(
             "change",
-            renderizarAlunos
+            function () {
+                renderizarAlunos();
+            }
         );
+
     }
 
 
@@ -2437,10 +2784,16 @@ function abrirRenovacao(matricula) {
 
         filtroTipo.addEventListener(
             "change",
-            renderizarAlunos
+            function () {
+                renderizarAlunos();
+            }
         );
-    }    /* =========================================================
-       BOTÃO SAIR
+
+    }
+
+
+    /* =========================================================
+       SAIR
     ========================================================= */
 
     if (sair) {
@@ -2457,72 +2810,10 @@ function abrirRenovacao(matricula) {
 
                 window.location.href =
                     "login.html";
+
             }
         );
-    }
 
-
-    /* =========================================================
-       DATA DE HOJE
-    ========================================================= */
-
-    function dataHoje() {
-
-        const hoje =
-            new Date();
-
-
-        const ano =
-            hoje.getFullYear();
-
-
-        const mes =
-            String(
-                hoje.getMonth() + 1
-            )
-            .padStart(2, "0");
-
-
-        const dia =
-            String(
-                hoje.getDate()
-            )
-            .padStart(2, "0");
-
-
-        return `${ano}-${mes}-${dia}`;
-    }
-
-
-    /* =========================================================
-       SEGURANÇA HTML
-    ========================================================= */
-
-    function escapeHTML(valor) {
-
-        return String(
-            valor ?? ""
-        )
-        .replaceAll(
-            "&",
-            "&amp;"
-        )
-        .replaceAll(
-            "<",
-            "&lt;"
-        )
-        .replaceAll(
-            ">",
-            "&gt;"
-        )
-        .replaceAll(
-            '"',
-            "&quot;"
-        )
-        .replaceAll(
-            "'",
-            "&#039;"
-        );
     }
 
 
@@ -2545,6 +2836,9 @@ function abrirRenovacao(matricula) {
     await carregarAlunos();
 
 
-    atualizarCamposPermanente();
+    atualizarResumoMatriculas();
+
+
+    renderizarAlunos();
 
 });
