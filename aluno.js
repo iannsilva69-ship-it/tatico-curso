@@ -9,10 +9,15 @@ async function verificarUsuario() {
         error
     } = await supabaseClient.auth.getUser();
 
+
     if (error || !user) {
-        window.location.href = "login.html";
+
+        window.location.href =
+            "login.html";
+
         return null;
     }
+
 
     return user;
 }
@@ -30,8 +35,12 @@ async function carregarPerfil(user) {
     } = await supabaseClient
         .from("perfis")
         .select("*")
-        .eq("auth_user_id", user.id)
+        .eq(
+            "auth_user_id",
+            user.id
+        )
         .single();
+
 
     if (error) {
 
@@ -43,6 +52,7 @@ async function carregarPerfil(user) {
         return null;
     }
 
+
     return data;
 }
 
@@ -53,7 +63,9 @@ async function carregarPerfil(user) {
 
 async function verificarTesteGratis(perfil) {
 
-    const agora = new Date().toISOString();
+    const agora =
+        new Date().toISOString();
+
 
     const {
         data,
@@ -61,10 +73,20 @@ async function verificarTesteGratis(perfil) {
     } = await supabaseClient
         .from("testes_gratis")
         .select("*")
-        .eq("usuario_id", perfil.id)
-        .eq("ativo", true)
-        .gt("data_fim", agora)
+        .eq(
+            "usuario_id",
+            perfil.id
+        )
+        .eq(
+            "ativo",
+            true
+        )
+        .gt(
+            "data_fim",
+            agora
+        )
         .maybeSingle();
+
 
     if (error) {
 
@@ -75,6 +97,7 @@ async function verificarTesteGratis(perfil) {
 
         return null;
     }
+
 
     return data;
 }
@@ -87,7 +110,10 @@ async function verificarTesteGratis(perfil) {
 async function carregarCursos(perfil) {
 
     const lista =
-        document.getElementById("listaCursos");
+        document.getElementById(
+            "listaCursos"
+        );
+
 
     if (!lista) {
         return;
@@ -99,7 +125,9 @@ async function carregarCursos(perfil) {
     // ==========================================
 
     const testeGratis =
-        await verificarTesteGratis(perfil);
+        await verificarTesteGratis(
+            perfil
+        );
 
 
     // ==========================================
@@ -107,13 +135,19 @@ async function carregarCursos(perfil) {
     // ==========================================
 
     const {
-        data: matriculas,
+        data: matriculasBrutas,
         error: erroMatriculas
     } = await supabaseClient
         .from("matriculas")
         .select("*")
-        .eq("usuario_id", perfil.id)
-        .eq("status", "ativo");
+        .eq(
+            "usuario_id",
+            perfil.id
+        )
+        .eq(
+            "status",
+            "ativo"
+        );
 
 
     if (erroMatriculas) {
@@ -123,31 +157,66 @@ async function carregarCursos(perfil) {
             erroMatriculas
         );
 
+
         lista.innerHTML = `
             <p>
                 Não foi possível carregar seus cursos.
             </p>
         `;
 
+
         return;
     }
 
 
     // ==========================================
-    // CURSOS MATRICULADOS
+    // FILTRAR MATRÍCULAS VÁLIDAS
     // ==========================================
+
+    const hoje =
+        new Date();
+
+
+    hoje.setHours(
+        0,
+        0,
+        0,
+        0
+    );
+
 
     const cursosMatriculados =
-        matriculas || [];
+        (matriculasBrutas || [])
+            .filter(
+                function (matricula) {
+
+                    // Sem vencimento =
+                    // acesso permanente
+
+                    if (
+                        !matricula.data_vencimento
+                    ) {
+
+                        return true;
+                    }
 
 
-    const idsCursosMatriculados =
-        cursosMatriculados
-            .map(matricula => matricula.id_curso)
-            .filter(id => id);
+                    const vencimento =
+                        new Date(
+                            matricula.data_vencimento +
+                            "T00:00:00"
+                        );
 
 
-    // ==========================================
+                    return (
+                        vencimento >= hoje
+                    );
+
+                }
+            );
+
+
+        // ==========================================
     // SEM MATRÍCULA E SEM TESTE
     // ==========================================
 
@@ -188,10 +257,16 @@ async function carregarCursos(perfil) {
         } = await supabaseClient
             .from("cursos")
             .select("*")
-            .eq("ativo", true)
-            .order("id", {
-                ascending: true
-            });
+            .eq(
+                "ativo",
+                true
+            )
+            .order(
+                "id",
+                {
+                    ascending: true
+                }
+            );
 
 
         if (erroCursos) {
@@ -200,6 +275,7 @@ async function carregarCursos(perfil) {
                 "Erro ao carregar cursos:",
                 erroCursos
             );
+
 
             lista.innerHTML = `
                 <p>
@@ -214,6 +290,7 @@ async function carregarCursos(perfil) {
         cursos =
             cursosAtivos || [];
 
+
     } else {
 
         // ==========================================
@@ -225,11 +302,11 @@ async function carregarCursos(perfil) {
             of cursosMatriculados
         ) {
 
-            // CORREÇÃO:
-            // a tabela usa id_curso
+            // IMPORTANTE:
+            // A tabela matriculas usa curso_id
 
             const cursoId =
-                matricula.id_curso;
+                matricula.curso_id;
 
 
             if (!cursoId) {
@@ -243,11 +320,17 @@ async function carregarCursos(perfil) {
             } = await supabaseClient
                 .from("cursos")
                 .select("*")
-                .eq("id", cursoId)
+                .eq(
+                    "id",
+                    cursoId
+                )
                 .single();
 
 
-            if (erroCurso || !curso) {
+            if (
+                erroCurso ||
+                !curso
+            ) {
 
                 console.error(
                     "Erro ao carregar curso:",
@@ -258,7 +341,9 @@ async function carregarCursos(perfil) {
             }
 
 
-            cursos.push(curso);
+            cursos.push(
+                curso
+            );
         }
     }
 
@@ -267,7 +352,9 @@ async function carregarCursos(perfil) {
     // NENHUM CURSO
     // ==========================================
 
-    if (cursos.length === 0) {
+    if (
+        cursos.length === 0
+    ) {
 
         lista.innerHTML = `
             <p>
@@ -280,7 +367,7 @@ async function carregarCursos(perfil) {
 
 
     // ==========================================
-    // EVITAR DUPLICADOS
+    // EVITAR CURSOS DUPLICADOS
     // ==========================================
 
     const cursosUnicos = [];
@@ -295,18 +382,24 @@ async function carregarCursos(perfil) {
     ) {
 
         if (
-            !idsJaAdicionados.has(curso.id)
+            !idsJaAdicionados.has(
+                curso.id
+            )
         ) {
 
-            idsJaAdicionados.add(curso.id);
+            idsJaAdicionados.add(
+                curso.id
+            );
 
-            cursosUnicos.push(curso);
+            cursosUnicos.push(
+                curso
+            );
         }
     }
 
 
     // ==========================================
-    // CADA CURSO
+    // PERCORRER CADA CURSO
     // ==========================================
 
     for (
@@ -320,8 +413,18 @@ async function carregarCursos(perfil) {
 
         const matricula =
             cursosMatriculados.find(
-                item =>
-                    item.id_curso === curso.id
+                function (item) {
+
+                    return (
+                        Number(
+                            item.curso_id
+                        ) ===
+                        Number(
+                            curso.id
+                        )
+                    );
+
+                }
             );
 
 
@@ -335,7 +438,10 @@ async function carregarCursos(perfil) {
         } = await supabaseClient
             .from("modulos")
             .select("id")
-            .eq("curso_id", curso.id);
+            .eq(
+                "curso_id",
+                curso.id
+            );
 
 
         if (erroModulos) {
@@ -352,7 +458,9 @@ async function carregarCursos(perfil) {
         const moduloIds =
             (modulos || [])
                 .map(
-                    modulo => modulo.id
+                    function (modulo) {
+                        return modulo.id;
+                    }
                 );
 
 
@@ -365,7 +473,9 @@ async function carregarCursos(perfil) {
         // BUSCAR AULAS
         // ==========================================
 
-        if (moduloIds.length > 0) {
+        if (
+            moduloIds.length > 0
+        ) {
 
             const {
                 data: aulas,
@@ -398,11 +508,15 @@ async function carregarCursos(perfil) {
                 // BUSCAR PROGRESSO
                 // ==========================================
 
-                if (totalAulas > 0) {
+                if (
+                    totalAulas > 0
+                ) {
 
                     const aulaIds =
                         aulas.map(
-                            aula => aula.id
+                            function (aula) {
+                                return aula.id;
+                            }
                         );
 
 
@@ -436,8 +550,14 @@ async function carregarCursos(perfil) {
                         aulasConcluidas =
                             (progresso || [])
                                 .filter(
-                                    item =>
-                                        item.concluida === true
+                                    function (item) {
+
+                                        return (
+                                            item.concluida ===
+                                            true
+                                        );
+
+                                    }
                                 )
                                 .length;
                     }
@@ -446,14 +566,16 @@ async function carregarCursos(perfil) {
         }
 
 
-        // ==========================================
+            // ==========================================
         // CALCULAR PORCENTAGEM
         // ==========================================
 
         let porcentagem = 0;
 
 
-        if (totalAulas > 0) {
+        if (
+            totalAulas > 0
+        ) {
 
             porcentagem =
                 Math.round(
@@ -469,11 +591,9 @@ async function carregarCursos(perfil) {
         // INFORMAÇÃO DO ACESSO
         // ==========================================
 
-        let informacaoAcesso = "";
+        let informacaoAcesso =
+            "";
 
-
-        // CORREÇÃO:
-        // a tabela usa data_vencimento
 
         if (
             matricula &&
@@ -487,14 +607,29 @@ async function carregarCursos(perfil) {
                     </strong>
 
                     ${new Date(
-                        matricula.data_vencimento
+                        matricula.data_vencimento +
+                        "T00:00:00"
                     ).toLocaleDateString(
                         "pt-BR"
                     )}
                 </p>
             `;
 
-        } else if (testeGratis) {
+        } else if (
+            matricula
+        ) {
+
+            informacaoAcesso = `
+                <p>
+                    <strong>
+                        ♾️ Acesso permanente
+                    </strong>
+                </p>
+            `;
+
+        } else if (
+            testeGratis
+        ) {
 
             informacaoAcesso = `
                 <p>
@@ -513,14 +648,17 @@ async function carregarCursos(perfil) {
 
 
         // ==========================================
-        // CARD DO CURSO
+        // CRIAR CARD DO CURSO
         // ==========================================
 
         const card =
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
 
 
-        card.className = "card";
+        card.className =
+            "card";
 
 
         card.innerHTML = `
@@ -643,7 +781,9 @@ async function carregarCursos(perfil) {
         `;
 
 
-        lista.appendChild(card);
+        lista.appendChild(
+            card
+        );
     }
 }
 
@@ -673,7 +813,10 @@ async function carregarSimulados() {
         .select(
             "id, titulo, descricao, link_pdf"
         )
-        .eq("ativo", true)
+        .eq(
+            "ativo",
+            true
+        )
         .order(
             "created_at",
             {
@@ -689,6 +832,7 @@ async function carregarSimulados() {
             error
         );
 
+
         lista.innerHTML = `
             <p>
                 Não foi possível carregar os simulados.
@@ -698,6 +842,10 @@ async function carregarSimulados() {
         return;
     }
 
+
+    // ==========================================
+    // NENHUM SIMULADO
+    // ==========================================
 
     if (
         !simulados ||
@@ -717,11 +865,17 @@ async function carregarSimulados() {
     lista.innerHTML = "";
 
 
+    // ==========================================
+    // CRIAR CARDS DOS SIMULADOS
+    // ==========================================
+
     simulados.forEach(
-        simulado => {
+        function (simulado) {
 
             const card =
-                document.createElement("div");
+                document.createElement(
+                    "div"
+                );
 
 
             card.className =
@@ -741,6 +895,7 @@ async function carregarSimulados() {
 
 
                 <button
+                    type="button"
                     onclick="
                         window.open(
                             '${simulado.link_pdf}',
@@ -754,7 +909,10 @@ async function carregarSimulados() {
             `;
 
 
-            lista.appendChild(card);
+            lista.appendChild(
+                card
+            );
+
         }
     );
 }
@@ -765,7 +923,9 @@ async function carregarSimulados() {
 // ==========================================
 
 const botaoLogout =
-    document.getElementById("logout");
+    document.getElementById(
+        "logout"
+    );
 
 
 if (botaoLogout) {
@@ -778,8 +938,10 @@ if (botaoLogout) {
                 .auth
                 .signOut();
 
+
             window.location.href =
                 "login.html";
+
         }
     );
 }
@@ -800,8 +962,14 @@ async function iniciarAluno() {
     }
 
 
+    // ==========================================
+    // CARREGAR PERFIL
+    // ==========================================
+
     const perfil =
-        await carregarPerfil(user);
+        await carregarPerfil(
+            user
+        );
 
 
     if (!perfil) {
@@ -833,13 +1001,17 @@ async function iniciarAluno() {
 
 
     // ==========================================
-    // CARREGAR CONTEÚDO
+    // CARREGAR CURSOS
     // ==========================================
 
     await carregarCursos(
         perfil
     );
 
+
+    // ==========================================
+    // CARREGAR SIMULADOS
+    // ==========================================
 
     await carregarSimulados();
 }
