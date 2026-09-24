@@ -970,177 +970,109 @@
 
 
         /* =========================================================
-           EDITAIS
+           EDITAIS — CARROSSEL
         ========================================================= */
 
         .home-editais-wrapper {
-
             position: relative;
-
             width: 100%;
         }
 
-
-  .home-editais-grid {
-    display: flex;
-    gap: 24px;
-    width: 100%;
-    overflow-x: auto;
-    overflow-y: hidden;
-    scroll-behavior: smooth;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-    padding: 10px 45px 22px;
-    box-sizing: border-box;
-}
-
-.home-editais-grid::-webkit-scrollbar {
-    display: none;
-}
-    .home-edital-card {
-    position: relative;
-
-    flex: 0 0 380px;
-    width: 380px;
-    min-width: 380px;
-
-    overflow: hidden;
-
-    border: 1px solid rgba(200, 163, 85, 0.35);
-    border-radius: 18px;
-
-    background: #0e121a;
-
-    box-shadow:
-        0 18px 40px rgba(0, 0, 0, 0.40);
-
-    transition:
-        transform 0.25s ease,
-        border-color 0.25s ease;
-}
-
-.home-edital-card:hover {
-    transform: translateY(-5px);
-
-    border-color:
-        rgba(200, 163, 85, 0.75);
-}
-
-.home-edital-card:hover {
-    transform: translateY(-5px);
-
-    border-color:
-        rgba(200, 163, 85, 0.75);
-}
-
-
-        .home-edital-card:hover {
-
-            transform:
-                translateY(-4px);
-
-            border-color:
-                rgba(200,163,85,0.65);
+        .home-editais-grid {
+            display: flex !important;
+            align-items: flex-start;
+            gap: 28px;
+            width: 100% !important;
+            overflow-x: auto;
+            overflow-y: hidden;
+            scroll-behavior: smooth;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            padding: 15px 55px 28px !important;
+            box-sizing: border-box;
         }
 
-.home-edital-card img {
-    width: 100%;
-    height: 520px;
+        .home-editais-grid::-webkit-scrollbar {
+            display: none;
+        }
 
-    display: block;
+        .home-editais-grid .home-edital-card {
+            position: relative;
+            flex: 0 0 430px !important;
+            width: 430px !important;
+            min-width: 430px !important;
+            max-width: 430px !important;
+            overflow: hidden;
+            border: 1px solid rgba(200, 163, 85, 0.45);
+            border-radius: 18px;
+            background: #0e121a;
+            box-shadow: 0 18px 45px rgba(0, 0, 0, 0.45);
+            transition: transform 0.25s ease, border-color 0.25s ease;
+        }
 
-    object-fit: cover;
+        .home-editais-grid .home-edital-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(200, 163, 85, 0.85);
+        }
 
-    background: #080a0f;
-}
+        .home-editais-grid .home-edital-card img {
+            width: 100% !important;
+            height: 570px !important;
+            display: block;
+            object-fit: cover;
+            background: #080a0f;
+        }
 
+        .home-editais-grid .home-edital-footer {
+            min-height: 64px;
+            display: flex;
+            align-items: center;
+            padding: 0 26px;
+            color: #e5c378;
+            font-size: 11px;
+            font-weight: 900;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
 
-       .home-edital-footer {
-    min-height: 65px;
-
-    display: flex;
-    align-items: center;
-
-    padding: 0 24px;
-
-    color: #e5c378;
-
-    font-size: 11px;
-    font-weight: 900;
-
-    letter-spacing: 2px;
-    text-transform: uppercase;
-}
-
-
-        /* =========================================================
-           BOTÕES DO CARROSSEL
-        ========================================================= */
+        /* Quando houver apenas um edital, centraliza o card. */
+        .home-editais-grid:has(> .home-edital-card:only-child) {
+            justify-content: center;
+        }
 
         .home-editais-arrow {
-
             position: absolute;
-
             top: 50%;
-
-            z-index: 5;
-
-            width: 42px;
-
-            height: 42px;
-
+            z-index: 10;
+            width: 46px;
+            height: 46px;
             display: flex;
-
             align-items: center;
-
             justify-content: center;
-
-            border:
-                1px solid
-                rgba(200,163,85,0.55);
-
+            border: 1px solid rgba(200, 163, 85, 0.65);
             border-radius: 50%;
-
-            background:
-                rgba(8,10,15,0.90);
-
+            background: rgba(8, 10, 15, 0.92);
             color: #e5c378;
-
-            font-size: 20px;
-
+            font-size: 22px;
             cursor: pointer;
-
-            transform:
-                translateY(-50%);
-
-            backdrop-filter:
-                blur(8px);
-
+            transform: translateY(-50%);
+            backdrop-filter: blur(8px);
             transition: 0.2s;
         }
 
-
         .home-editais-arrow:hover {
-
-            background:
-                rgba(200,163,85,0.14);
-
-            border-color:
-                #e5c378;
+            background: rgba(200, 163, 85, 0.16);
+            border-color: #e5c378;
+            transform: translateY(-50%) scale(1.08);
         }
-
 
         .home-editais-prev {
-
-            left: -18px;
+            left: 8px;
         }
-
 
         .home-editais-next {
-
-            right: -18px;
+            right: 8px;
         }
-
 
         /* =========================================================
            CURSOS
@@ -1375,19 +1307,15 @@
             }
 
 
-            .home-edital-card {
-
-                flex-basis: 300px;
-
-                min-width: 300px;
-
-                width: 300px;
+            .home-editais-grid .home-edital-card {
+                flex: 0 0 360px !important;
+                min-width: 360px !important;
+                width: 360px !important;
+                max-width: 360px !important;
             }
 
-
-            .home-edital-card img {
-
-                height: 420px;
+            .home-editais-grid .home-edital-card img {
+                height: 480px !important;
             }
 
 
@@ -1574,21 +1502,21 @@
             }
 
 
-            .home-edital-card {
-
-                flex-basis: 82vw;
-
-                min-width: 82vw;
-
-                width: 82vw;
+            .home-editais-grid {
+                gap: 16px;
+                padding: 10px 38px 22px !important;
             }
 
+            .home-editais-grid .home-edital-card {
+                flex: 0 0 86vw !important;
+                min-width: 86vw !important;
+                width: 86vw !important;
+                max-width: 86vw !important;
+            }
 
-            .home-edital-card img {
-
-                height: 105vw;
-
-                max-height: 520px;
+            .home-editais-grid .home-edital-card img {
+                height: 112vw !important;
+                max-height: 620px;
             }
 
 
@@ -2400,8 +2328,8 @@ async function carregarCursosPublicos() {
         );
 
         container.innerHTML = `
-            <div class="home-course-card">
-                <div class="home-course-content">
+            <div class="home-curso-card">
+                <div class="home-curso-content">
                     <p>
                         Não foi possível carregar os cursos.
                     </p>
@@ -2415,8 +2343,8 @@ async function carregarCursosPublicos() {
     if (!data || data.length === 0) {
 
         container.innerHTML = `
-            <div class="home-course-card">
-                <div class="home-course-content">
+            <div class="home-curso-card">
+                <div class="home-curso-content">
                     <p>
                         Nenhum curso disponível no momento.
                     </p>
@@ -2435,7 +2363,7 @@ async function carregarCursosPublicos() {
             document.createElement("article");
 
         card.className =
-            "home-course-card";
+            "home-curso-card";
 
         const imagem =
             curso.imagem ||
@@ -2454,7 +2382,7 @@ async function carregarCursosPublicos() {
                 : "Consulte";
 
         card.innerHTML = `
-            <div class="home-course-image">
+            <div class="home-curso-image">
                 <img
                     src="${imagem}"
                     alt="${curso.nome || "Curso"}"
@@ -2462,9 +2390,9 @@ async function carregarCursosPublicos() {
                 >
             </div>
 
-            <div class="home-course-content">
+            <div class="home-curso-content">
 
-                <div class="home-course-label">
+                <div class="home-section-label">
                     TÁTICO CURSO
                 </div>
 
@@ -2476,7 +2404,7 @@ async function carregarCursosPublicos() {
                     ${curso.descricao || "Curso completo para sua preparação."}
                 </p>
 
-                <div class="home-course-bottom">
+                <div class="home-curso-button">
 
                     <strong>
                         ${preco}
@@ -2484,6 +2412,7 @@ async function carregarCursosPublicos() {
 
                     <button
                         type="button"
+                        class="home-btn-secondary"
                         onclick="window.location.href='curso-publico.html?id=${curso.id}'"
                     >
                         Conhecer curso →
