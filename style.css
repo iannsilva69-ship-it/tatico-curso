@@ -1,4 +1,4 @@
-* {
+ {
     box-sizing: border-box;
 }
 
@@ -857,3 +857,162 @@ body.pagina-curso #modulos .course-card > div {
         width: 100%;
     }
 }
+
+/* =========================================================
+   TÁTICOS CURSO — CARROSSEL DE EDITAIS
+   ========================================================= */
+
+body.home-page .home-editais-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+body.home-page .home-editais-grid {
+    display: flex !important;
+    align-items: flex-start;
+    gap: 24px;
+    width: 100% !important;
+    max-width: none !important;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding: 12px 55px 25px !important;
+    box-sizing: border-box;
+}
+
+body.home-page .home-editais-grid::-webkit-scrollbar {
+    display: none;
+}
+
+body.home-page .home-editais-grid .home-edital-card {
+    position: relative;
+    flex: 0 0 430px !important;
+    width: 430px !important;
+    min-width: 430px !important;
+    max-width: 430px !important;
+    overflow: hidden;
+    box-sizing: border-box;
+    border: 1px solid rgba(200, 163, 85, 0.40);
+    border-radius: 18px;
+    background: #0e121a;
+    box-shadow: 0 18px 45px rgba(0, 0, 0, 0.42);
+    transition: transform 0.25s ease, border-color 0.25s ease;
+}
+
+body.home-page .home-editais-grid .home-edital-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(200, 163, 85, 0.80);
+}
+
+body.home-page .home-editais-grid .home-edital-card img {
+    width: 100% !important;
+    height: 555px !important;
+    display: block;
+    object-fit: cover;
+    background: #080a0f;
+}
+
+body.home-page .home-editais-grid .home-edital-footer {
+    min-height: 64px;
+    display: flex;
+    align-items: center;
+    padding: 0 24px;
+    color: #e5c378;
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+body.home-page .home-editais-arrow {
+    position: absolute;
+    top: 50%;
+    z-index: 10;
+    width: 46px;
+    height: 46px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(200, 163, 85, 0.65);
+    border-radius: 50%;
+    background: rgba(8, 10, 15, 0.92);
+    color: #e5c378;
+    font-size: 22px;
+    line-height: 1;
+    cursor: pointer;
+    transform: translateY(-50%);
+    backdrop-filter: blur(8px);
+    transition: 0.2s ease;
+}
+
+body.home-page .home-editais-arrow:hover {
+    background: #c8a355;
+    color: #080a0f;
+    transform: translateY(-50%) scale(1.08);
+}
+
+body.home-page .home-editais-prev {
+    left: 8px;
+}
+
+body.home-page .home-editais-next {
+    right: 8px;
+}
+
+/* =========================================================
+   CARROSSEL DE EDITAIS — TABLET
+   ========================================================= */
+
+@media (max-width: 1000px) {
+    body.home-page .home-editais-grid .home-edital-card {
+        flex: 0 0 380px !important;
+        width: 380px !important;
+        min-width: 380px !important;
+        max-width: 380px !important;
+    }
+
+    body.home-page .home-editais-grid .home-edital-card img {
+        height: 500px !important;
+    }
+}
+
+/* =========================================================
+   CARROSSEL DE EDITAIS — CELULAR
+   ========================================================= */
+
+@media (max-width: 620px) {
+    body.home-page .home-editais-grid {
+        gap: 16px;
+        padding: 10px 38px 20px !important;
+    }
+
+    body.home-page .home-editais-grid .home-edital-card {
+        flex: 0 0 84vw !important;
+        width: 84vw !important;
+        min-width: 84vw !important;
+        max-width: 84vw !important;
+    }
+
+    body.home-page .home-editais-grid .home-edital-card img {
+        height: 112vw !important;
+        max-height: 620px;
+    }
+
+    body.home-page .home-editais-arrow {
+        width: 40px;
+        height: 40px;
+        font-size: 18px;
+    }
+
+    body.home-page .home-editais-prev {
+        left: 1px;
+    }
+
+    body.home-page .home-editais-next {
+        right: 1px;
+    }
+}
+
+
