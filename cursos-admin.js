@@ -1,6 +1,12 @@
-// ==============================
+// =========================================================
+// TÁTICOS CURSO - GERENCIAR CURSOS
+// Upload de capas pelo celular
+// =========================================================
+
+
+// =========================================================
 // VERIFICAR SÓCIO
-// ==============================
+// =========================================================
 
 async function verificarSocio() {
 
@@ -10,29 +16,36 @@ async function verificarSocio() {
     } = await supabaseClient.auth.getUser();
 
     if (error || !user) {
+
         window.location.href = "login.html";
+
         return false;
     }
+
 
     const {
         data: perfil,
         error: erroPerfil
-    } =
-        await supabaseClient
-            .from("perfis")
-            .select("tipo, status")
-            .eq("auth_user_id", user.id)
-            .single();
+    } = await supabaseClient
+        .from("perfis")
+        .select("tipo, status")
+        .eq("auth_user_id", user.id)
+        .single();
+
 
     if (erroPerfil || !perfil) {
+
         window.location.href = "login.html";
+
         return false;
     }
+
 
     if (
         !["socio", "sócio"].includes(
             (perfil.tipo || "").toLowerCase()
-        ) ||
+        )
+        ||
         (perfil.status || "").toLowerCase() !== "ativo"
     ) {
 
@@ -46,25 +59,370 @@ async function verificarSocio() {
         return false;
     }
 
+
     return true;
 }
 
 
-// ==============================
+
+// =========================================================
+// CONFIGURAÇÕES DO UPLOAD
+// =========================================================
+
+const BUCKET_CAPAS = "capas-cursos";
+
+const TAMANHO_MAXIMO =
+    10 * 1024 * 1024;
+
+
+// =========================================================
+// VALIDAR IMAGEM
+// =========================================================
+
+function validarImagem(file) {
+
+    if (!file) {
+
+        return {
+            valido: false,
+            mensagem: "Nenhuma imagem selecionada."
+        };
+    }
+
+
+    const tiposPermitidos = [
+        "image/jpeg",
+        "image/png",
+        "image/webp"
+    ];
+
+
+    if (
+        !tiposPermitidos.includes(
+            file.type
+        )
+    ) {
+
+        return {
+            valido: false,
+            mensagem:
+                "Escolha uma imagem JPG, PNG ou WEBP."
+        };
+    }
+
+
+    if (
+        file.size >
+        TAMANHO_MAXIMO
+    ) {
+
+        return {
+            valido: false,
+            mensagem:
+                "A imagem deve ter no máximo 10 MB."
+        };
+    }
+
+
+    return {
+        valido: true
+    };
+}
+
+
+
+// =========================================================
+// CRIAR NOME ÚNICO PARA A IMAGEM
+// =========================================================
+
+function criarNomeImagem(file) {
+
+    const extensao =
+        file.name
+            .split(".")
+            .pop()
+            .toLowerCase();
+
+
+    const nomeUnico =
+        "curso_" +
+        Date.now() +
+        "_" +
+        Math.random()
+            .toString(36)
+            .substring(2, 10);
+
+
+    return (
+        nomeUnico +
+        "." +
+        extensao
+    );
+}
+
+
+
+// =========================================================
+// ENVIAR IMAGEM PARA O STORAGE
+// =========================================================
+
+async function enviarImagemCurso(file) {
+
+    const validacao =
+        validarImagem(file);
+
+
+    if (!validacao.valido) {
+
+        throw new Error(
+            validacao.mensagem
+        );
+    }
+
+
+    const nomeArquivo =
+        criarNomeImagem(file);
+
+
+    const caminho =
+        "capas/" +
+        nomeArquivo;
+
+
+    const {
+        error: erroUpload
+    } =
+        await supabaseClient
+            .storage
+            .from(BUCKET_CAPAS)
+            .upload(
+                caminho,
+                file,
+                {
+                    cacheControl: "3600",
+                    upsert: false
+                }
+            );
+
+
+    if (erroUpload) {
+
+        console.error(
+            "Erro no upload:",
+            erroUpload
+        );
+
+        throw new Error(
+            "Não foi possível enviar a imagem."
+        );
+    }
+
+
+    const {
+        data
+    } =
+        supabaseClient
+            .storage
+            .from(BUCKET_CAPAS)
+            .getPublicUrl(
+                caminho
+            );
+
+
+    if (
+        !data ||
+        !data.publicUrl
+    ) {
+
+        throw new Error(
+            "Não foi possível obter a URL da imagem."
+        );
+    }
+
+
+    return data.publicUrl;
+}
+
+
+
+// =========================================================
+// PRÉVIA - NOVO CURSO
+// =========================================================
+
+const inputImagemCurso =
+    document.getElementById(
+        "imagemCurso"
+    );
+
+
+if (inputImagemCurso) {
+
+    inputImagemCurso.addEventListener(
+        "change",
+        function () {
+
+            const file =
+                this.files &&
+                this.files[0];
+
+
+            const container =
+                document.getElementById(
+                    "previewImagemCurso"
+                );
+
+            const imagem =
+                document.getElementById(
+                    "previewImagemCursoImg"
+                );
+
+
+            if (!file) {
+
+                container.style.display =
+                    "none";
+
+                imagem.src = "";
+
+                return;
+            }
+
+
+            const validacao =
+                validarImagem(file);
+
+
+            if (!validacao.valido) {
+
+                alert(
+                    validacao.mensagem
+                );
+
+                this.value = "";
+
+                container.style.display =
+                    "none";
+
+                imagem.src = "";
+
+                return;
+            }
+
+
+            const url =
+                URL.createObjectURL(
+                    file
+                );
+
+
+            imagem.src = url;
+
+            container.style.display =
+                "block";
+        }
+    );
+}
+
+
+
+// =========================================================
+// PRÉVIA - EDIÇÃO
+// =========================================================
+
+const inputEdicaoImagem =
+    document.getElementById(
+        "edicaoImagem"
+    );
+
+
+if (inputEdicaoImagem) {
+
+    inputEdicaoImagem.addEventListener(
+        "change",
+        function () {
+
+            const file =
+                this.files &&
+                this.files[0];
+
+
+            const container =
+                document.getElementById(
+                    "previewEdicaoImagem"
+                );
+
+            const imagem =
+                document.getElementById(
+                    "previewEdicaoImagemImg"
+                );
+
+
+            if (!file) {
+
+                container.style.display =
+                    "none";
+
+                imagem.src = "";
+
+                return;
+            }
+
+
+            const validacao =
+                validarImagem(file);
+
+
+            if (!validacao.valido) {
+
+                alert(
+                    validacao.mensagem
+                );
+
+                this.value = "";
+
+                container.style.display =
+                    "none";
+
+                imagem.src = "";
+
+                return;
+            }
+
+
+            const url =
+                URL.createObjectURL(
+                    file
+                );
+
+
+            imagem.src = url;
+
+            container.style.display =
+                "block";
+        }
+    );
+}
+
+
+
+// =========================================================
 // CARREGAR CURSOS
-// ==============================
+// =========================================================
 
 async function carregarCursos() {
 
     const autorizado =
         await verificarSocio();
 
+
     if (!autorizado) return;
+
 
     const area =
         document.getElementById(
             "listaCursos"
         );
+
 
     const {
         data: cursos,
@@ -82,6 +440,7 @@ async function carregarCursos() {
                 }
             );
 
+
     if (error) {
 
         console.error(
@@ -89,11 +448,13 @@ async function carregarCursos() {
             error
         );
 
+
         area.innerHTML =
             "<p>Erro ao carregar os cursos.</p>";
 
         return;
     }
+
 
     if (
         !cursos ||
@@ -106,7 +467,9 @@ async function carregarCursos() {
         return;
     }
 
+
     area.innerHTML = "";
+
 
     cursos.forEach(
         function (curso) {
@@ -116,8 +479,19 @@ async function carregarCursos() {
                     "div"
                 );
 
+
             card.className =
                 "course-card";
+
+
+            card.style.cssText = `
+                background:#111722;
+                border:1px solid rgba(200,163,85,0.18);
+                border-radius:14px;
+                padding:20px;
+                margin-bottom:18px;
+            `;
+
 
             card.innerHTML = `
 
@@ -131,42 +505,81 @@ async function carregarCursos() {
                                     "Curso"
                                 }"
                                 style="
-                                    max-width:100%;
+                                    width:100%;
+                                    max-width:500px;
+                                    max-height:300px;
+                                    object-fit:cover;
                                     border-radius:10px;
                                     margin-bottom:15px;
+                                    display:block;
                                 "
                             >
                         `
                         : ""
                 }
 
-                <h3>
+
+                <h3
+                    style="
+                        color:#ffffff;
+                        margin:0 0 10px;
+                    "
+                >
                     ${
                         curso.nome ||
                         "Curso sem nome"
                     }
                 </h3>
 
-                <p>
+
+                <p
+                    style="
+                        color:#aeb5c1;
+                        line-height:1.5;
+                    "
+                >
                     ${
                         curso.descricao ||
                         "Sem descrição cadastrada."
                     }
                 </p>
 
-                <p>
-                    <strong>
+
+                <p
+                    style="
+                        color:#aeb5c1;
+                        line-height:1.5;
+                    "
+                >
+
+                    <strong
+                        style="color:#E5C378;"
+                    >
                         Por que fazer este curso:
                     </strong>
+
                     <br>
+
                     ${
                         curso.porque_fazer ||
                         "Ainda não informado."
                     }
+
                 </p>
 
-                <p>
-                    <strong>Preço:</strong>
+
+                <p
+                    style="
+                        color:#ffffff;
+                    "
+                >
+
+                    <strong
+                        style="color:#E5C378;"
+                    >
+                        Preço:
+                    </strong>
+
                     R$
 
                     ${
@@ -182,46 +595,93 @@ async function carregarCursos() {
                                 )
                             : "0,00"
                     }
+
                 </p>
 
-                <p>
-                    <strong>Status:</strong>
+
+                <p
+                    style="
+                        color:#ffffff;
+                    "
+                >
+
+                    <strong
+                        style="color:#E5C378;"
+                    >
+                        Status:
+                    </strong>
+
                     ${
                         curso.ativo
                             ? "Ativo"
                             : "Inativo"
                     }
+
                 </p>
 
-                <button
-                    type="button"
-                    class="btn-editar"
-                >
-                    ✏️ Editar
-                </button>
 
-                <button
-                    type="button"
-                    class="btn-modulos"
+                <div
+                    style="
+                        display:flex;
+                        gap:10px;
+                        flex-wrap:wrap;
+                        margin-top:15px;
+                    "
                 >
-                    📚 Gerenciar módulos
-                </button>
+
+                    <button
+                        type="button"
+                        class="btn-editar"
+                        style="
+                            padding:10px 16px;
+                            border:none;
+                            border-radius:7px;
+                            background:#d4af37;
+                            color:#080a0f;
+                            font-weight:800;
+                            cursor:pointer;
+                        "
+                    >
+                        ✏️ Editar
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="btn-modulos"
+                        style="
+                            padding:10px 16px;
+                            border:none;
+                            border-radius:7px;
+                            background:#1a1f29;
+                            color:#e5c378;
+                            border:1px solid rgba(200,163,85,0.25);
+                            font-weight:800;
+                            cursor:pointer;
+                        "
+                    >
+                        📚 Gerenciar módulos
+                    </button>
+
+                </div>
 
             `;
+
 
             area.appendChild(
                 card
             );
 
 
-            // ==============================
+            // =====================================================
             // EDITAR
-            // ==============================
+            // =====================================================
 
             const botaoEditar =
                 card.querySelector(
                     ".btn-editar"
                 );
+
 
             botaoEditar.addEventListener(
                 "click",
@@ -235,14 +695,15 @@ async function carregarCursos() {
             );
 
 
-            // ==============================
+            // =====================================================
             // MÓDULOS
-            // ==============================
+            // =====================================================
 
             const botaoModulos =
                 card.querySelector(
                     ".btn-modulos"
                 );
+
 
             botaoModulos.addEventListener(
                 "click",
@@ -260,9 +721,10 @@ async function carregarCursos() {
 }
 
 
-// ==============================
+
+// =========================================================
 // EDITAR CURSO
-// ==============================
+// =========================================================
 
 async function editarCurso(id) {
 
@@ -270,6 +732,7 @@ async function editarCurso(id) {
         "Editando curso:",
         id
     );
+
 
     const {
         data: curso,
@@ -286,16 +749,22 @@ async function editarCurso(id) {
             )
             .single();
 
-    if (error || !curso) {
+
+    if (
+        error ||
+        !curso
+    ) {
 
         console.error(
             "Erro ao carregar curso:",
             error
         );
 
+
         alert(
             "Não foi possível carregar o curso."
         );
+
 
         return;
     }
@@ -332,15 +801,82 @@ async function editarCurso(id) {
 
 
     document.getElementById(
-        "edicaoImagem"
-    ).value =
-        curso.imagem || "";
-
-
-    document.getElementById(
         "edicaoAtivo"
     ).checked =
         curso.ativo === true;
+
+
+    // =====================================================
+    // MOSTRAR CAPA ATUAL
+    // =====================================================
+
+    const containerAtual =
+        document.getElementById(
+            "imagemAtualContainer"
+        );
+
+    const imagemAtual =
+        document.getElementById(
+            "imagemAtualCurso"
+        );
+
+
+    if (
+        curso.imagem
+    ) {
+
+        imagemAtual.src =
+            curso.imagem;
+
+        containerAtual.style.display =
+            "block";
+
+    } else {
+
+        imagemAtual.src = "";
+
+        containerAtual.style.display =
+            "none";
+    }
+
+
+    // Limpar nova imagem selecionada
+
+    const input =
+        document.getElementById(
+            "edicaoImagem"
+        );
+
+
+    if (input) {
+
+        input.value = "";
+    }
+
+
+    const preview =
+        document.getElementById(
+            "previewEdicaoImagem"
+        );
+
+
+    const previewImg =
+        document.getElementById(
+            "previewEdicaoImagemImg"
+        );
+
+
+    if (preview) {
+
+        preview.style.display =
+            "none";
+    }
+
+
+    if (previewImg) {
+
+        previewImg.src = "";
+    }
 
 
     document.getElementById(
@@ -359,52 +895,57 @@ async function editarCurso(id) {
 }
 
 
-// ==============================
+
+// =========================================================
 // SALVAR ALTERAÇÕES
-// ==============================
+// =========================================================
 
 document
-    .getElementById("edicaoForm")
+    .getElementById(
+        "edicaoForm"
+    )
     .addEventListener(
         "submit",
         async function (event) {
 
             event.preventDefault();
 
+
             const mensagem =
                 document.getElementById(
                     "mensagemEdicao"
                 );
+
 
             const id =
                 document.getElementById(
                     "edicaoId"
                 ).value;
 
+
             const nome =
                 document.getElementById(
                     "edicaoNome"
                 ).value.trim();
+
 
             const descricao =
                 document.getElementById(
                     "edicaoDescricao"
                 ).value.trim();
 
+
             const porqueFazer =
                 document.getElementById(
                     "edicaoPorqueFazer"
                 ).value.trim();
+
 
             const preco =
                 document.getElementById(
                     "edicaoPreco"
                 ).value;
 
-            const imagem =
-                document.getElementById(
-                    "edicaoImagem"
-                ).value.trim();
 
             const ativo =
                 document.getElementById(
@@ -412,83 +953,168 @@ document
                 ).checked;
 
 
+            const arquivo =
+                document.getElementById(
+                    "edicaoImagem"
+                ).files[0];
+
+
             mensagem.textContent =
                 "Salvando alterações...";
 
 
-            const {
-                error
-            } =
-                await supabaseClient
-                    .from("cursos")
-                    .update({
+            try {
 
-                        nome: nome,
+                // =================================================
+                // BUSCAR IMAGEM ATUAL
+                // =================================================
 
-                        descricao:
-                            descricao,
+                const {
+                    data: cursoAtual,
+                    error: erroCurso
+                } =
+                    await supabaseClient
+                        .from("cursos")
+                        .select(
+                            "imagem"
+                        )
+                        .eq(
+                            "id",
+                            id
+                        )
+                        .single();
 
-                        porque_fazer:
-                            porqueFazer,
 
-                        preco:
-                            preco || null,
+                if (erroCurso) {
 
-                        imagem:
-                            imagem || null,
+                    throw new Error(
+                        "Não foi possível carregar os dados atuais do curso."
+                    );
+                }
 
-                        ativo:
-                            ativo
 
-                    })
-                    .eq(
-                        "id",
-                        id
+                let imagemFinal =
+                    cursoAtual?.imagem ||
+                    null;
+
+
+                // =================================================
+                // SE ESCOLHEU NOVA IMAGEM
+                // =================================================
+
+                if (arquivo) {
+
+                    mensagem.textContent =
+                        "Enviando nova capa...";
+
+
+                    imagemFinal =
+                        await enviarImagemCurso(
+                            arquivo
+                        );
+                }
+
+
+                // =================================================
+                // ATUALIZAR CURSO
+                // =================================================
+
+                mensagem.textContent =
+                    "Salvando alterações...";
+
+
+                const {
+                    error
+                } =
+                    await supabaseClient
+                        .from("cursos")
+                        .update({
+
+                            nome:
+                                nome,
+
+                            descricao:
+                                descricao,
+
+                            porque_fazer:
+                                porqueFazer,
+
+                            preco:
+                                preco || null,
+
+                            imagem:
+                                imagemFinal,
+
+                            ativo:
+                                ativo
+
+                        })
+                        .eq(
+                            "id",
+                            id
+                        );
+
+
+                if (error) {
+
+                    console.error(
+                        "Erro ao atualizar:",
+                        error
                     );
 
 
-            if (error) {
+                    throw new Error(
+                        "Não foi possível atualizar o curso."
+                    );
+                }
 
-                console.error(
-                    "Erro ao atualizar:",
-                    error
-                );
 
                 mensagem.textContent =
+                    "Curso atualizado com sucesso!";
+
+
+                setTimeout(
+                    function () {
+
+                        document.getElementById(
+                            "areaEdicao"
+                        ).style.display =
+                            "none";
+
+
+                        carregarCursos();
+
+                    },
+                    1000
+                );
+
+
+            } catch (erro) {
+
+                console.error(
+                    "Erro ao salvar edição:",
+                    erro
+                );
+
+
+                mensagem.textContent =
+                    erro.message ||
                     "Erro ao atualizar o curso.";
-
-                return;
             }
-
-
-            mensagem.textContent =
-                "Curso atualizado com sucesso!";
-
-
-            setTimeout(
-                function () {
-
-                    document.getElementById(
-                        "areaEdicao"
-                    ).style.display =
-                        "none";
-
-                    carregarCursos();
-
-                },
-                1000
-            );
 
         }
     );
 
 
-// ==============================
+
+// =========================================================
 // NOVO CURSO
-// ==============================
+// =========================================================
 
 document
-    .getElementById("novoCurso")
+    .getElementById(
+        "novoCurso"
+    )
     .addEventListener(
         "click",
         function () {
@@ -498,6 +1124,7 @@ document
             ).style.display =
                 "block";
 
+
             document.getElementById(
                 "nomeCurso"
             ).focus();
@@ -506,12 +1133,15 @@ document
     );
 
 
-// ==============================
+
+// =========================================================
 // CANCELAR NOVO CURSO
-// ==============================
+// =========================================================
 
 document
-    .getElementById("cancelarCurso")
+    .getElementById(
+        "cancelarCurso"
+    )
     .addEventListener(
         "click",
         function () {
@@ -521,55 +1151,85 @@ document
             ).style.display =
                 "none";
 
+
             document.getElementById(
                 "cursoForm"
             ).reset();
+
+
+            const preview =
+                document.getElementById(
+                    "previewImagemCurso"
+                );
+
+
+            const previewImg =
+                document.getElementById(
+                    "previewImagemCursoImg"
+                );
+
+
+            preview.style.display =
+                "none";
+
+
+            previewImg.src = "";
 
         }
     );
 
 
-// ==============================
+
+// =========================================================
 // SALVAR NOVO CURSO
-// ==============================
+// =========================================================
 
 document
-    .getElementById("cursoForm")
+    .getElementById(
+        "cursoForm"
+    )
     .addEventListener(
         "submit",
         async function (event) {
 
             event.preventDefault();
 
+
             const mensagem =
                 document.getElementById(
                     "mensagemCurso"
                 );
+
 
             const nome =
                 document.getElementById(
                     "nomeCurso"
                 ).value.trim();
 
+
             const descricao =
                 document.getElementById(
                     "descricaoCurso"
                 ).value.trim();
+
 
             const porqueFazer =
                 document.getElementById(
                     "porqueFazerCurso"
                 ).value.trim();
 
+
             const preco =
                 document.getElementById(
                     "precoCurso"
                 ).value;
 
-            const imagem =
+
+            const arquivo =
                 document.getElementById(
                     "imagemCurso"
-                ).value.trim();
+                ).files[0];
+
 
             const ativo =
                 document.getElementById(
@@ -581,89 +1241,155 @@ document
                 "Salvando curso...";
 
 
-            const {
-                error
-            } =
-                await supabaseClient
-                    .from("cursos")
-                    .insert({
+            try {
 
-                        nome: nome,
+                // =================================================
+                // UPLOAD DA CAPA
+                // =================================================
 
-                        descricao:
-                            descricao,
-
-                        porque_fazer:
-                            porqueFazer,
-
-                        preco:
-                            preco || null,
-
-                        imagem:
-                            imagem || null,
-
-                        ativo:
-                            ativo
-
-                    });
+                let imagemFinal =
+                    null;
 
 
-            if (error) {
+                if (arquivo) {
+
+                    mensagem.textContent =
+                        "Enviando capa do curso...";
+
+
+                    imagemFinal =
+                        await enviarImagemCurso(
+                            arquivo
+                        );
+
+                }
+
+
+                // =================================================
+                // CRIAR CURSO
+                // =================================================
+
+                mensagem.textContent =
+                    "Criando curso...";
+
+
+                const {
+                    error
+                } =
+                    await supabaseClient
+                        .from("cursos")
+                        .insert({
+
+                            nome:
+                                nome,
+
+                            descricao:
+                                descricao,
+
+                            porque_fazer:
+                                porqueFazer,
+
+                            preco:
+                                preco || null,
+
+                            imagem:
+                                imagemFinal,
+
+                            ativo:
+                                ativo
+
+                        });
+
+
+                if (error) {
+
+                    console.error(
+                        "Erro ao criar curso:",
+                        error
+                    );
+
+
+                    throw new Error(
+                        "Não foi possível salvar o curso."
+                    );
+                }
+
+
+                mensagem.textContent =
+                    "Curso criado com sucesso!";
+
+
+                document
+                    .getElementById(
+                        "cursoForm"
+                    )
+                    .reset();
+
+
+                document.getElementById(
+                    "ativoCurso"
+                ).checked =
+                    true;
+
+
+                document.getElementById(
+                    "previewImagemCurso"
+                ).style.display =
+                    "none";
+
+
+                document.getElementById(
+                    "previewImagemCursoImg"
+                ).src =
+                    "";
+
+
+                setTimeout(
+                    function () {
+
+                        document.getElementById(
+                            "formularioCurso"
+                        ).style.display =
+                            "none";
+
+
+                        mensagem.textContent =
+                            "";
+
+
+                        carregarCursos();
+
+                    },
+                    1000
+                );
+
+
+            } catch (erro) {
 
                 console.error(
                     "Erro ao criar curso:",
-                    error
+                    erro
                 );
 
+
                 mensagem.textContent =
+                    erro.message ||
                     "Erro ao salvar o curso.";
-
-                return;
             }
-
-
-            mensagem.textContent =
-                "Curso criado com sucesso!";
-
-
-            document.getElementById(
-                "cursoForm"
-            ).reset();
-
-
-            document.getElementById(
-                "ativoCurso"
-            ).checked =
-                true;
-
-
-            setTimeout(
-                function () {
-
-                    document.getElementById(
-                        "formularioCurso"
-                    ).style.display =
-                        "none";
-
-                    mensagem.textContent =
-                        "";
-
-                    carregarCursos();
-
-                },
-                1000
-            );
 
         }
     );
 
 
-// ==============================
+
+// =========================================================
 // CANCELAR EDIÇÃO
-// ==============================
+// =========================================================
 
 document
-    .getElementById("cancelarEdicao")
+    .getElementById(
+        "cancelarEdicao"
+    )
     .addEventListener(
         "click",
         function () {
@@ -673,27 +1399,51 @@ document
             ).style.display =
                 "none";
 
+
             document.getElementById(
                 "edicaoForm"
             ).reset();
+
+
+            document.getElementById(
+                "previewEdicaoImagem"
+            ).style.display =
+                "none";
+
+
+            document.getElementById(
+                "previewEdicaoImagemImg"
+            ).src =
+                "";
+
+
+            document.getElementById(
+                "imagemAtualContainer"
+            ).style.display =
+                "none";
 
         }
     );
 
 
-// ==============================
+
+// =========================================================
 // SAIR
-// ==============================
+// =========================================================
 
 document
-    .getElementById("sair")
+    .getElementById(
+        "sair"
+    )
     .addEventListener(
         "click",
         async function (event) {
 
             event.preventDefault();
 
+
             await supabaseClient.auth.signOut();
+
 
             window.location.href =
                 "login.html";
@@ -702,8 +1452,9 @@ document
     );
 
 
-// ==============================
+
+// =========================================================
 // INICIAR
-// ==============================
+// =========================================================
 
 carregarCursos();
