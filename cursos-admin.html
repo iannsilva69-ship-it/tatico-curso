@@ -4,14 +4,22 @@
 <head>
 
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>Gerenciar Cursos - Tático Curso</title>
 
-    <link rel="stylesheet" href="style.css">
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabase.js"></script>
+
 
     <style>
 
@@ -59,6 +67,7 @@
             border-bottom: 1px solid rgba(200, 163, 85, 0.22);
         }
 
+
         body.cursos-admin-page .logo {
 
             color: #E5C378;
@@ -70,6 +79,7 @@
             letter-spacing: 2px;
         }
 
+
         body.cursos-admin-page nav {
 
             display: flex;
@@ -78,6 +88,7 @@
 
             gap: 25px;
         }
+
 
         body.cursos-admin-page nav a {
 
@@ -91,6 +102,7 @@
 
             transition: 0.2s;
         }
+
 
         body.cursos-admin-page nav a:hover {
 
@@ -117,7 +129,7 @@
 
 
         /* =========================================================
-           HERO / CABEÇALHO
+           HERO
            ========================================================= */
 
         body.cursos-admin-page .hero {
@@ -139,10 +151,12 @@
                 0 15px 40px rgba(0, 0, 0, 0.22);
         }
 
+
         body.cursos-admin-page .hero-text {
 
             width: 100%;
         }
+
 
         body.cursos-admin-page .tag {
 
@@ -167,6 +181,7 @@
             letter-spacing: 1.2px;
         }
 
+
         body.cursos-admin-page .hero h1 {
 
             margin: 0;
@@ -177,6 +192,7 @@
 
             font-weight: 900;
         }
+
 
         body.cursos-admin-page .hero-text > p {
 
@@ -220,6 +236,7 @@
             transition: 0.2s;
         }
 
+
         body.cursos-admin-page #novoCurso:hover {
 
             transform: translateY(-2px);
@@ -243,6 +260,7 @@
 
             box-sizing: border-box;
         }
+
 
         body.cursos-admin-page #formularioCurso h2,
         body.cursos-admin-page #areaEdicao h2 {
@@ -287,6 +305,7 @@
             font-size: 14px;
         }
 
+
         body.cursos-admin-page textarea {
 
             resize: vertical;
@@ -294,11 +313,13 @@
             min-height: 110px;
         }
 
+
         body.cursos-admin-page input::placeholder,
         body.cursos-admin-page textarea::placeholder {
 
             color: #737b88;
         }
+
 
         body.cursos-admin-page input:focus,
         body.cursos-admin-page textarea:focus {
@@ -309,6 +330,142 @@
 
             box-shadow:
                 0 0 0 2px rgba(200, 163, 85, 0.08);
+        }
+
+
+        /* =========================================================
+           INPUT DE IMAGEM
+           ========================================================= */
+
+        .campo-imagem {
+
+            width: 100%;
+
+            max-width: 700px;
+
+            box-sizing: border-box;
+
+            padding: 15px;
+
+            border: 1px dashed rgba(200, 163, 85, 0.45);
+
+            border-radius: 10px;
+
+            background: #0E121A;
+
+            color: #ffffff;
+
+            cursor: pointer;
+        }
+
+
+        .campo-imagem::file-selector-button {
+
+            padding: 10px 14px;
+
+            margin-right: 12px;
+
+            border: none;
+
+            border-radius: 7px;
+
+            background: linear-gradient(
+                135deg,
+                #C8A355,
+                #E5C378
+            );
+
+            color: #080A0F;
+
+            font-weight: 800;
+
+            cursor: pointer;
+        }
+
+
+        .imagem-preview-container {
+
+            display: none;
+
+            width: 100%;
+
+            max-width: 350px;
+
+            margin-top: 15px;
+        }
+
+
+        .imagem-preview-titulo {
+
+            color: #c8a355;
+
+            font-size: 12px;
+
+            font-weight: 800;
+
+            margin-bottom: 8px;
+
+            letter-spacing: 1px;
+        }
+
+
+        .imagem-preview {
+
+            width: 100%;
+
+            max-height: 400px;
+
+            object-fit: contain;
+
+            display: block;
+
+            background: #080a0f;
+
+            border: 1px solid #303744;
+
+            border-radius: 10px;
+        }
+
+
+        .imagem-atual {
+
+            display: none;
+
+            width: 100%;
+
+            max-width: 350px;
+
+            margin-top: 15px;
+        }
+
+
+        .imagem-atual-titulo {
+
+            color: #8c95a3;
+
+            font-size: 12px;
+
+            font-weight: 700;
+
+            margin-bottom: 8px;
+        }
+
+
+        .imagem-atual img {
+
+            width: 100%;
+
+            max-height: 400px;
+
+            object-fit: contain;
+
+            display: block;
+
+            background: #080a0f;
+
+            border: 1px solid #303744;
+
+            border-radius: 10px;
         }
 
 
@@ -333,7 +490,7 @@
 
 
         /* =========================================================
-           BOTÕES DOS FORMULÁRIOS
+           BOTÕES
            ========================================================= */
 
         body.cursos-admin-page form button {
@@ -362,10 +519,12 @@
             transition: 0.2s;
         }
 
+
         body.cursos-admin-page form button:hover {
 
             transform: translateY(-1px);
         }
+
 
         body.cursos-admin-page form button.secondary {
 
@@ -414,6 +573,7 @@
                 0 15px 40px rgba(0, 0, 0, 0.20);
         }
 
+
         body.cursos-admin-page .courses > h2 {
 
             margin: 0 0 25px;
@@ -425,20 +585,18 @@
             font-weight: 850;
         }
 
+
         body.cursos-admin-page #listaCursos {
 
             width: 100%;
         }
 
 
-        /* =========================================================
-           COMPATIBILIDADE COM OS CARDS GERADOS PELO JS
-           ========================================================= */
-
         body.cursos-admin-page #listaCursos > * {
 
             box-sizing: border-box;
         }
+
 
         body.cursos-admin-page #listaCursos img {
 
@@ -459,25 +617,30 @@
                 padding: 14px 18px;
             }
 
+
             body.cursos-admin-page .logo {
 
                 font-size: 17px;
             }
+
 
             body.cursos-admin-page nav {
 
                 gap: 13px;
             }
 
+
             body.cursos-admin-page nav a {
 
                 font-size: 11px;
             }
 
+
             body.cursos-admin-page main {
 
                 padding: 25px 15px 50px;
             }
+
 
             body.cursos-admin-page .hero {
 
@@ -486,16 +649,19 @@
                 border-radius: 14px;
             }
 
+
             body.cursos-admin-page .hero h1 {
 
                 font-size: 30px;
             }
+
 
             body.cursos-admin-page #formularioCurso,
             body.cursos-admin-page #areaEdicao {
 
                 padding: 20px;
             }
+
 
             body.cursos-admin-page .courses {
 
@@ -504,6 +670,7 @@
                 border-radius: 14px;
             }
 
+
             body.cursos-admin-page form button {
 
                 width: 100%;
@@ -511,9 +678,22 @@
                 margin-top: 8px;
             }
 
+
             body.cursos-admin-page form button.secondary {
 
                 margin-left: 0;
+            }
+
+
+            .campo-imagem {
+
+                font-size: 13px;
+            }
+
+
+            .campo-imagem::file-selector-button {
+
+                margin-bottom: 5px;
             }
 
         }
@@ -531,6 +711,7 @@
     <div class="logo">
         TÁTICO CURSO
     </div>
+
 
     <nav>
 
@@ -558,9 +739,11 @@
                 GERENCIAR CURSOS
             </span>
 
+
             <h1>
                 Cursos
             </h1>
+
 
             <p>
                 Crie e gerencie os cursos do Tático Curso.
@@ -632,14 +815,66 @@
                     <br><br>
 
 
-                    <input
-                        type="url"
-                        id="imagemCurso"
-                        placeholder="Link da imagem do curso"
-                    >
+                    <!-- =================================================
+                         IMAGEM DO NOVO CURSO
+                         ================================================= -->
+
+                    <div>
+
+                        <div
+                            style="
+                                color:#E5C378;
+                                font-size:14px;
+                                font-weight:800;
+                                margin-bottom:8px;
+                            "
+                        >
+                            📷 Capa do curso
+                        </div>
 
 
-                    <br><br>
+                        <div
+                            style="
+                                color:#737b88;
+                                font-size:12px;
+                                margin-bottom:10px;
+                            "
+                        >
+                            Escolha uma imagem diretamente do celular.
+                        </div>
+
+
+                        <input
+                            type="file"
+                            id="imagemCurso"
+                            class="campo-imagem"
+                            accept="image/jpeg,image/png,image/webp"
+                        >
+
+
+                        <div
+                            id="previewImagemCurso"
+                            class="imagem-preview-container"
+                        >
+
+                            <div class="imagem-preview-titulo">
+                                PRÉVIA DA CAPA
+                            </div>
+
+
+                            <img
+                                id="previewImagemCursoImg"
+                                class="imagem-preview"
+                                src=""
+                                alt="Prévia da capa do curso"
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <br>
 
 
                     <label>
@@ -746,14 +981,86 @@
                     <br><br>
 
 
-                    <input
-                        type="url"
-                        id="edicaoImagem"
-                        placeholder="Link da imagem do curso"
-                    >
+                    <!-- =================================================
+                         IMAGEM DA EDIÇÃO
+                         ================================================= -->
+
+                    <div>
+
+                        <div
+                            style="
+                                color:#E5C378;
+                                font-size:14px;
+                                font-weight:800;
+                                margin-bottom:8px;
+                            "
+                        >
+                            📷 Capa do curso
+                        </div>
 
 
-                    <br><br>
+                        <div
+                            id="imagemAtualContainer"
+                            class="imagem-atual"
+                        >
+
+                            <div class="imagem-atual-titulo">
+                                CAPA ATUAL
+                            </div>
+
+
+                            <img
+                                id="imagemAtualCurso"
+                                src=""
+                                alt="Capa atual do curso"
+                            >
+
+                        </div>
+
+
+                        <div
+                            style="
+                                color:#737b88;
+                                font-size:12px;
+                                margin-top:15px;
+                                margin-bottom:10px;
+                            "
+                        >
+                            Se quiser trocar a capa, selecione uma nova imagem.
+                        </div>
+
+
+                        <input
+                            type="file"
+                            id="edicaoImagem"
+                            class="campo-imagem"
+                            accept="image/jpeg,image/png,image/webp"
+                        >
+
+
+                        <div
+                            id="previewEdicaoImagem"
+                            class="imagem-preview-container"
+                        >
+
+                            <div class="imagem-preview-titulo">
+                                NOVA CAPA
+                            </div>
+
+
+                            <img
+                                id="previewEdicaoImagemImg"
+                                class="imagem-preview"
+                                src=""
+                                alt="Prévia da nova capa"
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <br>
 
 
                     <label>
