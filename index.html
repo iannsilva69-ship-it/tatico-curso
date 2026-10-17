@@ -548,67 +548,44 @@
         ========================================================= */
 
         .home-hero-card {
-
+            position: relative;
             min-height: 360px;
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: center;
-
-            padding: 35px;
-
-            border:
-                1px solid
-                rgba(200, 163, 85, 0.35);
-
+            padding: 0;
+            overflow: hidden;
+            border: 1px solid rgba(200, 163, 85, 0.45);
             border-radius: 18px;
-
-            background:
-                linear-gradient(
-                    145deg,
-                    rgba(18, 22, 30, 0.96),
-                    rgba(8, 10, 15, 0.96)
-                );
-
-            box-shadow:
-                0 25px 60px
-                rgba(0,0,0,0.5),
-
-                inset 0 0 40px
-                rgba(200,163,85,0.04);
+            background: #080a0f;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
         }
-
 
         .home-hero-brand {
-
-            text-align: center;
-
+            position: absolute;
+            inset: 0;
             width: 100%;
+            height: 100%;
+            margin: 0;
         }
 
-
         .home-brand-logo {
-
-            width: 190px;
-
-            height: 190px;
-
-            margin:
-                0 auto 25px;
-
+            position: absolute;
+            inset: 0;
             display: block;
+            width: 100%;
+            height: 100%;
+            max-width: none;
+            margin: 0;
+            border-radius: 0;
+            object-fit: cover;
+            object-position: center;
+            filter: none;
+        }
 
-            object-fit: contain;
-
-            border-radius: 20px;
-
-            filter:
-                drop-shadow(
-                    0 0 25px
-                    rgba(200, 163, 85, 0.18)
-                );
+        /* A arte já contém a identidade visual e o slogan. */
+        .home-brand-name,
+        .home-brand-sub,
+        .home-brand-line,
+        .home-brand-motto {
+            display: none;
         }
 
 
@@ -1429,10 +1406,14 @@
 
 
             .home-hero-card {
-
-                padding: 25px;
-
                 min-height: 290px;
+                padding: 0;
+            }
+
+            .home-hero-brand,
+            .home-brand-logo {
+                width: 100%;
+                height: 100%;
             }
 
 
@@ -1756,7 +1737,7 @@
 
                         <img
                             class="home-brand-logo"
-                            src="icons/logo-512.png"
+                            src="logo-taticos.png"
                             alt="Logo TÁTICOS Concursos"
                         >
 
