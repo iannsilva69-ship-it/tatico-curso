@@ -27,7 +27,7 @@
                     transparent 35%
                 ),
                 #080a0f !important;
-            color: #fff !important;
+            color: #ffffff !important;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -46,21 +46,33 @@
             max-width: 440px;
         }
 
-        /* MARCA E IMAGEM */
+        /* MARCA TÁTICOS CONCURSOS */
 
         .login-brand {
             text-align: center;
             margin-bottom: 25px;
+            padding: 18px;
+            border: 1px solid rgba(200, 163, 85, 0.35);
+            border-radius: 18px;
+            background: linear-gradient(
+                145deg,
+                rgba(18, 22, 30, 0.98),
+                rgba(10, 13, 19, 0.98)
+            );
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
         }
 
+        /* QUADRADO DA IMAGEM */
+
         .login-brand-symbol {
-            width: 208px;
-            height: 208px;
-            max-width: 100%;
+            width: 100%;
+            max-width: 360px;
+            aspect-ratio: 1 / 1;
+            height: auto;
             margin: 0 auto 14px;
             padding: 0;
             border: 1px solid rgba(200, 163, 85, 0.45);
-            border-radius: 16px;
+            border-radius: 12px;
             overflow: hidden;
             display: flex;
             align-items: center;
@@ -81,7 +93,7 @@
             font-size: 25px;
             font-weight: 900;
             letter-spacing: 6px;
-            color: #fff;
+            color: #ffffff;
         }
 
         .login-brand-sub {
@@ -110,7 +122,7 @@
 
         .login-card h1 {
             margin: 0;
-            color: #fff;
+            color: #ffffff;
             font-size: 29px;
             font-weight: 900;
             text-transform: uppercase;
@@ -148,7 +160,7 @@
             border-radius: 8px;
             outline: none;
             background: #080a0f;
-            color: #fff;
+            color: #ffffff;
             font-size: 13px;
             transition: 0.2s;
         }
@@ -248,16 +260,22 @@
 
         @media (max-width: 520px) {
             body.login-page {
-                padding: 20px 15px;
+                padding: 18px 14px;
             }
 
             .login-wrapper {
-                max-width: 390px;
+                max-width: 440px;
+            }
+
+            .login-brand {
+                padding: 14px;
+                margin-bottom: 20px;
             }
 
             .login-brand-symbol {
-                width: min(208px, 72vw);
-                height: min(208px, 72vw);
+                width: 100%;
+                max-width: 360px;
+                aspect-ratio: 1 / 1;
             }
 
             .login-card {
@@ -281,6 +299,7 @@
     <div class="login-wrapper">
 
         <div class="login-brand">
+
             <div class="login-brand-symbol">
                 <img
                     src="logo-taticos.png"
@@ -295,6 +314,7 @@
             <div class="login-brand-sub">
                 Concursos
             </div>
+
         </div>
 
         <section class="login-card">
@@ -345,9 +365,7 @@
             <div class="login-register">
                 Ainda não possui uma conta?
 
-                <a href="cadastro.html">
-                    Criar conta
-                </a>
+                <a href="cadastro.html">Criar conta</a>
             </div>
 
             <a href="index.html" class="login-back">
@@ -362,4 +380,3 @@
 
 </body>
 </html>
-
