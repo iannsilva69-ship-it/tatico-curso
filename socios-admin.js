@@ -1,6 +1,7 @@
-// ==============================
-// GERENCIAR SÓCIOS
-// ==============================
+
+ // ==============================
+ // GERENCIAR SÓCIOS
+ // ==============================
 
 let usuarioAtual = null;
 
@@ -10,28 +11,19 @@ let usuarioAtual = null;
 // ==============================
 
 async function verificarAcesso() {
-
     const {
         data: { user },
         error: erroUsuario
     } = await supabaseClient.auth.getUser();
 
-
     if (erroUsuario || !user) {
-
         window.location.href = "login.html";
-
         return false;
     }
 
-
     usuarioAtual = user;
 
-
-    // ==============================
     // BUSCAR PERFIL
-    // ==============================
-
     const {
         data: perfil,
         error: erroPerfil
@@ -41,55 +33,29 @@ async function verificarAcesso() {
         .eq("auth_user_id", user.id)
         .single();
 
-
     if (erroPerfil || !perfil) {
-
-        alert(
-            "Não foi possível verificar seu perfil."
-        );
-
+        alert("Não foi possível verificar seu perfil.");
         window.location.href = "login.html";
-
         return false;
     }
 
-
-    // ==============================
     // VERIFICAR SÓCIO ATIVO
-    // ==============================
+    const tipo = String(perfil.tipo || "")
+        .toLowerCase()
+        .trim();
 
-    const tipo =
-        String(perfil.tipo || "")
-            .toLowerCase()
-            .trim();
+    const status = String(perfil.status || "")
+        .toLowerCase()
+        .trim();
 
-
-    const status =
-        String(perfil.status || "")
-            .toLowerCase()
-            .trim();
-
-
-    const ehSocio =
-        tipo === "socio" ||
-        tipo === "sócio";
-
-
-    const estaAtivo =
-        status === "ativo";
-
+    const ehSocio = tipo === "socio" || tipo === "sócio";
+    const estaAtivo = status === "ativo";
 
     if (!ehSocio || !estaAtivo) {
-
-        alert(
-            "Acesso permitido somente para Sócios ativos."
-        );
-
+        alert("Acesso permitido somente para Sócios ativos.");
         window.location.href = "login.html";
-
         return false;
     }
-
 
     return true;
 }
@@ -100,81 +66,43 @@ async function verificarAcesso() {
 // ==============================
 
 async function cadastrarSocio() {
+    const nome = document
+        .getElementById("nomeSocio")
+        .value.trim();
 
-    const nome =
-        document
-            .getElementById("nomeSocio")
-            .value
-            .trim();
+    const email = document
+        .getElementById("emailSocio")
+        .value.trim();
 
+    const senha = document
+        .getElementById("senhaSocio")
+        .value;
 
-    const email =
-        document
-            .getElementById("emailSocio")
-            .value
-            .trim();
+    const mensagem = document.getElementById("mensagem");
 
-
-    const senha =
-        document
-            .getElementById("senhaSocio")
-            .value;
-
-
-    const mensagem =
-        document.getElementById("mensagem");
-
-
-    // ==============================
     // VALIDAR CAMPOS
-    // ==============================
-
     if (!nome || !email || !senha) {
-
         mensagem.textContent =
             "Preencha nome, e-mail e senha.";
-
         return;
     }
-
 
     if (senha.length < 6) {
-
         mensagem.textContent =
             "A senha deve ter pelo menos 6 caracteres.";
-
         return;
     }
 
-
-    // ==============================
     // DESABILITAR BOTÃO
-    // ==============================
-
-    const botao =
-        document.getElementById("cadastrarSocio");
-
+    const botao = document.getElementById("cadastrarSocio");
 
     botao.disabled = true;
-
-    botao.textContent =
-        "CADASTRANDO...";
-
-
-    mensagem.textContent =
-        "Criando sócio...";
-
+    botao.textContent = "CADASTRANDO...";
+    mensagem.textContent = "Criando sócio...";
 
     try {
-
-        // ==============================
         // CHAMAR EDGE FUNCTION
-        // ==============================
-
-        const {
-            data,
-            error
-        } =
+        const { data, error } =
             await supabaseClient.functions.invoke(
                 "criar-socio",
                 {
@@ -186,80 +114,60 @@ async function cadastrarSocio() {
                 }
             );
 
-
-        // ==============================
-        // VERIFICAR ERRO
-        // ==============================
-
+        // TRATAR ERRO E MOSTRAR A MENSAGEM REAL
         if (error) {
+            console.error("ERRO EDGE FUNCTION:", error);
 
-            console.error(
-                "ERRO EDGE FUNCTION:",
-                error
-            );
+            let detalhe = "";
 
-            mensagem.textContent =
-                "Não foi possível cadastrar o sócio.";
+            try {
+                if (typeof error.context?.json === "function") {
+                    const resposta = await error.context.json();
+                    detalhe =
+                        resposta?.erro ||
+                        resposta?.message ||
+                        "";
+                } else if (typeof error.message === "string") {
+                    detalhe = error.message;
+                }
+            } catch (erroLeitura) {
+                console.warn(
+                    "Não foi possível ler a resposta do erro:",
+                    erroLeitura
+                );
+            }
+
+            mensagem.textContent = detalhe
+                ? "Erro ao cadastrar: " + detalhe
+                : "Não foi possível cadastrar o sócio. Consulte o Console (F12).";
 
             return;
         }
-
 
         if (data && data.erro) {
-
-            mensagem.textContent =
-                data.erro;
-
+            mensagem.textContent = data.erro;
             return;
         }
 
-
-        // ==============================
         // SUCESSO
-        // ==============================
-
         mensagem.textContent =
-            "✅ Sócio cadastrado com sucesso!";
+            "Sócio cadastrado com sucesso!";
 
-
-        // Limpar formulário
-
-        document
-            .getElementById("nomeSocio")
-            .value = "";
-
-
-        document
-            .getElementById("emailSocio")
-            .value = "";
-
-
-        document
-            .getElementById("senhaSocio")
-            .value = "";
-
-
-        // Atualizar lista
+        document.getElementById("nomeSocio").value = "";
+        document.getElementById("emailSocio").value = "";
+        document.getElementById("senhaSocio").value = "";
 
         await carregarSocios();
 
-
     } catch (erro) {
-
-        console.error(
-            "ERRO:",
-            erro
-        );
+        console.error("ERRO AO CADASTRAR SÓCIO:", erro);
 
         mensagem.textContent =
-            "Ocorreu um erro ao cadastrar o sócio.";
+            "Ocorreu um erro ao cadastrar o sócio. Consulte o Console (F12).";
 
     } finally {
-
         botao.disabled = false;
-
-        botao.textContent =
-            "CADASTRAR SÓCIO";
+        botao.textContent = "CADASTRAR SÓCIO";
     }
 }
 
@@ -269,41 +177,21 @@ async function cadastrarSocio() {
 // ==============================
 
 async function carregarSocios() {
+    const lista = document.getElementById("listaSocios");
 
-    const lista =
-        document.getElementById("listaSocios");
-
-
-    lista.innerHTML =
-        "<p>Carregando sócios...</p>";
-
+    lista.innerHTML = "<p>Carregando sócios...</p>";
 
     const {
         data: socios,
         error
-    } =
-        await supabaseClient
-            .from("perfis")
-            .select(
-                "id, nome, email, telefone, tipo, status, auth_user_id"
-            )
-            .or(
-                "tipo.eq.Sócio,tipo.eq.Socio"
-            )
-            .order(
-                "nome",
-                {
-                    ascending: true
-                }
-            );
-
+    } = await supabaseClient
+        .from("perfis")
+        .select("id, nome, email, telefone, tipo, status, auth_user_id")
+        .or("tipo.eq.Sócio,tipo.eq.Socio")
+        .order("nome", { ascending: true });
 
     if (error) {
-
-        console.error(
-            "ERRO AO CARREGAR SÓCIOS:",
-            error
-        );
+        console.error("ERRO AO CARREGAR SÓCIOS:", error);
 
         lista.innerHTML =
             "<p>Não foi possível carregar os sócios.</p>";
@@ -311,152 +199,57 @@ async function carregarSocios() {
         return;
     }
 
-
     if (!socios || socios.length === 0) {
-
-        lista.innerHTML =
-            "<p>Nenhum sócio cadastrado.</p>";
-
+        lista.innerHTML = "<p>Nenhum sócio cadastrado.</p>";
         return;
     }
 
-
     lista.innerHTML = "";
 
+    socios.forEach(function (socio) {
+        const card = document.createElement("div");
+        card.className = "course-card";
 
-    socios.forEach(
-        function (socio) {
+        const nome = socio.nome || "Sem nome";
+        const email = socio.email || "Sem e-mail";
+        const telefone = socio.telefone || "Não informado";
+        const status = socio.status || "Sem status";
 
-            const card =
-                document.createElement("div");
+        const statusNormalizado = String(status)
+            .toLowerCase()
+            .trim();
 
+        const ativo = statusNormalizado === "ativo";
 
-            card.className =
-                "course-card";
+        card.innerHTML = `
+            <h3>👤 ${nome}</h3>
+            <p>📧 ${email}</p>
+            <p>📱 ${telefone}</p>
+            <p>Status: <strong>${status}</strong></p>
 
+            <button type="button" class="botao-editar">
+                ✏️ Editar
+            </button>
 
-            const nome =
-                socio.nome ||
-                "Sem nome";
+            <button type="button" class="botao-status">
+                ${ativo ? "🔴 Desativar Sócio" : "🟢 Ativar Sócio"}
+            </button>
+        `;
 
+        const botaoEditar = card.querySelector(".botao-editar");
 
-            const email =
-                socio.email ||
-                "Sem e-mail";
+        botaoEditar.addEventListener("click", function () {
+            abrirEdicaoSocio(socio);
+        });
 
+        const botaoStatus = card.querySelector(".botao-status");
 
-            const telefone =
-                socio.telefone ||
-                "Não informado";
+        botaoStatus.addEventListener("click", function () {
+            alterarStatusSocio(socio.id, socio.status);
+        });
 
-
-            const status =
-                socio.status ||
-                "Sem status";
-
-
-            const statusNormalizado =
-                String(status)
-                    .toLowerCase()
-                    .trim();
-
-
-            const ativo =
-                statusNormalizado === "ativo";
-
-
-            card.innerHTML = `
-
-                <h3>
-                    👤 ${nome}
-                </h3>
-
-                <p>
-                    📧 ${email}
-                </p>
-
-                <p>
-                    📱 ${telefone}
-                </p>
-
-                <p>
-                    Status:
-                    <strong>
-                        ${status}
-                    </strong>
-                </p>
-
-
-                <button
-                    type="button"
-                    class="botao-editar"
-                >
-                    ✏️ Editar
-                </button>
-
-
-                <button
-                    type="button"
-                    class="botao-status"
-                >
-                    ${
-                        ativo
-                            ? "🔴 Desativar Sócio"
-                            : "🟢 Ativar Sócio"
-                    }
-                </button>
-
-            `;
-
-
-            // ==============================
-            // BOTÃO EDITAR
-            // ==============================
-
-            const botaoEditar =
-                card.querySelector(
-                    ".botao-editar"
-                );
-
-
-            botaoEditar.addEventListener(
-                "click",
-                function () {
-
-                    abrirEdicaoSocio(
-                        socio
-                    );
-
-                }
-            );
-
-
-            // ==============================
-            // BOTÃO STATUS
-            // ==============================
-
-            const botaoStatus =
-                card.querySelector(
-                    ".botao-status"
-                );
-
-
-            botaoStatus.addEventListener(
-                "click",
-                function () {
-
-                    alterarStatusSocio(
-                        socio.id,
-                        socio.status
-                    );
-
-                }
-            );
-
-
-            lista.appendChild(card);
-        }
-    );
+        lista.appendChild(card);
+    });
 }
 
 
@@ -465,52 +258,26 @@ async function carregarSocios() {
 // ==============================
 
 function abrirEdicaoSocio(socio) {
+    const areaEdicao = document.getElementById("areaEdicao");
 
-    const areaEdicao =
-        document.getElementById(
-            "areaEdicao"
-        );
+    areaEdicao.style.display = "block";
 
-
-    areaEdicao.style.display =
-        "block";
-
-
-    document
-        .getElementById("edicaoSocioId")
-        .value =
+    document.getElementById("edicaoSocioId").value =
         socio.id || "";
 
-
-    document
-        .getElementById("edicaoAuthUserId")
-        .value =
+    document.getElementById("edicaoAuthUserId").value =
         socio.auth_user_id || "";
 
-
-    document
-        .getElementById("edicaoNomeSocio")
-        .value =
+    document.getElementById("edicaoNomeSocio").value =
         socio.nome || "";
 
-
-    document
-        .getElementById("edicaoEmailSocio")
-        .value =
+    document.getElementById("edicaoEmailSocio").value =
         socio.email || "";
 
-
-    document
-        .getElementById("edicaoTelefoneSocio")
-        .value =
+    document.getElementById("edicaoTelefoneSocio").value =
         socio.telefone || "";
 
-
-    document
-        .getElementById("mensagemEdicao")
-        .textContent =
-        "";
-
+    document.getElementById("mensagemEdicao").textContent = "";
 
     areaEdicao.scrollIntoView({
         behavior: "smooth",
@@ -524,79 +291,35 @@ function abrirEdicaoSocio(socio) {
 // ==============================
 
 async function salvarEdicaoSocio() {
-
     const socioId =
-        document
-            .getElementById("edicaoSocioId")
-            .value;
-
+        document.getElementById("edicaoSocioId").value;
 
     const nome =
-        document
-            .getElementById("edicaoNomeSocio")
-            .value
-            .trim();
-
+        document.getElementById("edicaoNomeSocio").value.trim();
 
     const email =
-        document
-            .getElementById("edicaoEmailSocio")
-            .value
-            .trim();
-
+        document.getElementById("edicaoEmailSocio").value.trim();
 
     const telefone =
-        document
-            .getElementById("edicaoTelefoneSocio")
-            .value
-            .trim();
+        document.getElementById("edicaoTelefoneSocio").value.trim();
 
+    const mensagem = document.getElementById("mensagemEdicao");
 
-    const mensagem =
-        document
-            .getElementById("mensagemEdicao");
-
-
-    // ==============================
     // VALIDAR
-    // ==============================
-
     if (!nome || !email) {
-
-        mensagem.textContent =
-            "Nome e e-mail são obrigatórios.";
-
+        mensagem.textContent = "Nome e e-mail são obrigatórios.";
         return;
     }
 
-
-    const botao =
-        document
-            .getElementById(
-                "salvarEdicaoSocio"
-            );
-
+    const botao = document.getElementById("salvarEdicaoSocio");
 
     botao.disabled = true;
-
-    botao.textContent =
-        "SALVANDO...";
-
-
-    mensagem.textContent =
-        "Atualizando sócio...";
-
+    botao.textContent = "SALVANDO...";
+    mensagem.textContent = "Atualizando sócio...";
 
     try {
-
-        // ==============================
         // CHAMAR EDGE FUNCTION
-        // ==============================
-
-        const {
-            data,
-            error
-        } =
+        const { data, error } =
             await supabaseClient.functions.invoke(
                 "editar-socio",
                 {
@@ -609,17 +332,8 @@ async function salvarEdicaoSocio() {
                 }
             );
 
-
-        // ==============================
-        // ERRO
-        // ==============================
-
         if (error) {
-
-            console.error(
-                "ERRO EDITAR SÓCIO:",
-                error
-            );
+            console.error("ERRO EDITAR SÓCIO:", error);
 
             mensagem.textContent =
                 "Não foi possível editar o sócio.";
@@ -627,248 +341,95 @@ async function salvarEdicaoSocio() {
             return;
         }
 
-
         if (data && data.erro) {
-
-            mensagem.textContent =
-                data.erro;
-
+            mensagem.textContent = data.erro;
             return;
         }
 
-
-        // ==============================
-        // SUCESSO
-        // ==============================
-
-        mensagem.textContent =
-            "✅ Sócio atualizado com sucesso!";
-
+        mensagem.textContent = "Sócio atualizado com sucesso!";
 
         await carregarSocios();
 
-
-        setTimeout(
-            function () {
-
-                cancelarEdicao();
-
-            },
-            800
-        );
-
+        setTimeout(function () {
+            cancelarEdicao();
+        }, 800);
 
     } catch (erro) {
-
-        console.error(
-            "ERRO:",
-            erro
-        );
+        console.error("ERRO AO EDITAR SÓCIO:", erro);
 
         mensagem.textContent =
             "Ocorreu um erro ao editar o sócio.";
 
     } finally {
-
         botao.disabled = false;
-
-        botao.textContent =
-            "💾 SALVAR ALTERAÇÕES";
+        botao.textContent = "💾 SALVAR ALTERAÇÕES";
     }
 }
 
-
-// ==============================
-// CANCELAR EDIÇÃO
-// ==============================
 
 function cancelarEdicao() {
+  const areaEdicao = document.getElementById("areaEdicao");
 
-    const areaEdicao =
-        document.getElementById(
-            "areaEdicao"
-        );
-
-
-    areaEdicao.style.display =
-        "none";
-
-
-    document
-        .getElementById("edicaoSocioId")
-        .value = "";
-
-
-    document
-        .getElementById("edicaoAuthUserId")
-        .value = "";
-
-
-    document
-        .getElementById("edicaoNomeSocio")
-        .value = "";
-
-
-    document
-        .getElementById("edicaoEmailSocio")
-        .value = "";
-
-
-    document
-        .getElementById("edicaoTelefoneSocio")
-        .value = "";
-
-
-    document
-        .getElementById("mensagemEdicao")
-        .textContent = "";
+  areaEdicao.style.display = "none";
+  document.getElementById("edicaoSocioId").value = "";
+  document.getElementById("edicaoAuthUserId").value = "";
+  document.getElementById("edicaoNomeSocio").value = "";
+  document.getElementById("edicaoEmailSocio").value = "";
+  document.getElementById("edicaoTelefoneSocio").value = "";
+  document.getElementById("mensagemEdicao").textContent = "";
 }
 
+async function alterarStatusSocio(socioId, statusAtual) {
+  const novoStatus = statusAtual === "Ativo" ? "Inativo" : "Ativo";
 
-// ==============================
-// ALTERAR STATUS
-// ==============================
+  const confirmado = confirm(
+    `Deseja realmente alterar o status deste sócio para ${novoStatus}?`
+  );
 
-async function alterarStatusSocio(
-    socioId,
-    statusAtual
-) {
+  if (!confirmado) return;
 
-    const statusNormalizado =
-        String(statusAtual || "")
-            .toLowerCase()
-            .trim();
-
-
-    const novoStatus =
-        statusNormalizado === "ativo"
-            ? "Inativo"
-            : "Ativo";
-
-
-    const confirmar =
-        confirm(
-            novoStatus === "Ativo"
-                ? "Deseja ativar este sócio?"
-                : "Deseja desativar este sócio?"
-        );
-
-
-    if (!confirmar) {
-        return;
-    }
-
-
-    // ==============================
-    // ATUALIZAR
-    // ==============================
-
-    const {
-        error
-    } =
-        await supabaseClient
-            .from("perfis")
-            .update({
-                status: novoStatus
-            })
-            .eq("id", socioId);
-
+  try {
+    const { error } = await supabaseClient
+      .from("perfis")
+      .update({ status: novoStatus })
+      .eq("id", socioId);
 
     if (error) {
-
-        console.error(
-            "ERRO AO ALTERAR STATUS:",
-            error
-        );
-
-        alert(
-            "Não foi possível alterar o status."
-        );
-
-        return;
+      console.error("Erro ao alterar status:", error);
+      alert("Não foi possível alterar o status do sócio.");
+      return;
     }
 
-
-    alert(
-        "Status alterado com sucesso."
-    );
-
-
+    alert(`Status alterado para ${novoStatus} com sucesso!`);
     await carregarSocios();
+  } catch (erro) {
+    console.error("Erro inesperado ao alterar status:", erro);
+    alert("Ocorreu um erro ao alterar o status do sócio.");
+  }
 }
 
+document.getElementById("logout")?.addEventListener("click", async () => {
+  try {
+    await supabaseClient.auth.signOut();
+    window.location.href = "login.html";
+  } catch (erro) {
+    console.error("Erro ao sair:", erro);
+    alert("Não foi possível sair da conta.");
+  }
+});
 
-// ==============================
-// LOGOUT
-// ==============================
+document.getElementById("cadastrarSocio")?.addEventListener("click", cadastrarSocio);
 
-document
-    .getElementById("logout")
-    .addEventListener(
-        "click",
-        async function () {
+document.getElementById("salvarEdicaoSocio")?.addEventListener("click", salvarEdicaoSocio);
 
-            await supabaseClient.auth.signOut();
-
-            window.location.href =
-                "login.html";
-        }
-    );
-
-
-// ==============================
-// BOTÃO CADASTRAR
-// ==============================
-
-document
-    .getElementById("cadastrarSocio")
-    .addEventListener(
-        "click",
-        cadastrarSocio
-    );
-
-
-// ==============================
-// BOTÃO SALVAR EDIÇÃO
-// ==============================
-
-document
-    .getElementById("salvarEdicaoSocio")
-    .addEventListener(
-        "click",
-        salvarEdicaoSocio
-    );
-
-
-// ==============================
-// BOTÃO CANCELAR EDIÇÃO
-// ==============================
-
-document
-    .getElementById("cancelarEdicaoSocio")
-    .addEventListener(
-        "click",
-        cancelarEdicao
-    );
-
-
-// ==============================
-// INICIAR
-// ==============================
+document.getElementById("cancelarEdicaoSocio")?.addEventListener("click", cancelarEdicao);
 
 async function iniciar() {
+  const autorizado = await verificarAcesso();
 
-    const acesso =
-        await verificarAcesso();
-
-
-    if (!acesso) {
-        return;
-    }
-
-
+  if (autorizado) {
     await carregarSocios();
+  }
 }
-
 
 iniciar();
