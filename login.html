@@ -1,36 +1,20 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
-
     <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Login | Táticos Concursos</title>
 
     <link rel="stylesheet" href="style.css">
-
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
     <script src="supabase.js"></script>
 
-
     <style>
-
-        /* =====================================================
-           LOGIN — TÁTICOS CONCURSOS
-        ===================================================== */
-
         body.login-page {
-
             margin: 0 !important;
-
             min-height: 100vh;
-
             background:
                 radial-gradient(
                     circle at 50% 20%,
@@ -38,466 +22,281 @@
                     transparent 35%
                 ),
                 #080a0f !important;
-
-            color: #ffffff !important;
-
+            color: #fff !important;
             display: flex;
-
             align-items: center;
-
             justify-content: center;
-
             padding: 30px 20px;
-
+            box-sizing: border-box;
         }
-
 
         body.login-page::before {
-
             opacity: 0.05 !important;
-
             z-index: 0 !important;
-
         }
-
 
         .login-wrapper {
-
             position: relative;
-
             z-index: 2;
-
             width: 100%;
-
             max-width: 440px;
-
         }
-
-
-        /* =====================================================
-           MARCA
-        ===================================================== */
 
         .login-brand {
-
             text-align: center;
-
             margin-bottom: 25px;
-
         }
-
 
         .login-brand-symbol {
-
             width: 78px;
-
             height: 78px;
-
             margin: 0 auto 14px;
-
             border-radius: 50%;
-
             display: flex;
-
             align-items: center;
-
             justify-content: center;
-
-            border:
-                2px solid #c8a355;
-
-            background:
-                radial-gradient(
-                    circle,
-                    #202832,
-                    #080a0f
-                );
-
+            border: 2px solid #c8a355;
+            background: radial-gradient(circle, #202832, #080a0f);
             color: #e5c378;
-
             font-size: 30px;
-
             font-weight: 900;
-
-            box-shadow:
-                0 0 30px
-                rgba(200,163,85,0.16);
-
+            box-shadow: 0 0 30px rgba(200,163,85,0.16);
         }
-
 
         .login-brand-name {
-
             font-size: 25px;
-
             font-weight: 900;
-
             letter-spacing: 6px;
-
-            color: #ffffff;
-
+            color: #fff;
         }
-
 
         .login-brand-sub {
-
             margin-top: 6px;
-
             font-size: 8px;
-
             letter-spacing: 4px;
-
             text-transform: uppercase;
-
             color: #d4af37;
-
         }
-
-
-        /* =====================================================
-           CARD
-        ===================================================== */
 
         .login-card {
-
-            background:
-                linear-gradient(
-                    145deg,
-                    rgba(18,22,30,0.98),
-                    rgba(10,13,19,0.98)
-                );
-
-            border:
-                1px solid rgba(200,163,85,0.30);
-
+            background: linear-gradient(
+                145deg,
+                rgba(18,22,30,0.98),
+                rgba(10,13,19,0.98)
+            );
+            border: 1px solid rgba(200,163,85,0.30);
             border-radius: 18px;
-
             padding: 34px;
-
             box-shadow:
-                0 25px 70px
-                rgba(0,0,0,0.55),
-
-                inset 0 0 35px
-                rgba(200,163,85,0.025);
-
+                0 25px 70px rgba(0,0,0,0.55),
+                inset 0 0 35px rgba(200,163,85,0.025);
+            box-sizing: border-box;
         }
-
 
         .login-card h1 {
-
             margin: 0;
-
-            color: #ffffff;
-
+            color: #fff;
             font-size: 29px;
-
             font-weight: 900;
-
             text-transform: uppercase;
-
             letter-spacing: -0.5px;
-
         }
-
 
         .login-card-description {
-
-            margin:
-                9px 0 25px;
-
+            margin: 9px 0 25px;
             color: #94a3b8;
-
             font-size: 12px;
-
             line-height: 1.6;
-
         }
-
-
-        /* =====================================================
-           CAMPOS
-        ===================================================== */
 
         .login-field {
-
             margin-bottom: 17px;
-
         }
-
 
         .login-field label {
-
             display: block;
-
             margin-bottom: 7px;
-
             color: #cbd5e1;
-
             font-size: 10px;
-
             font-weight: 800;
-
             text-transform: uppercase;
-
             letter-spacing: 1px;
-
         }
-
 
         .login-field input {
-
             width: 100%;
-
             height: 46px;
-
-            padding:
-                0 14px;
-
+            padding: 0 14px;
             box-sizing: border-box;
-
-            border:
-                1px solid rgba(255,255,255,0.12);
-
+            border: 1px solid rgba(255,255,255,0.12);
             border-radius: 8px;
-
             outline: none;
-
             background: #080a0f;
-
-            color: #ffffff;
-
+            color: #fff;
             font-size: 13px;
-
             transition: 0.2s;
-
         }
-
 
         .login-field input::placeholder {
-
             color: #64748b;
-
         }
-
 
         .login-field input:focus {
-
-            border-color:
-                rgba(200,163,85,0.70);
-
-            box-shadow:
-                0 0 0 3px
-                rgba(200,163,85,0.08);
-
+            border-color: rgba(200,163,85,0.70);
+            box-shadow: 0 0 0 3px rgba(200,163,85,0.08);
         }
-
-
-        /* =====================================================
-           BOTÃO
-        ===================================================== */
 
         .login-button {
-
             width: 100%;
-
             height: 47px;
-
             margin-top: 7px;
-
             border: none;
-
             border-radius: 8px;
-
-            background:
-                linear-gradient(
-                    135deg,
-                    #e5c378,
-                    #b88b2f
-                );
-
+            background: linear-gradient(135deg, #e5c378, #b88b2f);
             color: #080a0f;
-
             font-size: 11px;
-
             font-weight: 900;
-
             text-transform: uppercase;
-
             letter-spacing: 0.5px;
-
             cursor: pointer;
-
             transition: 0.2s;
-
-            box-shadow:
-                0 0 20px
-                rgba(200,163,85,0.16);
-
+            box-shadow: 0 0 20px rgba(200,163,85,0.16);
         }
-
 
         .login-button:hover {
-
             transform: translateY(-2px);
-
-            box-shadow:
-                0 0 30px
-                rgba(200,163,85,0.30);
-
+            box-shadow: 0 0 30px rgba(200,163,85,0.30);
         }
-
 
         .login-button:active {
-
             transform: translateY(0);
-
         }
-
-
-        /* =====================================================
-           MENSAGEM
-        ===================================================== */
 
         #mensagem {
-
             min-height: 20px;
-
-            margin:
-                15px 0 5px;
-
+            margin: 15px 0 5px;
             color: #e5c378;
-
             font-size: 11px;
-
             text-align: center;
-
+            line-height: 1.6;
+            overflow-wrap: anywhere;
         }
-
-
-        /* =====================================================
-           CADASTRO
-        ===================================================== */
 
         .login-register {
-
             margin-top: 22px;
-
             padding-top: 20px;
-
-            border-top:
-                1px solid rgba(255,255,255,0.07);
-
+            border-top: 1px solid rgba(255,255,255,0.07);
             text-align: center;
-
             color: #94a3b8;
-
             font-size: 11px;
-
         }
-
 
         .login-register a {
-
             color: #e5c378;
-
             font-weight: 800;
-
             text-decoration: none;
-
         }
-
 
         .login-register a:hover {
-
             text-decoration: underline;
-
         }
-
-
-        /* =====================================================
-           VOLTAR
-        ===================================================== */
 
         .login-back {
-
             display: block;
-
             margin-top: 18px;
-
             text-align: center;
-
             color: #64748b;
-
             font-size: 10px;
-
             text-decoration: none;
-
             text-transform: uppercase;
-
             letter-spacing: 0.5px;
-
         }
-
 
         .login-back:hover {
-
             color: #e5c378;
-
         }
 
+        /* Campo de senha com botão de olho */
 
-        /* =====================================================
-           MOBILE
-        ===================================================== */
+        .senha-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        .senha-wrapper input {
+            padding-right: 48px;
+        }
+
+        .senha-olho {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 5px;
+            border: none;
+            background: transparent;
+            color: #c8a355;
+            cursor: pointer;
+        }
+
+        .senha-olho:hover {
+            color: #e5c378;
+        }
+
+        .senha-olho:focus-visible {
+            outline: 2px solid #e5c378;
+            outline-offset: 2px;
+            border-radius: 4px;
+        }
+
+        /* Link de recuperação */
+
+        .esqueci-senha {
+            margin-top: -7px;
+            margin-bottom: 16px;
+            text-align: right;
+            font-size: 11px;
+        }
+
+        .esqueci-senha a {
+            color: #e5c378;
+            text-decoration: none;
+        }
+
+        .esqueci-senha a:hover {
+            text-decoration: underline;
+        }
 
         @media (max-width: 520px) {
-
             body.login-page {
-
                 padding: 20px 15px;
-
             }
-
 
             .login-card {
-
                 padding: 26px 21px;
-
             }
-
 
             .login-card h1 {
-
                 font-size: 24px;
-
             }
-
 
             .login-brand-name {
-
                 font-size: 21px;
-
                 letter-spacing: 5px;
-
             }
-
         }
-
     </style>
-
 </head>
 
-
+    
 <body class="login-page">
-
 
     <div class="login-wrapper">
 
-
-        <!-- =================================================
-             MARCA
-        ================================================== -->
+        <!-- MARCA TÁTICOS -->
 
         <div class="login-brand">
 
@@ -515,32 +314,23 @@
 
         </div>
 
-
-        <!-- =================================================
-             LOGIN
-        ================================================== -->
+        <!-- FORMULÁRIO DE LOGIN -->
 
         <section class="login-card">
 
-
-            <h1>
-                Entrar
-            </h1>
-
+            <h1>Entrar</h1>
 
             <p class="login-card-description">
                 Acesse sua área de aluno e continue sua preparação.
             </p>
 
-
             <form id="loginForm">
 
+                <!-- E-MAIL -->
 
                 <div class="login-field">
 
-                    <label for="email">
-                        E-mail
-                    </label>
+                    <label for="email">E-mail</label>
 
                     <input
                         type="email"
@@ -552,23 +342,67 @@
 
                 </div>
 
+                <!-- SENHA COM OLHO -->
 
                 <div class="login-field">
 
-                    <label for="senha">
-                        Senha
-                    </label>
+                    <label for="senha">Senha</label>
 
-                    <input
-                        type="password"
-                        id="senha"
-                        placeholder="Sua senha"
-                        autocomplete="current-password"
-                        required
-                    >
+                    <div class="senha-wrapper">
+
+                        <input
+                            type="password"
+                            id="senha"
+                            placeholder="Sua senha"
+                            autocomplete="current-password"
+                            required
+                        >
+
+                        <button
+                            type="button"
+                            id="alternarSenha"
+                            class="senha-olho"
+                            aria-label="Mostrar senha"
+                            aria-pressed="false"
+                        >
+
+                            <svg
+                                id="iconeOlho"
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="20"
+                                height="20"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                aria-hidden="true"
+                            >
+
+                                <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/>
+
+                                <circle cx="12" cy="12" r="3"/>
+
+                            </svg>
+
+                        </button>
+
+                    </div>
 
                 </div>
 
+                <!-- ESQUECI MINHA SENHA -->
+
+                <div class="esqueci-senha">
+
+                    <a href="#" id="linkEsqueciSenha">
+                        Esqueci minha senha
+                    </a>
+
+                </div>
+
+                <!-- BOTÃO ENTRAR -->
 
                 <button
                     type="submit"
@@ -577,12 +411,13 @@
                     Entrar na plataforma →
                 </button>
 
-
             </form>
 
+            <!-- MENSAGENS DE LOGIN E RECUPERAÇÃO -->
 
-            <p id="mensagem"></p>
+            <p id="mensagem" role="status" aria-live="polite"></p>
 
+            <!-- CRIAR CONTA -->
 
             <div class="login-register">
 
@@ -594,6 +429,7 @@
 
             </div>
 
+            <!-- VOLTAR AO INÍCIO -->
 
             <a
                 href="index.html"
@@ -602,15 +438,13 @@
                 ← Voltar para o início
             </a>
 
-
         </section>
-
 
     </div>
 
-
+    
+    <!-- SCRIPT DO LOGIN -->
     <script src="login.js"></script>
 
 </body>
-
 </html>
