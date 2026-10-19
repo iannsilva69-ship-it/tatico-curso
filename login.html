@@ -8,13 +8,19 @@
     <title>Login | Táticos Concursos</title>
 
     <link rel="stylesheet" href="style.css">
+
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabase.js"></script>
 
     <style>
+        /* FUNDO DA PÁGINA */
+
         body.login-page {
             margin: 0 !important;
             min-height: 100vh;
+            box-sizing: border-box;
+            padding: 30px 20px;
+
             background:
                 radial-gradient(
                     circle at 50% 20%,
@@ -22,12 +28,12 @@
                     transparent 35%
                 ),
                 #080a0f !important;
-            color: #fff !important;
+
+            color: #ffffff !important;
+
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 30px 20px;
-            box-sizing: border-box;
         }
 
         body.login-page::before {
@@ -42,6 +48,8 @@
             max-width: 440px;
         }
 
+        /* MARCA */
+
         .login-brand {
             text-align: center;
             margin-bottom: 25px;
@@ -55,19 +63,24 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            overflow: hidden;
             border: 2px solid #c8a355;
-            background: radial-gradient(circle, #202832, #080a0f);
-            color: #e5c378;
-            font-size: 30px;
-            font-weight: 900;
+            background: #080a0f;
             box-shadow: 0 0 30px rgba(200,163,85,0.16);
+        }
+
+        .login-brand-symbol img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
         }
 
         .login-brand-name {
             font-size: 25px;
             font-weight: 900;
             letter-spacing: 6px;
-            color: #fff;
+            color: #ffffff;
         }
 
         .login-brand-sub {
@@ -78,7 +91,10 @@
             color: #d4af37;
         }
 
+        /* CARTÃO */
+
         .login-card {
+            box-sizing: border-box;
             background: linear-gradient(
                 145deg,
                 rgba(18,22,30,0.98),
@@ -90,12 +106,11 @@
             box-shadow:
                 0 25px 70px rgba(0,0,0,0.55),
                 inset 0 0 35px rgba(200,163,85,0.025);
-            box-sizing: border-box;
         }
 
         .login-card h1 {
             margin: 0;
-            color: #fff;
+            color: #ffffff;
             font-size: 29px;
             font-weight: 900;
             text-transform: uppercase;
@@ -108,6 +123,8 @@
             font-size: 12px;
             line-height: 1.6;
         }
+
+        /* CAMPOS */
 
         .login-field {
             margin-bottom: 17px;
@@ -132,7 +149,7 @@
             border-radius: 8px;
             outline: none;
             background: #080a0f;
-            color: #fff;
+            color: #ffffff;
             font-size: 13px;
             transition: 0.2s;
         }
@@ -146,9 +163,68 @@
             box-shadow: 0 0 0 3px rgba(200,163,85,0.08);
         }
 
+        /* OLHO DA SENHA */
+
+        .senha-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        .senha-wrapper input {
+            padding-right: 48px;
+        }
+
+        .senha-olho {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 34px;
+            height: 34px;
+            padding: 5px;
+            border: none;
+            border-radius: 6px;
+            background: transparent;
+            color: #c8a355;
+            cursor: pointer;
+        }
+
+        .senha-olho:hover {
+            color: #e5c378;
+            background: rgba(200,163,85,0.08);
+        }
+
+        .senha-olho:focus-visible {
+            outline: 2px solid #e5c378;
+            outline-offset: 2px;
+        }
+
+        /* ESQUECI MINHA SENHA */
+
+        .esqueci-senha {
+            margin-top: -7px;
+            margin-bottom: 16px;
+            text-align: right;
+            font-size: 11px;
+        }
+
+        .esqueci-senha a {
+            color: #e5c378;
+            text-decoration: none;
+        }
+
+        .esqueci-senha a:hover {
+            text-decoration: underline;
+        }
+
+        /* BOTÃO ENTRAR */
+
         .login-button {
             width: 100%;
-            height: 47px;
+            min-height: 47px;
             margin-top: 7px;
             border: none;
             border-radius: 8px;
@@ -172,15 +248,19 @@
             transform: translateY(0);
         }
 
+        /* MENSAGENS */
+
         #mensagem {
             min-height: 20px;
             margin: 15px 0 5px;
             color: #e5c378;
             font-size: 11px;
-            text-align: center;
             line-height: 1.6;
+            text-align: center;
             overflow-wrap: anywhere;
         }
+
+        /* CRIAR CONTA */
 
         .login-register {
             margin-top: 22px;
@@ -201,6 +281,8 @@
             text-decoration: underline;
         }
 
+        /* VOLTAR AO INÍCIO */
+
         .login-back {
             display: block;
             margin-top: 18px;
@@ -216,59 +298,7 @@
             color: #e5c378;
         }
 
-        /* Campo de senha com botão de olho */
-
-        .senha-wrapper {
-            position: relative;
-            width: 100%;
-        }
-
-        .senha-wrapper input {
-            padding-right: 48px;
-        }
-
-        .senha-olho {
-            position: absolute;
-            right: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 5px;
-            border: none;
-            background: transparent;
-            color: #c8a355;
-            cursor: pointer;
-        }
-
-        .senha-olho:hover {
-            color: #e5c378;
-        }
-
-        .senha-olho:focus-visible {
-            outline: 2px solid #e5c378;
-            outline-offset: 2px;
-            border-radius: 4px;
-        }
-
-        /* Link de recuperação */
-
-        .esqueci-senha {
-            margin-top: -7px;
-            margin-bottom: 16px;
-            text-align: right;
-            font-size: 11px;
-        }
-
-        .esqueci-senha a {
-            color: #e5c378;
-            text-decoration: none;
-        }
-
-        .esqueci-senha a:hover {
-            text-decoration: underline;
-        }
+        /* CELULAR */
 
         @media (max-width: 520px) {
             body.login-page {
@@ -291,17 +321,19 @@
     </style>
 </head>
 
-    
 <body class="login-page">
 
-    <div class="login-wrapper">
+    <main class="login-wrapper">
 
-        <!-- MARCA TÁTICOS -->
+        <!-- LOGO OFICIAL -->
 
         <div class="login-brand">
 
             <div class="login-brand-symbol">
-                T
+                <img
+                    src="logo-simbolo.png"
+                    alt="Símbolo Táticos Concursos"
+                >
             </div>
 
             <div class="login-brand-name">
@@ -342,7 +374,7 @@
 
                 </div>
 
-                <!-- SENHA COM OLHO -->
+                <!-- SENHA -->
 
                 <div class="login-field">
 
@@ -379,11 +411,8 @@
                                 stroke-linejoin="round"
                                 aria-hidden="true"
                             >
-
                                 <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/>
-
                                 <circle cx="12" cy="12" r="3"/>
-
                             </svg>
 
                         </button>
@@ -392,7 +421,7 @@
 
                 </div>
 
-                <!-- ESQUECI MINHA SENHA -->
+                <!-- RECUPERAÇÃO DE SENHA -->
 
                 <div class="esqueci-senha">
 
@@ -402,7 +431,7 @@
 
                 </div>
 
-                <!-- BOTÃO ENTRAR -->
+                <!-- ENTRAR -->
 
                 <button
                     type="submit"
@@ -413,11 +442,13 @@
 
             </form>
 
-            <!-- MENSAGENS DE LOGIN E RECUPERAÇÃO -->
+            <p
+                id="mensagem"
+                role="status"
+                aria-live="polite"
+            ></p>
 
-            <p id="mensagem" role="status" aria-live="polite"></p>
-
-            <!-- CRIAR CONTA -->
+            <!-- CADASTRO -->
 
             <div class="login-register">
 
@@ -429,7 +460,7 @@
 
             </div>
 
-            <!-- VOLTAR AO INÍCIO -->
+            <!-- VOLTAR -->
 
             <a
                 href="index.html"
@@ -440,10 +471,8 @@
 
         </section>
 
-    </div>
+    </main>
 
-    
-    <!-- SCRIPT DO LOGIN -->
     <script src="login.js"></script>
 
 </body>
