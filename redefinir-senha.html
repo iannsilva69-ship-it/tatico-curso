@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Redefinir senha | Táticos Concursos</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase.js"></script>
+
+    <style>
+        body.login-page {
+            margin: 0 !important;
+            min-height: 100vh;
+            padding: 25px 15px;
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background:
+                radial-gradient(
+                    circle at 50% 20%,
+                    rgba(200,163,85,0.10),
+                    transparent 35%
+                ),
+                #080a0f !important;
+            color: #fff !important;
+        }
+
+        body.login-page::before {
+            opacity: 0.05 !important;
+            z-index: 0 !important;
+        }
+
+        .reset-wrapper {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            max-width: 440px;
+        }
+
+        .reset-brand {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .reset-brand-symbol {
+            width: 78px;
+            height: 78px;
+            margin: 0 auto 14px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #c8a355;
+            background: radial-gradient(circle, #202832, #080a0f);
+            color: #e5c378;
+            font-size: 30px;
+            font-weight: 900;
+            box-shadow: 0 0 30px rgba(200,163,85,0.16);
+        }
+
+        .reset-brand-name {
+            font-size: 25px;
+            font-weight: 900;
+            letter-spacing: 6px;
+        }
+
+        .reset-brand-sub {
+            margin-top: 6px;
+            font-size: 8px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: #d4af37;
+        }
+
+        .reset-card {
+            box-sizing: border-box;
+            padding: 34px;
+            border: 1px solid rgba(200,163,85,0.30);
+            border-radius: 18px;
+            background: linear-gradient(
+                145deg,
+                rgba(18,22,30,0.98),
+                rgba(10,13,19,0.98)
+            );
+            box-shadow:
+                0 25px 70px rgba(0,0,0,0.55),
+                inset 0 0 35px rgba(200,163,85,0.025);
+        }
+
+        .reset-card h1 {
+            margin: 0;
+            color: #fff;
+            font-size: 27px;
+            font-weight: 900;
+            text-transform: uppercase;
+        }
+
+        .reset-description {
+            margin: 10px 0 25px;
+            color: #94a3b8;
+            font-size: 12px;
+            line-height: 1.7;
+        }
+
+        .reset-field {
+            margin-bottom: 18px;
+        }
+
+        .reset-field label {
+            display: block;
+            margin-bottom: 7px;
+            color: #cbd5e1;
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .reset-field input {
+            width: 100%;
+            height: 46px;
+            padding: 0 14px;
+            box-sizing: border-box;
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 8px;
+            outline: none;
+            background: #080a0f;
+            color: #fff;
+            font-size: 13px;
+        }
+
+        .reset-field input:focus {
+            border-color: rgba(200,163,85,0.70);
+            box-shadow: 0 0 0 3px rgba(200,163,85,0.08);
+        }
+
+        .reset-field input::placeholder {
+            color: #64748b;
+        }
+
+        .reset-password-wrapper {
+            position: relative;
+        }
+
+        .reset-password-wrapper input {
+            padding-right: 48px;
+        }
+
+        .reset-eye {
+            position: absolute;
+            top: 50%;
+            right: 12px;
+            transform: translateY(-50%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 5px;
+            border: none;
+            background: transparent;
+            color: #c8a355;
+            cursor: pointer;
+        }
+
+        .reset-eye:hover {
+            color: #e5c378;
+        }
+
+        .reset-eye:focus-visible {
+            outline: 2px solid #e5c378;
+            outline-offset: 2px;
+            border-radius: 4px;
+        }
+
+        .reset-button {
+            width: 100%;
+            min-height: 47px;
+            margin-top: 7px;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #e5c378, #b88b2f);
+            color: #080a0f;
+            font-size: 11px;
+            font-weight: 900;
+            text-transform: uppercase;
+            cursor: pointer;
+        }
+
+        .reset-button:hover {
+            filter: brightness(1.08);
+        }
+
+        .reset-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        #mensagemReset {
+            min-height: 20px;
+            margin: 15px 0 5px;
+            color: #e5c378;
+            font-size: 12px;
+            line-height: 1.6;
+            text-align: center;
+            overflow-wrap: anywhere;
+        }
+
+        .reset-back {
+            display: block;
+            margin-top: 20px;
+            text-align: center;
+            color: #64748b;
+            font-size: 10px;
+            text-decoration: none;
+            text-transform: uppercase;
+        }
+
+        .reset-back:hover {
+            color: #e5c378;
+        }
+
+        @media (max-width: 520px) {
+            .reset-card {
+                padding: 26px 21px;
+            }
+
+            .reset-card h1 {
+                font-size: 23px;
+            }
+
+            .reset-brand-name {
+                font-size: 21px;
+                letter-spacing: 5px;
+            }
+        }
+    </style>
+</head>
+
+<body class="login-page">
+
+    <main class="reset-wrapper">
+
+        <div class="reset-brand">
+            <div class="reset-brand-symbol">T</div>
+            <div class="reset-brand-name">TÁTICOS</div>
+            <div class="reset-brand-sub">Concursos</div>
+        </div>
+
+        <section class="reset-card">
+
+            <h1>Nova senha</h1>
+
+            <p class="reset-description">
+                Crie uma nova senha para acessar sua área de aluno.
+                Utilize pelo menos 8 caracteres.
+            </p>
+
+            <form id="formReset">
+
+                <div class="reset-field">
+                    <label for="novaSenha">Nova senha</label>
+
+                    <div class="reset-password-wrapper">
+                        <input
+                            type="password"
+                            id="novaSenha"
+                            placeholder="Digite a nova senha"
+                            autocomplete="new-password"
+                            minlength="8"
+                            required
+                        >
+
+                        <button
+                            type="button"
+                            class="reset-eye"
+                            data-campo="novaSenha"
+                            aria-label="Mostrar senha"
+                            aria-pressed="false"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="20"
+                                height="20"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                aria-hidden="true"
+                            >
+                                <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/>
+                                <circle cx="12" cy="12" r="3"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="reset-field">
+                    <label for="confirmarSenha">
+                        Confirmar nova senha
+                    </label>
+
+                    <div class="reset-password-wrapper">
+                        <input
+                            type="password"
+                            id="confirmarSenha"
+                            placeholder="Digite a senha novamente"
+                            autocomplete="new-password"
+                            minlength="8"
+                            required
+                        >
+
+                        <button
+                            type="button"
+                            class="reset-eye"
+                            data-campo="confirmarSenha"
+                            aria-label="Mostrar confirmação da senha"
+                            aria-pressed="false"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="20"
+                                height="20"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                aria-hidden="true"
+                            >
+                                <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/>
+                                <circle cx="12" cy="12" r="3"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <button
+                    type="submit"
+                    class="reset-button"
+                    id="botaoSalvarSenha"
+                    disabled
+                >
+                    Salvar nova senha
+                </button>
+
+            </form>
+
+            <p
+                id="mensagemReset"
+                role="status"
+                aria-live="polite"
+            ></p>
+
+            <a href="login.html" class="reset-back">
+                ← Voltar para o login
+            </a>
+
+        </section>
+
+    </main>
+
+    <script>
+        const formReset = document.getElementById("formReset");
+        const mensagemReset = document.getElementById("mensagemReset");
+        const botaoSalvarSenha = document.getElementById("botaoSalvarSenha");
+
+        let sessaoValida = false;
+        let enviando = false;
+
+        // Mostrar ou ocultar as senhas
+        document.querySelectorAll(".reset-eye").forEach(function (botao) {
+            botao.addEventListener("click", function () {
+                const campo = document.getElementById(botao.dataset.campo);
+                const mostrar = campo.type === "password";
+
+                campo.type = mostrar ? "text" : "password";
+
+                botao.setAttribute("aria-pressed", String(mostrar));
+                botao.setAttribute(
+                    "aria-label",
+                    mostrar ? "Ocultar senha" : "Mostrar senha"
+                );
+            });
+        });
+
+        // Verificar a sessão criada pelo link de recuperação
+        async function verificarSessao() {
+            try {
+                const hash = window.location.hash || "";
+
+                // Alguns fluxos do Supabase entregam os dados
+                // de recuperação no fragmento da URL.
+                const parametros = new URLSearchParams(
+                    hash.startsWith("#") ? hash.slice(1) : hash
+                );
+
+                const tipo = parametros.get("type");
+                const accessToken = parametros.get("access_token");
+                const refreshToken = parametros.get("refresh_token");
+
+                if (
+                    tipo === "recovery" &&
+                    accessToken &&
+                    refreshToken
+                ) {
+                    const { error } =
+                        await supabaseClient.auth.setSession({
+                            access_token: accessToken,
+                            refresh_token: refreshToken
+                        });
+
+                    if (error) {
+                        throw error;
+                    }
+
+                    // Retira os tokens da barra de endereço após usá-los.
+                    window.history.replaceState(
+                        null,
+                        document.title,
+                        window.location.pathname + window.location.search
+                    );
+                }
+
+                const { data, error } =
+                    await supabaseClient.auth.getSession();
+
+                if (error || !data.session) {
+                    sessaoValida = false;
+                    botaoSalvarSenha.disabled = true;
+
+                    mensagemReset.textContent =
+                        "O link é inválido ou expirou. Solicite outra recuperação na tela de login.";
+
+                    return;
+                }
+
+                sessaoValida = true;
+                botaoSalvarSenha.disabled = false;
+
+                mensagemReset.textContent =
+                    "Digite e confirme sua nova senha.";
+
+            } catch (erro) {
+                console.error("ERRO AO VALIDAR RECUPERAÇÃO:", erro);
+
+                sessaoValida = false;
+                botaoSalvarSenha.disabled = true;
+
+                mensagemReset.textContent =
+                    "Não foi possível validar o link. Solicite outro pela tela de login.";
+            }
+        }
+
+        // Atualizar a senha
+        formReset.addEventListener("submit", async function (event) {
+            event.preventDefault();
+
+            if (enviando) {
+                return;
+            }
+
+            if (!sessaoValida) {
+                mensagemReset.textContent =
+                    "O link de recuperação não é válido. Solicite outro pela tela de login.";
+                return;
+            }
+
+            const novaSenha =
+                document.getElementById("novaSenha").value;
+
+            const confirmarSenha =
+                document.getElementById("confirmarSenha").value;
+
+            if (novaSenha.length < 8) {
+                mensagemReset.textContent =
+                    "A senha deve ter pelo menos 8 caracteres.";
+                return;
+            }
+
+            if (novaSenha !== confirmarSenha) {
+                mensagemReset.textContent =
+                    "As senhas não coincidem. Confira os dois campos.";
+                return;
+            }
+
+            enviando = true;
+            botaoSalvarSenha.disabled = true;
+            mensagemReset.textContent = "Salvando nova senha...";
+
+            try {
+                const { error } =
+                    await supabaseClient.auth.updateUser({
+                        password: novaSenha
+                    });
+
+                if (error) {
+                    console.error("ERRO AO ATUALIZAR SENHA:", error);
+
+                    mensagemReset.textContent =
+                        "Não foi possível alterar a senha. O link pode ter expirado; solicite outro.";
+
+                    return;
+                }
+
+                mensagemReset.textContent =
+                    "Senha alterada com sucesso! Você será direcionado ao login.";
+
+                formReset.reset();
+
+                await supabaseClient.auth.signOut();
+
+                setTimeout(function () {
+                    window.location.href = "login.html";
+                }, 2000);
+
+            } catch (erro) {
+                console.error("ERRO AO SALVAR SENHA:", erro);
+
+                mensagemReset.textContent =
+                    "Ocorreu um erro ao salvar a senha. Tente novamente.";
+
+            } finally {
+                enviando = false;
+
+                if (sessaoValida) {
+                    botaoSalvarSenha.disabled = false;
+                }
+            }
+        });
+
+        verificarSessao();
+    </script>
+
+</body>
+</html>
